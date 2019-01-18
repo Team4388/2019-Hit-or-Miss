@@ -60,7 +60,8 @@ public class OI
 	        JoystickButton shiftDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 	        shiftDown.whenPressed(new DriveSpeedShift(false));
 	       // shiftDown.whenPressed(new LEDIndicators(false));
-	        
+			
+	        ledSwitch.whenPressed(new LedSwitch());
 	        
 	        //Operator Xbox
 /*
