@@ -1,5 +1,7 @@
 package org.usfirst.frc4388.robot.subsystems;
 
+
+
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.RobotMap;
 
@@ -10,13 +12,17 @@ public class Pnumatics extends Subsystem {
     
 		
 	private DoubleSolenoid speedShift;
-	private DoubleSolenoid Intake;
+	private DoubleSolenoid hatchIntake;
+	private DoubleSolenoid ballIntake;
+	private DoubleSolenoid wrist;
 
 	
 	public Pnumatics() {
 		try {
 			speedShift = new DoubleSolenoid(1,0,1);					
-			Intake = new DoubleSolenoid(1,4,5 ); 
+			hatchIntake = new DoubleSolenoid(1,2,3 ); 
+			ballIntake = new DoubleSolenoid(1,4,5 );
+			wrist = new DoubleSolenoid(1,6,7 );
 		} 
 		catch (Exception e) {
 			System.err.println("An error occurred in the Pnumatics constructor");
@@ -31,12 +37,28 @@ public class Pnumatics extends Subsystem {
 			speedShift.set(DoubleSolenoid.Value.kReverse);
 		}
 	}
-	public void setIntake(boolean state) {
+	public void setHatchIntakeState(boolean state) {
 		if (state==true) {
-			Intake.set(DoubleSolenoid.Value.kForward);
+			hatchIntake.set(DoubleSolenoid.Value.kForward);
 		}
 		if (state==false) {
-			Intake.set(DoubleSolenoid.Value.kReverse);
+			hatchIntake.set(DoubleSolenoid.Value.kReverse);
+		}
+	}
+	public void setBallIntake(boolean state) {
+		if (state==true) {
+			ballIntake.set(DoubleSolenoid.Value.kForward);
+		}
+		if (state==false) {
+			ballIntake.set(DoubleSolenoid.Value.kReverse);
+		}
+	}
+	public void setWrist(boolean state) {
+		if (state==true) {
+			wrist.set(DoubleSolenoid.Value.kForward);
+		}
+		if (state==false) {
+			wrist.set(DoubleSolenoid.Value.kReverse);
 		}
 	}
 
