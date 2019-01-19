@@ -34,31 +34,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 public class Elevator extends Subsystem implements ControlLoopable
 {
 	//PID encoder and motor
-	private CANTalonEncoder elevatorRight;
-	private WPI_TalonSRX elevatorLeft;
-
-	//PID controller Max Scale
-	private SoftwarePIDPositionController pidPositionControllerMaxScale;
-	//private PIDParams PositionPIDParamsMaxScale = new PIDParams(2.0, 0.0, 0.0);
-	private PIDParams PositionPMaxScale;
+	private CANTalonEncoder elevatorMain;
 	
-	//PID controller Max Scale
-	private SoftwarePIDPositionController pidPositionControllerLowScale;
-	//private PIDParams PositionPIDParamsLowScale = new PIDParams(2.0, 0.0, 0.0);
-	private PIDParams PositionPLowScale;
-	
-	//PID controller Max Scale
-	private SoftwarePIDPositionController pidPositionControllerSwitch;
-	//private PIDParams PositionPIDParamsSwitch = new PIDParams(2.0, 0.0, 0.0);
-	private PIDParams PositionPSwitch;
-	
-	//PID controller Max Scale
-	private SoftwarePIDPositionController pidPositionControllerLowest;
-	//private PIDParams PositionPIDParamsLowest = new PIDParams(2.0, 0.0, 0.0);
-	private PIDParams PositionPLowest;
-
-	//PID target
-	private double targetPPosition;
 	
 	//Encoder ticks to inches for encoders
 	public static final double ENCODER_TICKS_TO_INCHES = Constants.kElevatorEncoderTicksPerInch;
@@ -93,37 +70,34 @@ public class Elevator extends Subsystem implements ControlLoopable
     	try
     	{
 			//PID elevator encoder and talon
-			elevatorRight = new CANTalonEncoder(RobotMap.ELEVATOR_MOTOR1_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
-			elevatorLeft = new WPI_TalonSRX(RobotMap.ELEVATOR_MOTOR2_ID);
+			elevatorMain = new CANTalonEncoder(RobotMap.ELEVATOR_MOTOR1_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
+		
 			
-    		elevatorRight.setInverted(false);
+    		elevatorMain.setInverted(false);
 
 			//Setting left elevator motor as follower
-    		elevatorLeft.set(ControlMode.Follower, elevatorRight.getDeviceID());
-    		elevatorLeft.setInverted(false);
-    		elevatorLeft.setNeutralMode(NeutralMode.Brake);
-    		elevatorRight.setNeutralMode(NeutralMode.Brake);
-    		elevatorRight.setSensorPhase(true);
+    		elevatorMain.setNeutralMode(NeutralMode.Brake);
+    		elevatorMain.setSensorPhase(true);
     		//Limit Switch Left
     		//elevatorLeft.overrideLimitSwitchesEnable(true);
-    		elevatorLeft.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
-    		elevatorLeft.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+    		elevatorMain.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+    		elevatorMain.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
     		
     		//Limit Switch Right
-    		//elevatorRight.overrideLimitSwitchesEnable(true);
-			//elevatorRight.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
-    		//elevatorRight.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+    		//elevatorMain.overrideLimitSwitchesEnable(true);
+			//elevatorMain.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+    		//elevatorMain.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
     		
     		
     		//Change This boi
     		
-    	//	elevatorRight.configForwardSoftLimitThreshold(10000, 0); //right here
-    		//elevatorRight.configReverseSoftLimitThreshold(5, 0);
-    		//elevatorRight.configForwardSoftLimitEnable(true, 0);
-    		//elevatorRight.configReverseSoftLimitEnable(true, 0);
+    	//	elevatorMain.configForwardSoftLimitThreshold(10000, 0); //right here
+    		//elevatorMain.configReverseSoftLimitThreshold(5, 0);
+    		//elevatorMain.configForwardSoftLimitEnable(true, 0);
+    		//elevatorMain.configReverseSoftLimitEnable(true, 0);
     		
     		//sos
-    		//elevatorRight.enableLimitSwitch(true, true);
+    		//elevatorMain.enableLimitSwitch(true, true);
 
     		
     		
@@ -207,7 +181,7 @@ public class Elevator extends Subsystem implements ControlLoopable
     
     public void resetElevatorEncoder()
     {
-    	elevatorRight.setSelectedSensorPosition(0, 0, 0);
+    	elevatorMain.setSelectedSensorPosition(0, 0, 0);
     }
     
     public void moveElevatorXbox()
@@ -226,37 +200,37 @@ public class Elevator extends Subsystem implements ControlLoopable
     	
     	if(elevatorTuningPressed == true)
       	{     		
-     		elevatorRight.set(moveElevatorInput * 0.5);
+     		elevatorMain.set(moveElevatorInput * 0.5);
       	}
      	else if(elevatorTuningPressed == false)
      	{
-     		elevatorRight.set(moveElevatorInput);
+     		elevatorMain.set(moveElevatorInput);
      	}
      		
      		/*
      		if(elevatorPos <= elevatorSafeZone && elevatorPos >= 0)
      		{
-     			elevatorRight.set(moveElevatorInput);
+     			elevatorMain.set(moveElevatorInput);
      		}
      		else if(elevatorPos > elevatorSafeZone)
      		{
-     			elevatorRight.set(moveElevatorInput * 0.65);
+     			elevatorMain.set(moveElevatorInput * 0.65);
      			
      			
      			if(holdButtonPressed == true)
              	{
-             		elevatorRight.set(-0.43 * (0.2));
+             		elevatorMain.set(-0.43 * (0.2));
              	}
              	else if(holdButtonPressed == false)
              	{
-             		elevatorRight.set(moveElevatorInput * 0.75);
+             		elevatorMain.set(moveElevatorInput * 0.75);
              	}
              	
      		}
      		
      		else if(elevatorPos < 0)
      		{
-             	elevatorRight.set(moveElevatorInput * 0.75);
+             	elevatorMain.set(moveElevatorInput * 0.75);
      		}
      		*/
      	}
@@ -268,12 +242,12 @@ public class Elevator extends Subsystem implements ControlLoopable
 	//PID encoder position
 	public double getEncoderElevatorPosition()
 	{
-		return elevatorRight.getPositionWorld();
+		return elevatorMain.getPositionWorld();
 	}
 	
 	public double getElevatorHeightInchesAboveFloor()
 	{
-		return elevatorRight.getPositionWorld();
+		return elevatorMain.getPositionWorld();
 	}
 
 	public synchronized void setControlMode(DriveControlMode controlMode) 
@@ -316,23 +290,23 @@ public class Elevator extends Subsystem implements ControlLoopable
 	}
 	*/
 	public void rawSetOutput(double output){
-		elevatorRight.set(/*ControlMode.PercentOutput,*/ output);
+		elevatorMain.set(/*ControlMode.PercentOutput,*/ output);
 	}
 	
 	public void holdInPos()
 	{
-		elevatorRight.set(-0.43 * 0.2);
+		elevatorMain.set(-0.43 * 0.2);
 	}
 	
 	public void stopMotors()
 	{
-		elevatorRight.set(0);
+		elevatorMain.set(0);
 	}
 	
 	public void isSwitchPressed()
 	{
 		pressed = false;
-		isPressed = elevatorRight.getSensorCollection();
+		isPressed = elevatorMain.getSensorCollection();
 		
 		if(isPressed.isFwdLimitSwitchClosed() == true)
 		{
@@ -370,22 +344,6 @@ public class Elevator extends Subsystem implements ControlLoopable
 		else if (!isFinished)
 		{
 			//PID control mode
-			if(controlMode == DriveControlMode.MOVE_POSITION_MAX_SCALE)
-			{
-				isFinished = pidPositionControllerMaxScale.controlLoopUpdate(getEncoderElevatorPosition());
-			}
-			else if(controlMode == DriveControlMode.MOVE_POSITION_LOW_SCALE)
-			{
-				isFinished = pidPositionControllerLowScale.controlLoopUpdate(getEncoderElevatorPosition());
-			}
-			else if(controlMode == DriveControlMode.MOVE_POSITION_SWITCH)
-			{
-				isFinished = pidPositionControllerSwitch.controlLoopUpdate(getEncoderElevatorPosition());
-			}
-			else if(controlMode == DriveControlMode.MOVE_POSITION_LOWEST)
-			{
-				isFinished = pidPositionControllerLowest.controlLoopUpdate(getEncoderElevatorPosition());
-			}
 			/*
 			else if(controlMode == DriveControlMode.RAW)
 			{
@@ -410,11 +368,6 @@ public class Elevator extends Subsystem implements ControlLoopable
 	public void setPeriodMs(long periodMs)
 	{
 		//PID controller
-		pidPositionControllerMaxScale = new SoftwarePIDPositionController(PositionPMaxScale, elevatorRight);
-		pidPositionControllerLowScale = new SoftwarePIDPositionController(PositionPLowScale, elevatorRight);
-		pidPositionControllerSwitch = new SoftwarePIDPositionController(PositionPSwitch, elevatorRight);
-		pidPositionControllerLowest = new SoftwarePIDPositionController(PositionPLowest, elevatorRight);
-		
 		this.periodMs = periodMs;
 	}
 	
@@ -434,7 +387,7 @@ public class Elevator extends Subsystem implements ControlLoopable
 		{
 			try 
 			{
-				SmartDashboard.putNumber("Elevator Pos Ticks", elevatorRight.getSelectedSensorPosition(0));
+				SmartDashboard.putNumber("Elevator Pos Ticks", elevatorMain.getSelectedSensorPosition(0));
 				SmartDashboard.putNumber("Elevator Pos Inches", getElevatorHeightInchesAboveFloor());
 				//SmartDashboard.putData(pressed);
 			}
