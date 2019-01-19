@@ -38,6 +38,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -93,7 +94,7 @@ public class Drive extends Subsystem implements ControlLoopable
 	public static final double MP_MAX_TURN_T2 = 200;
 	
 	// Motor controllers
-	private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();	
+	private ArrayList<CANPIDController> motorControllers = new ArrayList<CANPIDController>();	
 
 	private CANSparkMax leftDrive1;
 	private CANSparkMax leftDrive2;	
@@ -264,11 +265,12 @@ public class Drive extends Subsystem implements ControlLoopable
 			rightDrive2.setNeutralMode(NeutralMode.Brake);
 			rightDrive2.set(ControlMode.Follower, rightDrive1.getDeviceID());
 
-			
 
+			leftPIDController = new CANPIDController(leftDrive1);
+			rightPIDController = new CANPIDController(rightDrive1);
 							
-			motorControllers.add(leftDrive1);
-			motorControllers.add(rightDrive1);
+			motorControllers.add(leftPIDController);
+			motorControllers.add(rightPIDController);
 
 			//m_drive = new RobotDrive(leftDrive1, rightDrive1);
 			//m_drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
@@ -757,14 +759,16 @@ public class Drive extends Subsystem implements ControlLoopable
 	}
 	
 	@Override
+	
 	public void setPeriodMs(long periodMs) {
+		/*
 		mpStraightController = new MPTalonPIDController(periodMs, mpStraightPIDParams, motorControllers);
 		mpTurnController = new MPSoftwarePIDController(periodMs, mpTurnPIDParams, motorControllers);
 		pidTurnController = new SoftwarePIDController(pidTurnPIDParams, motorControllers);
 		mpPathController = new MPTalonPIDPathController(periodMs, mpPathPIDParams, motorControllers);
 		mpPathVelocityController = new MPTalonPIDPathVelocityController(periodMs, mpPathVelocityPIDParams, motorControllers);
 		adaptivePursuitController = new AdaptivePurePursuitController(periodMs, adaptivePursuitPIDParams, motorControllers);
-
+		*/
 		this.periodMs = periodMs;
 	}
 	
