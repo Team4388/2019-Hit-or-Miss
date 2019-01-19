@@ -13,7 +13,6 @@ import org.usfirst.frc4388.utility.BHRMathUtils;
 import org.usfirst.frc4388.utility.CANTalonEncoder;
 import org.usfirst.frc4388.utility.ControlLoopable;
 import org.usfirst.frc4388.utility.Kinematics;
-import org.usfirst.frc4388.utility.MMTalonPIDController;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import org.usfirst.frc4388.utility.MPTalonPIDController;
@@ -38,6 +37,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.DigitalInput;
@@ -93,19 +95,16 @@ public class Drive extends Subsystem implements ControlLoopable
 	// Motor controllers
 	private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();	
 
-	private CANTalonEncoder leftDrive1;
-	private WPI_TalonSRX leftDrive2;
-//	private WPI_TalonSRX leftDrive3;
-	
-	private CANTalonEncoder rightDrive1;
-	private WPI_TalonSRX rightDrive2;
-//	private WPI_TalonSRX rightDrive3;
+	private CANSparkMax leftDrive1;
+	private CANSparkMax leftDrive2;	
+	private CANSparkMax rightDrive1;
+	private CANSparkMax rightDrive2;
+	private CANEncoder encoderLeft;
+	private CANEncoder encoderRight;
 
 	private DifferentialDrive m_drive;
 	
 	//PID encoder and motor
-	private CANTalonEncoder elevatorRight;
-	private WPI_TalonSRX elevatorLeft;
 
 	//private DigitalInput hopperSensorRed;
 	//private DigitalInput hopperSensorBlue;
@@ -159,9 +158,6 @@ public class Drive extends Subsystem implements ControlLoopable
 	private PIDParams mpStraightPIDParams = new PIDParams(.7, 0.0, 0.000000, .001, 0.001, .7);  // 4 colsons
 //	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.03);  // 4 omni
 	private PIDParams mpHoldPIDParams = new PIDParams(1, 0, 0, 0.0, 0.0, 0.0); 
-
-	private MMTalonPIDController mmStraightController;
-	private PIDParams mmStraightPIDParams = new PIDParams(0, 0, 0, 0.24);  
 	
 	private MPSoftwarePIDController mpTurnController; // p    i   d     a      v      g    izone
 	private PIDParams mpTurnPIDParams = new PIDParams(0.07, 0.00002, 0.5, 0.00025, 0.008, 0.0, 100);  // 4 colson wheels
@@ -202,18 +198,19 @@ public class Drive extends Subsystem implements ControlLoopable
 
 	public Drive() {
 		try {
-			leftDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.QuadEncoder);
-			leftDrive2 = new WPI_TalonSRX(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID);
-//			leftDrive3 = new WPI_TalonSRX(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID);
-			
-			rightDrive1 = new CANTalonEncoder(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, true, FeedbackDevice.QuadEncoder);
-			rightDrive2 = new WPI_TalonSRX(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID);
-//			rightDrive3 = new WPI_TalonSRX(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID);
-			
-			elevatorRight = new CANTalonEncoder(RobotMap.ELEVATOR_MOTOR1_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
+			leftDrive1 = new CANSparkMax(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, MotorType.kBrushless);
+			//leftDrive1 = new CANSparkMax(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.QuadEncoder);
+			leftDrive2 = new CANSparkMax(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID, MotorType.kBrushless);
+			encoderLeft = new CANEncoder(leftDrive1);
+			leftDrive2.follow(leftDrive1);
+
+			rightDrive1 = new CANSparkMax(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID, MotorType.kBrushless);
+			rightDrive2 = new CANSparkMax(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID, MotorType.kBrushless);
+			encoderRight = new CANEncoder(rightDrive1);
+			rightDrive2.follow(rightDrive1);
 			//gyroPigeon = new PigeonImu(leftDrive2);
 			gyroNavX = new AHRS(SPI.Port.kMXP);
-
+			
 			//hopperSensorRed = new DigitalInput(RobotMap.HOPPER_SENSOR_RED_DIO_ID);
 			//hopperSensorBlue = new DigitalInput(RobotMap.HOPPER_SENSOR_BLUE_DIO_ID);
 	
@@ -360,13 +357,6 @@ public class Drive extends Subsystem implements ControlLoopable
 	//		return isHopperSensorBlueOn();
 	//	}
 	//}
-
-	public void setStraightMM(double distanceInches, double maxVelocity, double maxAcceleration, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
-		double yawAngle = useAbsolute ? BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle) : getGyroAngleDeg();
-		mmStraightController.setPID(mmStraightPIDParams);
-		mmStraightController.setMMStraightTarget(0, distanceInches, maxVelocity, maxAcceleration, useGyroLock, yawAngle, true); 
-		setControlMode(DriveControlMode.MOTION_MAGIC);
-	}
 	
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
 		double yawAngle = useAbsolute ? BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle) : getGyroAngleDeg();
@@ -536,9 +526,6 @@ public class Drive extends Subsystem implements ControlLoopable
 			}
 			else if (controlMode == DriveControlMode.MP_PATH_VELOCITY) {
 				isFinished = mpPathVelocityController.controlLoopUpdate(getGyroAngleDeg()); 
-			}
-			else if (controlMode == DriveControlMode.MOTION_MAGIC) {
-				isFinished = mmStraightController.controlLoopUpdate(getGyroAngleDeg()); 
 			}
 			else if (controlMode == DriveControlMode.ADAPTIVE_PURSUIT) {
 				updatePose();
@@ -771,7 +758,6 @@ public class Drive extends Subsystem implements ControlLoopable
 	
 	@Override
 	public void setPeriodMs(long periodMs) {
-		//mmStraightController = new MMTalonPIDController(periodMs, mmStraightPIDParams, motorControllers);
 		mpStraightController = new MPTalonPIDController(periodMs, mpStraightPIDParams, motorControllers);
 		mpTurnController = new MPSoftwarePIDController(periodMs, mpTurnPIDParams, motorControllers);
 		pidTurnController = new SoftwarePIDController(pidTurnPIDParams, motorControllers);
