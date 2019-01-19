@@ -1,23 +1,12 @@
-
-
-
-
 package org.usfirst.frc4388.robot.subsystems;
 
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.RobotMap;
 import org.usfirst.frc4388.robot.commands.*;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 
-/**
- *
- */
 public class Climber extends Subsystem{
 	
 	private WPI_TalonSRX Climber;
@@ -49,13 +38,8 @@ public class Climber extends Subsystem{
 
     }
     
-	public void setClimbSpeed(boolean Climb) {
-		if (Climb==true) {
-			Climber.set(1.0);
-		}
-		if (Climb==false) {
-			Climber.set(0);
-		}
+	public void setClimbSpeed(double Climb) {
+		Climber.set(Climb);
 }
     // Put methods for controlling this subsystem
     // here. Call these from Commands.

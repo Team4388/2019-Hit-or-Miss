@@ -1,21 +1,20 @@
 package org.usfirst.frc4388.robot.commands;
 
 import org.usfirst.frc4388.robot.Robot;
+import org.usfirst.frc4388.robot.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class InitiateClimber extends Command
 {
-	boolean climb;
 	
-	public InitiateClimber(boolean climb) {
-		this.climb=climb;
+	public InitiateClimber() {
 		requires(Robot.climber);
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.climber.setClimbSpeed(climb);
+		Robot.climber.setClimbSpeed(kClimbLiftSpeed);
 	}
 
 	@Override

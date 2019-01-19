@@ -69,4 +69,7 @@ public class Constants {
     public static double kPathFollowingMaxVel = 120.0; // inches/sec
     public static double kPathFollowingMaxAccel = 80.0; // inches/sec^2
 
+    //Climbing Constants
+    public static double kClimbLiftSpeed = 1.0;
+
 }
