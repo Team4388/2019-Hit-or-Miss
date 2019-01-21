@@ -64,7 +64,7 @@ public class Robot extends IterativeRobot
 		oi = OI.getInstance();
 		
     	controlLoop.addLoopable(drive);
-    	controlLoop.addLoopable(Arm);
+    	controlLoop.addLoopable(arm);
 			
 
         operationModeChooser = new SendableChooser<OperationMode>();
@@ -146,14 +146,15 @@ public class Robot extends IterativeRobot
 		LLautonomousCommand = (Command)LLautonTaskChooser.getSelected();
     }
     
-    public Alliance getAlliance() {
+	public Alliance getAlliance() 
+	{
     	return m_ds.getAlliance();
     }
     
-    public void updateStatus() {
+	public void updateStatus() 
+	{
     	drive.updateStatus(operationMode);
-    	Elevator.updateStatus(operationMode);
-
+    	arm.updateStatus(operationMode);
    }
 
 }
