@@ -152,7 +152,7 @@ public class Robot extends IterativeRobot
     
     public void updateStatus() {
     	drive.updateStatus(operationMode);
-    	Arm.updateStatus(operationMode);
+    	Elevator.updateStatus(operationMode);
 
    }
 

@@ -34,8 +34,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 public class Arm extends Subsystem implements ControlLoopable
 {
 	//PID encoder and motor
-	private CANTalonEncoder ArmRight;
-	private WPI_TalonSRX ArmLeft;
+	private CANTalonEncoder ArmMotor;
+	//private WPI_TalonSRX ArmLeft;
 
 	//PID controller Max Scale
 	private SoftwarePIDPositionController pidPositionControllerMaxScale;
@@ -93,37 +93,38 @@ public class Arm extends Subsystem implements ControlLoopable
     	try
     	{
 			//PID Arm encoder and talon
-			ArmRight = new CANTalonEncoder(RobotMap.ARM_MOTOR1_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
-			ArmLeft = new WPI_TalonSRX(RobotMap.ARM_MOTOR2_ID);
+			ArmMotor = new CANTalonEncoder(RobotMap.ARM_MOTOR1_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
+		
+			//ArmLeft = new WPI_TalonSRX(RobotMap.ARM_MOTOR2_ID);
 			
-    		ArmRight.setInverted(false);
+    		//ArmMotor.setInverted(false);
 
 			//Setting left Arm motor as follower
-    		ArmLeft.set(ControlMode.Follower, ArmRight.getDeviceID());
-    		ArmLeft.setInverted(false);
-    		ArmLeft.setNeutralMode(NeutralMode.Brake);
-    		ArmRight.setNeutralMode(NeutralMode.Brake);
-    		ArmRight.setSensorPhase(true);
+    		//ArmLeft.set(ControlMode.Follower, ArmMotor.getDeviceID());
+    		//ArmLeft.setInverted(false);
+    		//ArmLeft.setNeutralMode(NeutralMode.Brake);
+    		ArmMotor.setNeutralMode(NeutralMode.Brake);
+    		ArmMotor.setSensorPhase(true);
     		//Limit Switch Left
     		//ArmLeft.overrideLimitSwitchesEnable(true);
-    		ArmLeft.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
-    		ArmLeft.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+    		//ArmLeft.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+    		//ArmLeft.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
     		
     		//Limit Switch Right
-    		//ArmRight.overrideLimitSwitchesEnable(true);
-			//ArmRight.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
-    		//ArmRight.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+    		//ArmMotor.overrideLimitSwitchesEnable(true);
+			//ArmMotor.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+    		//ArmMotor.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
     		
     		
     		//Change This boi
     		
-    	//	ArmRight.configForwardSoftLimitThreshold(10000, 0); //right here
-    		//ArmRight.configReverseSoftLimitThreshold(5, 0);
-    		//ArmRight.configForwardSoftLimitEnable(true, 0);
-    		//ArmRight.configReverseSoftLimitEnable(true, 0);
+    	//	ArmMotor.configForwardSoftLimitThreshold(10000, 0); //right here
+    		//ArmMotor.configReverseSoftLimitThreshold(5, 0);
+    		//ArmMotor.configForwardSoftLimitEnable(true, 0);
+    		//ArmMotor.configReverseSoftLimitEnable(true, 0);
     		
     		//sos
-    		//ArmRight.enableLimitSwitch(true, true);
+    		//ArmMotor.enableLimitSwitch(true, true);
 
     		
     		
@@ -207,7 +208,7 @@ public class Arm extends Subsystem implements ControlLoopable
     
     public void resetArmEncoder()
     {
-    	ArmRight.setSelectedSensorPosition(0, 0, 0);
+    	ArmMotor.setSelectedSensorPosition(0, 0, 0);
     }
     
     public void moveArmXbox()
@@ -226,37 +227,37 @@ public class Arm extends Subsystem implements ControlLoopable
     	
     	if(ArmTuningPressed == true)
       	{     		
-     		ArmRight.set(moveArmInput * 0.5);
+     		ArmMotor.set(moveArmInput * 0.5);
       	}
      	else if(ArmTuningPressed == false)
      	{
-     		ArmRight.set(moveArmInput);
+     		ArmMotor.set(moveArmInput);
      	}
      		
      		/*
      		if(ArmPos <= ArmSafeZone && ArmPos >= 0)
      		{
-     			ArmRight.set(moveArmInput);
+     			ArmMotor.set(moveArmInput);
      		}
      		else if(ArmPos > ArmSafeZone)
      		{
-     			ArmRight.set(moveArmInput * 0.65);
+     			ArmMotor.set(moveArmInput * 0.65);
      			
      			
      			if(holdButtonPressed == true)
              	{
-             		ArmRight.set(-0.43 * (0.2));
+             		ArmMotor.set(-0.43 * (0.2));
              	}
              	else if(holdButtonPressed == false)
              	{
-             		ArmRight.set(moveArmInput * 0.75);
+             		ArmMotor.set(moveArmInput * 0.75);
              	}
              	
      		}
      		
      		else if(ArmPos < 0)
      		{
-             	ArmRight.set(moveArmInput * 0.75);
+             	ArmMotor.set(moveArmInput * 0.75);
      		}
      		*/
      	}
@@ -268,12 +269,12 @@ public class Arm extends Subsystem implements ControlLoopable
 	//PID encoder position
 	public double getEncoderArmPosition()
 	{
-		return ArmRight.getPositionWorld();
+		return ArmMotor.getPositionWorld();
 	}
 	
 	public double getArmHeightInchesAboveFloor()
 	{
-		return ArmRight.getPositionWorld();
+		return ArmMotor.getPositionWorld();
 	}
 
 	public synchronized void setControlMode(DriveControlMode controlMode) 
@@ -316,23 +317,23 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 	*/
 	public void rawSetOutput(double output){
-		ArmRight.set(/*ControlMode.PercentOutput,*/ output);
+		ArmMotor.set(/*ControlMode.PercentOutput,*/ output);
 	}
 	
 	public void holdInPos()
 	{
-		ArmRight.set(-0.43 * 0.2);
+		ArmMotor.set(-0.43 * 0.2);
 	}
 	
 	public void stopMotors()
 	{
-		ArmRight.set(0);
+		ArmMotor.set(0);
 	}
 	
 	public void isSwitchPressed()
 	{
 		pressed = false;
-		isPressed = ArmRight.getSensorCollection();
+		isPressed = ArmMotor.getSensorCollection();
 		
 		if(isPressed.isFwdLimitSwitchClosed() == true)
 		{
@@ -410,10 +411,10 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void setPeriodMs(long periodMs)
 	{
 		//PID controller
-		pidPositionControllerMaxScale = new SoftwarePIDPositionController(PositionPMaxScale, ArmRight);
-		pidPositionControllerLowScale = new SoftwarePIDPositionController(PositionPLowScale, ArmRight);
-		pidPositionControllerSwitch = new SoftwarePIDPositionController(PositionPSwitch, ArmRight);
-		pidPositionControllerLowest = new SoftwarePIDPositionController(PositionPLowest, ArmRight);
+		pidPositionControllerMaxScale = new SoftwarePIDPositionController(PositionPMaxScale, ArmMotor);
+		pidPositionControllerLowScale = new SoftwarePIDPositionController(PositionPLowScale, ArmMotor);
+		pidPositionControllerSwitch = new SoftwarePIDPositionController(PositionPSwitch, ArmMotor);
+		pidPositionControllerLowest = new SoftwarePIDPositionController(PositionPLowest, ArmMotor);
 		
 		this.periodMs = periodMs;
 	}
@@ -434,7 +435,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		{
 			try 
 			{
-				SmartDashboard.putNumber("Arm Pos Ticks", ArmRight.getSelectedSensorPosition(0));
+				SmartDashboard.putNumber("Arm Pos Ticks", ArmMotor.getSelectedSensorPosition(0));
 				SmartDashboard.putNumber("Arm Pos Inches", getArmHeightInchesAboveFloor());
 				//SmartDashboard.putData(pressed);
 			}
