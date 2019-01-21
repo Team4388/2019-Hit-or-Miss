@@ -39,7 +39,9 @@ public class Wrist extends Subsystem
     {
       //PID wrist encoder and talon
 			wristRight = new CANTalonEncoder(RobotMap.WRIST_LEFT_MOTOR_CAN_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
-			wristLeft = new WPI_TalonSRX(RobotMap.WRITST_RIGHT_MOTOR_CAN_ID);
+      wristLeft = new WPI_TalonSRX(RobotMap.WRITST_RIGHT_MOTOR_CAN_ID);
+      
+      
     }
     catch(Exception e)
     {
