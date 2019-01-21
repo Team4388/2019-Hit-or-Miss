@@ -193,8 +193,9 @@ public class Drive extends Subsystem implements ControlLoopable
     private AHRS gyroNavX;
 	private boolean useGyroLock;
 	private double gyroLockAngleDeg;
-	//private double kPGyro = 0.04;
-	private double kPGyro = 0.0625;
+	private double kPGyro = 0.07;
+	//private double kPGyro = 0.0625;
+	
 	private boolean isCalibrating = false;
 	private double gyroOffsetDeg = 0;
 
@@ -225,7 +226,7 @@ public class Drive extends Subsystem implements ControlLoopable
 			//leftDrive1.setVoltageRampRate(VOLTAGE_RAMP_RATE);
 			//leftDrive1.setNominalClosedLoopVoltage(12.0);
 			leftDrive1.clearFaults();
-			leftDrive1.setInverted(true);//false on comp 2108, false on microbot
+			leftDrive1.setInverted(false);//false on comp 2108, false on microbot
 			//leftDrive1.setSensorPhase(true);//true on comp 2108, false on microbot //not needed for spark
 			//leftDrive1.setSafetyEnabled(false); //not needed for spark
 			//leftDrive1.setCurrentLimit(15);
@@ -242,7 +243,7 @@ public class Drive extends Subsystem implements ControlLoopable
 //	        }
 			
 
-			leftDrive2.setInverted(true);//false on comp 2108, false on microbot
+			leftDrive2.setInverted(false);//false on comp 2108, false on microbot
 			//leftDrive2.setSafetyEnabled(false);
 			leftDrive2.setIdleMode(IdleMode.kBrake);
 			//leftDrive2.set(ControlMode.Follower, leftDrive1.getDeviceID()); // set above
@@ -253,7 +254,7 @@ public class Drive extends Subsystem implements ControlLoopable
 			//rightDrive1.setVoltageRampRate(VOLTAGE_RAMP_RATE);
 			//rightDrive1.setNominalClosedLoopVoltage(12.0);
 			rightDrive1.clearFaults();
-			rightDrive1.setInverted(true);//true on comp 2108, false on microbot
+			rightDrive1.setInverted(false);//true on comp 2108, false on microbot
 			//rightDrive1.setSensorPhase(true);//true on comp 2108, true on microbot
 			//rightDrive1.setSafetyEnabled(false);
 			rightDrive1.setIdleMode(IdleMode.kBrake);
@@ -266,7 +267,7 @@ public class Drive extends Subsystem implements ControlLoopable
 //	        }
 			
 
-			rightDrive2.setInverted(true);//True on comp 2108, false on microbot
+			rightDrive2.setInverted(false);//True on comp 2108, false on microbot
 			//rightDrive2.setSafetyEnabled(false);
 			rightDrive2.setIdleMode(IdleMode.kBrake);
 			//rightDrive2.set(ControlMode.Follower, rightDrive1.getDeviceID());
@@ -378,8 +379,7 @@ public class Drive extends Subsystem implements ControlLoopable
 		mpStraightController.setMPStraightTarget(0, distanceInches, maxVelocity, MP_STRAIGHT_T1, MP_STRAIGHT_T2, useGyroLock, yawAngle, true); 
 		setControlMode(DriveControlMode.MP_STRAIGHT);
 	}
-	
-	//public void setStraightMPCached(String key, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
+		//public void setStraightMPCached(String key, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
 	//	double yawAngle = useAbsolute ? BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle) : getGyroAngleDeg();
 	//	mpStraightController.setPID(mpStraightPIDParams);
 	//	mpStraightController.setMPStraightTarget(key, useGyroLock, yawAngle, true); 
@@ -449,8 +449,8 @@ public class Drive extends Subsystem implements ControlLoopable
 	}
     
     public void updatePose() {
-        double left_distance = 0;//leftDrive1.getPositionWorld();
-        double right_distance = 0;//rightDrive1.getPositionWorld();     FIX TODAY
+        double left_distance = encoderLeft.getPosition();
+        double right_distance = encoderRight.getPosition();
         Rotation2d gyro_angle = Rotation2d.fromDegrees(-getGyroAngleDeg());
         lastPose = currentPose;
         currentPose = generateOdometryFromSensors(left_distance - left_encoder_prev_distance_, right_distance - right_encoder_prev_distance_, gyro_angle);
@@ -658,7 +658,7 @@ public class Drive extends Subsystem implements ControlLoopable
 			m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
 					m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
 		}
-		
+
 		m_drive.arcadeDrive(m_moveOutput, m_steerOutput*.75);
 		// break;
 		// case CONTROLLER_XBOX_ARCADE_RIGHT:
@@ -818,11 +818,12 @@ public class Drive extends Subsystem implements ControlLoopable
 	public void updateStatus(Robot.OperationMode operationMode) {
 		if (operationMode == Robot.OperationMode.TEST) {
 			try {
+				SmartDashboard.putNumber("Gyro Value", getGyroAngleDeg());
 				SmartDashboard.putNumber("Update Period (ms)", lastControlLoopUpdatePeriod * 1000.0);
 				SmartDashboard.putNumber("Right Pos Ticks", 0);//rightDrive1.getSelectedSensorPosition(0));   FIX TODAY
 				SmartDashboard.putNumber("Left Pos Ticks", 0);//leftDrive1.getSelectedSensorPosition(0));
-				SmartDashboard.putNumber("Right Pos Inches", 0);//rightDrive1.getPositionWorld());
-				SmartDashboard.putNumber("Left Pos Inches", 0);//leftDrive1.getPositionWorld());
+				SmartDashboard.putNumber("Right Pos Inches", -encoderRight.getPosition());//rightDrive1.getPositionWorld());
+				SmartDashboard.putNumber("Left Pos Inches", encoderLeft.getPosition());//leftDrive1.getPositionWorld());
 				SmartDashboard.putNumber("Right Vel Ft-Sec", 0);//rightDrive1.getVelocityWorld() / 12);
 				SmartDashboard.putNumber("Left Vel Ft-Sec", 0);//leftDrive1.getVelocityWorld() / 12);
 				//SmartDashboard.putNumber("Left 1 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID));
