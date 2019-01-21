@@ -18,8 +18,8 @@ public class RobotMap {
 	public static final int DRIVETRAIN_RIGHT_MOTOR2_CAN_ID = 5;
 	
 	//carriage motors
-	public static final int CARRIAGE_LEFT_MOTOR_CAN_ID = 8;
-	public static final int CARRIAGE_RIGHT_MOTOR_CAN_ID = 9;
+	public static final int WRIST_LEFT_MOTOR_CAN_ID = 8;
+	public static final int WRITST_RIGHT_MOTOR_CAN_ID = 9;
 	  
 	//Elevator Motors
 	public static final int ELEVATOR_MOTOR1_ID = 6;
