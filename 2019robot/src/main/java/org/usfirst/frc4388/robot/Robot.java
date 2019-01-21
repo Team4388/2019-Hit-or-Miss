@@ -45,16 +45,6 @@ public class Robot extends IterativeRobot
 	public static OperationMode operationMode = OperationMode.TEST;
 
 	private SendableChooser<OperationMode> operationModeChooser;
-	private SendableChooser<Command> RRautonTaskChooser;
-	private SendableChooser<Command> RLautonTaskChooser;
-	private SendableChooser<Command> LRautonTaskChooser;
-	private SendableChooser<Command> LLautonTaskChooser;
-
-    private Command RRautonomousCommand;
-    private Command RLautonomousCommand;
-    private Command LRautonomousCommand;
-    private Command LLautonomousCommand;
-    
     public void robotInit() 
     {
     	//Printing game data to riolog
@@ -116,15 +106,17 @@ public class Robot extends IterativeRobot
     }
 
     public void teleopInit() {
-        if (RRautonomousCommand != null) RRautonomousCommand.cancel();
-        if (RLautonomousCommand != null) RLautonomousCommand.cancel();
-        if (LRautonomousCommand != null) LRautonomousCommand.cancel();
-        if (LLautonomousCommand != null) LLautonomousCommand.cancel();
+		System.err.println("Beginning of teleopInit.");
+
         drive.setToBrakeOnNeutral(false);	
-    	updateChoosers();
-        controlLoop.start();
-    	drive.resetEncoders();
-    	drive.endGyroCalibration();
+		updateChoosers();
+		System.err.println("TeleopInit after UpdateChoosers");
+		controlLoop.start();
+		System.err.println("TeleopInit after controlLoop");
+		//drive.resetEncoders();
+		//System.err.println("TeleopInit after resetEncoders");
+		drive.endGyroCalibration();
+		System.err.println("TeleopInit after endGyroCalibrations");
 
         updateStatus();
     }
@@ -143,10 +135,6 @@ public class Robot extends IterativeRobot
     
     private void updateChoosers() {
 		operationMode = (OperationMode)operationModeChooser.getSelected();
-		RRautonomousCommand = (Command)RRautonTaskChooser.getSelected();
-		RLautonomousCommand = (Command)RLautonTaskChooser.getSelected();
-		LRautonomousCommand = (Command)LRautonTaskChooser.getSelected();
-		LLautonomousCommand = (Command)LLautonTaskChooser.getSelected();
     }
     
     public Alliance getAlliance() {
