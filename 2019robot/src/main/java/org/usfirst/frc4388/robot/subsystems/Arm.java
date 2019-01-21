@@ -93,8 +93,8 @@ public class Arm extends Subsystem implements ControlLoopable
     	try
     	{
 			//PID Arm encoder and talon
-			ArmRight = new CANTalonEncoder(RobotMap.Arm_MOTOR1_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
-			ArmLeft = new WPI_TalonSRX(RobotMap.Arm_MOTOR2_ID);
+			ArmRight = new CANTalonEncoder(RobotMap.ARM_MOTOR1_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
+			ArmLeft = new WPI_TalonSRX(RobotMap.ARM_MOTOR2_ID);
 			
     		ArmRight.setInverted(false);
 
