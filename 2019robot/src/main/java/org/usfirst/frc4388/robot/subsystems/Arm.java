@@ -31,7 +31,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-public class Elevator extends Subsystem implements ControlLoopable
+public class Arm extends Subsystem implements ControlLoopable
 {
 	//PID encoder and motor
 	private CANTalonEncoder elevatorRight;

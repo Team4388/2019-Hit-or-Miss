@@ -32,10 +32,7 @@ public class Robot extends IterativeRobot
 
 
  
-    public static final Elevator elevator = new Elevator();
-    
-
-
+    public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Pnumatics pnumatics = new Pnumatics();
 	public static final long periodMS = 10;
