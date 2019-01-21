@@ -19,16 +19,16 @@ public class ElevatorBasic extends Command {
 	public static boolean isfinishedElevatorBasic;
  
     public ElevatorBasic(double targetHeightInchesAboveFloor) {
-        requires(Robot.elevator);
+        requires(Robot.arm);
         m_targetHeightInchesAboveFloor = targetHeightInchesAboveFloor;
    }
 
     // Called just before this Command runs the first time
     protected void initialize() 
     {
-    	Robot.elevator.setControlMode(DriveControlMode.RAW);
+    	Robot.arm.setControlMode(DriveControlMode.RAW);
     	
-    	double currentHeight = Robot.elevator.getElevatorHeightInchesAboveFloor();
+    	double currentHeight = Robot.arm.getArmHeightInchesAboveFloor();
     	// start out at half speed, as crude way to reduce slippage
     	m_goingUp = (m_targetHeightInchesAboveFloor > currentHeight);
 System.out.println("initialize(): cur=" + currentHeight + " , target=" + m_targetHeightInchesAboveFloor + " , going " + (m_goingUp ? "UP" : "DOWN"));
