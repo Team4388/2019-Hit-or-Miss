@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class ElevatorBasic extends Command {
+public class ArmBasic extends Command {
     private double m_targetHeightInchesAboveFloor;
     private double m_speed;
     private boolean m_goingUp;
@@ -18,7 +18,7 @@ public class ElevatorBasic extends Command {
 	private double m_lastCommandExecutePeriod = 0.0;
 	public static boolean isfinishedElevatorBasic;
  
-    public ElevatorBasic(double targetHeightInchesAboveFloor) {
+    public ArmBasic(double targetHeightInchesAboveFloor) {
         requires(Robot.arm);
         m_targetHeightInchesAboveFloor = targetHeightInchesAboveFloor;
    }
@@ -33,10 +33,10 @@ public class ElevatorBasic extends Command {
     	m_goingUp = (m_targetHeightInchesAboveFloor > currentHeight);
 System.out.println("initialize(): cur=" + currentHeight + " , target=" + m_targetHeightInchesAboveFloor + " , going " + (m_goingUp ? "UP" : "DOWN"));
     	if (m_goingUp) {
-    		m_speed = Constants.kElevatorBasicPercentOutputUp;
+    		m_speed = Constants.kArmBasicPercentOutputUp;
     	}
     	else {
-    		m_speed = Constants.kElevatorBasicPercentOutputDown;
+    		m_speed = Constants.kArmBasicPercentOutputDown;
     	}
 		m_commandInitTimestamp = Timer.getFPGATimestamp();
 		
@@ -50,14 +50,14 @@ System.out.println("initialize(): cur=" + currentHeight + " , target=" + m_targe
 			m_lastCommandExecutePeriod = currentTimestamp - m_lastCommandExecuteTimestamp;
 		}
 		m_lastCommandExecuteTimestamp = currentTimestamp;
-    	Robot.elevator.rawSetOutput(m_speed);
+    	Robot.arm.rawSetOutput(m_speed);
 		//SmartDashboard.putNumber("DSB Period", m_lastCommandExecutePeriod);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	boolean finished=false;
-    	double currentHeight = Robot.elevator.getElevatorHeightInchesAboveFloor();
+    	double currentHeight = Robot.arm.getArmHeightInchesAboveFloor();
     	double remaining = (m_targetHeightInchesAboveFloor - currentHeight) * (m_goingUp ? 1.0 : -1.0);
 System.out.println("cur=" + currentHeight + " , remaining=" + remaining + " , target=" + m_targetHeightInchesAboveFloor);
     	if (remaining < 0.0) {
@@ -86,9 +86,9 @@ System.out.println("cur=" + currentHeight + " , remaining=" + remaining + " , ta
     	
     	isfinishedElevatorBasic = isFinished();
     	
-    	Robot.elevator.rawSetOutput(0.0);
+    	Robot.arm.rawSetOutput(0.0);
     	
-		Robot.elevator.setControlMode(DriveControlMode.JOYSTICK);
+		Robot.arm.setControlMode(DriveControlMode.JOYSTICK);
     }
 
     // Called when another command which requires one or more of the same
