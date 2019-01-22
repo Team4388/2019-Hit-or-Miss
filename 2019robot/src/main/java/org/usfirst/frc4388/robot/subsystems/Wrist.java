@@ -31,7 +31,7 @@ public class Wrist extends Subsystem
   private WPI_TalonSRX wristLeft;
 
   //Encoder ticks to inches for encoders
-	public static final double ENCODER_TICKS_TO_INCHES = Constants.kElevatorEncoderTicksPerInch;
+	public static final double ENCODER_TICKS_TO_INCHES = Constants.kArmEncoderTicksPerInch;
   
   public Wrist()
   {
