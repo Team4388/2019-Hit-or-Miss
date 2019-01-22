@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class ElevatorSetSpeed extends Command {
+public class ArmSetSpeed extends Command {
 
 	private double RaiseSpeed;
 	
 	// Constructor with speed
-    public ElevatorSetSpeed(double RaiseSpeed) {
+    public ArmSetSpeed(double RaiseSpeed) {
     	this.RaiseSpeed = RaiseSpeed;
        // requires(Robot.elevatorAuton);
     }
