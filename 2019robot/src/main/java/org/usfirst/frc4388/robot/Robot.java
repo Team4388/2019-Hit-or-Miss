@@ -32,10 +32,7 @@ public class Robot extends IterativeRobot
 
 
  
-    public static final Elevator elevator = new Elevator();
-    
-
-
+    public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Pnumatics pnumatics = new Pnumatics();
 	public static final long periodMS = 10;
@@ -67,7 +64,7 @@ public class Robot extends IterativeRobot
 		oi = OI.getInstance();
 		
     	controlLoop.addLoopable(drive);
-    	controlLoop.addLoopable(elevator);
+    	controlLoop.addLoopable(arm);
 			
 
         operationModeChooser = new SendableChooser<OperationMode>();
@@ -149,14 +146,15 @@ public class Robot extends IterativeRobot
 		LLautonomousCommand = (Command)LLautonTaskChooser.getSelected();
     }
     
-    public Alliance getAlliance() {
+	public Alliance getAlliance() 
+	{
     	return m_ds.getAlliance();
     }
     
-    public void updateStatus() {
+	public void updateStatus() 
+	{
     	drive.updateStatus(operationMode);
-    	elevator.updateStatus(operationMode);
-
+    	arm.updateStatus(operationMode);
    }
 
 }

@@ -210,7 +210,6 @@ public class Drive extends Subsystem implements ControlLoopable
 			rightDrive2 = new WPI_TalonSRX(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID);
 //			rightDrive3 = new WPI_TalonSRX(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID);
 			
-			elevatorRight = new CANTalonEncoder(RobotMap.ELEVATOR_MOTOR1_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
 			//gyroPigeon = new PigeonImu(leftDrive2);
 			gyroNavX = new AHRS(SPI.Port.kMXP);
 
