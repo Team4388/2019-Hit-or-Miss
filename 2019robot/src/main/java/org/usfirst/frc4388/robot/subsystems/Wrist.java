@@ -39,9 +39,7 @@ public class Wrist extends Subsystem
     {
       //PID wrist encoder and talon
 			wristRight = new CANTalonEncoder(RobotMap.WRIST_LEFT_MOTOR_CAN_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
-      wristLeft = new WPI_TalonSRX(RobotMap.WRITST_RIGHT_MOTOR_CAN_ID);
-      
-      
+      //wristLeft = new WPI_TalonSRX(RobotMap.WRITST_RIGHT_MOTOR_CAN_ID);
     }
     catch(Exception e)
     {
@@ -49,8 +47,38 @@ public class Wrist extends Subsystem
     }
   }
 
+  public double armAngle(double encoderValue)
+  {
+    double angle = 0;
+
+    //Insert conversion from encoder value to angle of arm
+
+    return angle;
+  }
+
+  public void stationaryWrist()
+  {
+    double angle = armAngle(ENCODER_TICKS_TO_INCHES);
+
+    
+  }
+
   @Override
   public void initDefaultCommand() 
   {
   }
+
+  public void updateStatus(Robot.OperationMode operationMode) 
+	{
+		if (operationMode == Robot.OperationMode.TEST) 
+		{
+			try 
+			{
+			}
+			catch (Exception e)
+			{
+				System.err.println("Wrist update status error");
+			}
+		}
+	}
 }

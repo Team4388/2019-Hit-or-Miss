@@ -23,12 +23,13 @@ public class Constants {
     public static double kDriveStraightBasicMaxSteerMagnitude = 0.8;	// keep absolute value of steer parameter below this
     public static double kDriveTurnBasicTankMotorOutput = 0.4;
     public static double kDriveTurnBasicSingleMotorOutput = 0.15;
-    public static double kElevatorWheelDiameterInches = 1;
+    public static double kArmWheelDiameterInches = 1;    //Changes depending on mechanical design
+
 	// Encoders
 	public static int kDriveEncoderTicksPerRev = 4096;
 	public static double kDriveEncoderTicksPerInch = (double)kDriveEncoderTicksPerRev / (kDriveWheelDiameterInches * Math.PI);
 	
-	// Elevator
+	// Arm
 	public static int kArmEncoderTickesPerRev = 256;
     public static double kArmInchesOfTravelPerRev = 3.75;
 	public static double kArmEncoderTicksPerInch = 126.36;
