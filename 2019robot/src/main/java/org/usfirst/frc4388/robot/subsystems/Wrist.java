@@ -53,9 +53,15 @@ public class Wrist extends Subsystem
 	public static final double KF_UP = 0.005;
 	public static final double KF_DOWN = 0.0;
   public static final double PID_ERROR_INCHES = 1.0;
+
+  // Defined positions
+	public static final double MIN_POSITION_INCHES = 0.0;
+	public static final double MAX_POSITION_INCHES = 83.4;
   
   //Misc
   private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
+  private boolean isFinished;
+  private double targetPositionInchesPID = 0;
   
   public Wrist()
   {
@@ -104,13 +110,34 @@ public class Wrist extends Subsystem
 		updatePositionPID(targetPositionInches);
 		setWristControlMode(WristControlMode.PID);	
 		setFinished(false);
+  }
+  
+  private double limitPosition(double targetPosition) {
+		if (targetPosition < MIN_POSITION_INCHES) {
+			return MIN_POSITION_INCHES;
+		}
+		else if (targetPosition > MAX_POSITION_INCHES) {
+			return MAX_POSITION_INCHES;
+		}
+		
+		return targetPosition;
 	}
 	
   public void updatePositionPID(double targetPositionInches) 
   {
  		targetPositionInchesPID = limitPosition(targetPositionInches);
-		double startPositionInches = motor1.getPositionWorld();
+		double startPositionInches = wristRight.getPositionWorld();
 		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
+  }
+
+  public synchronized boolean isFinished() 
+  {
+		return isFinished;
+	}
+  
+  public synchronized void setFinished(boolean isFinished) 
+  {
+		this.isFinished = isFinished;
 	}
 
   @Override

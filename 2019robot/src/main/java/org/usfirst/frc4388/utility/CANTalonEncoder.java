@@ -5,6 +5,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class CANTalonEncoder extends WPI_TalonSRX
 {
+	public static int TIMEOUT_MS = 0;
+
 	private double encoderTicksToWorld;
 	private boolean isRight = true;
 	

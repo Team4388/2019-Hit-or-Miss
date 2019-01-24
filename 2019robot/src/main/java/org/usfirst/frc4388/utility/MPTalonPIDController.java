@@ -235,6 +235,17 @@ public class MPTalonPIDController
 		
 		return false;
 	}
+
+	public void setTarget(double position, double Kf) 
+	{
+		// Kf gets multipled by position in the Talon 
+		double KfPerPosition = Math.abs(position) > 0.001 ? Kf / position : 0;
+
+		for (CANTalonEncoder motorController : motorControllers) {
+			motorController.config_kF(0, KfPerPosition, CANTalonEncoder.TIMEOUT_MS);
+			motorController.setWorld(ControlMode.Position, position);
+		}
+	}
 	
 	public MotionProfilePoint getCurrentPoint() {
 		return mpPoint;
