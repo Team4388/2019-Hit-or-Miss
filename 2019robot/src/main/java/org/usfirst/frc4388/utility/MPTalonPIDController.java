@@ -21,6 +21,7 @@ public class MPTalonPIDController
 	protected double trackDistance;
 	protected MPControlMode controlMode;
 	protected MPTalonTurnType turnType;
+	protected int pidSlot;
 	
 	public MPTalonPIDController(long periodMs, PIDParams pidParams, ArrayList<CANTalonEncoder> motorControllers) 
 	{
@@ -40,6 +41,14 @@ public class MPTalonPIDController
 		}
 	}
 	
+	public void setPIDSlot(int slot) 
+	{
+		this.pidSlot = slot;
+		for (CANTalonEncoder motorController : motorControllers) {
+			motorController.selectProfileSlot(slot, 0);
+		}
+	}
+
 	public void setMPTarget(double startValue, double targetValue, double maxVelocity, double t1, double t2) {
 		setMPStraightTarget(startValue, targetValue, maxVelocity, t1, t2, false, 0, false);
 	}

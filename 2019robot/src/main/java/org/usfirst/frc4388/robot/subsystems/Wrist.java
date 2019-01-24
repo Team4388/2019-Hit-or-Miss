@@ -2,10 +2,13 @@ package org.usfirst.frc4388.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import java.util.ArrayList;
+
 import org.usfirst.frc4388.controller.XboxController;
 import org.usfirst.frc4388.robot.Constants;
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.RobotMap;
+import org.usfirst.frc4388.utility.MPTalonPIDController;
 import org.usfirst.frc4388.robot.commands.*;
 import org.usfirst.frc4388.robot.subsystems.Drive.DriveControlMode;
 import org.usfirst.frc4388.utility.CANTalonEncoder;
@@ -21,17 +24,38 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 /**
  * Add your docs here.
  */
 public class Wrist extends Subsystem
 {
-  //PID encoder and motor
+  public static enum WristControlMode {PID, JOYSTICK_MANUAL};
+
+  //Motor Controllers
+  private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();
+
 	private CANTalonEncoder wristRight;
-  private WPI_TalonSRX wristLeft;
 
   //Encoder ticks to inches for encoders
-	public static final double ENCODER_TICKS_TO_INCHES = Constants.kArmEncoderTicksPerInch;
+  public static final double ENCODER_TICKS_TO_INCHES = Constants.kArmEncoderTicksPerInch;
+  
+  // PID controller and params
+	private MPTalonPIDController mpController;
+
+	public static int PID_SLOT = 0;
+	public static int MP_SLOT = 1;
+
+	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);  
+	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);  
+	private PIDParams pidPIDParamsLoGear = new PIDParams(0.45, 0.0, 0.0, 0.0, 0.0, 0.0);  
+	public static final double KF_UP = 0.005;
+	public static final double KF_DOWN = 0.0;
+  public static final double PID_ERROR_INCHES = 1.0;
+  
+  //Misc
+  private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
   
   public Wrist()
   {
@@ -47,6 +71,7 @@ public class Wrist extends Subsystem
     }
   }
 
+  /*
   public double armAngle(double encoderValue)
   {
     double angle = 0;
@@ -55,13 +80,38 @@ public class Wrist extends Subsystem
 
     return angle;
   }
+  */
 
-  public void stationaryWrist()
+  private synchronized void setWristControlMode(WristControlMode controlMode) 
   {
-    double angle = armAngle(ENCODER_TICKS_TO_INCHES);
-
-    
+		this.wristControlMode = controlMode;
   }
+  
+  private synchronized WristControlMode getWristControlMode() 
+  {
+		return this.wristControlMode;
+	}
+
+  public void setSpeed(double speed) 
+  {
+		wristRight.set(ControlMode.PercentOutput, speed);
+		setWristControlMode(WristControlMode.JOYSTICK_MANUAL);
+	}
+
+  public void setPositionPID(double targetPositionInches) 
+  {
+		mpController.setPIDSlot(PID_SLOT);
+		updatePositionPID(targetPositionInches);
+		setWristControlMode(WristControlMode.PID);	
+		setFinished(false);
+	}
+	
+  public void updatePositionPID(double targetPositionInches) 
+  {
+ 		targetPositionInchesPID = limitPosition(targetPositionInches);
+		double startPositionInches = motor1.getPositionWorld();
+		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
+	}
 
   @Override
   public void initDefaultCommand() 
