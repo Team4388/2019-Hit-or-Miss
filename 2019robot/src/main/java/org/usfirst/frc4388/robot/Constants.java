@@ -34,7 +34,12 @@ public class Constants {
     public static double kArmInchesOfTravelPerRev = 3.75;
 	public static double kArmEncoderTicksPerInch = 126.36;
 	public static double kArmBasicPercentOutputUp = -0.85;
-	public static double kArmBasicPercentOutputDown =.7;
+    public static double kArmBasicPercentOutputDown =.7;
+    
+    //Wrist
+    public static int kWristEncoderticksPerRev = 4096;
+    public static double kWristDegreesOfTravel = 306;
+    public static double kWristEncoderTicksPerDegree = 11.38;
 	
     // CONTROL LOOP GAINS
 
