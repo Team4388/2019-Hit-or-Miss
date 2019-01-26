@@ -154,6 +154,17 @@ public class Wrist extends Subsystem
 		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
   }
 
+  public double getPositionInches() 
+  {
+		return wristRight.getPositionWorld();
+  }
+  
+  public void setSpeedJoystick(double speed) 
+  {
+		wristRight.set(ControlMode.PercentOutput, speed);
+		setWristControlMode(wristControlMode.JOYSTICK_MANUAL);
+	}
+
   public synchronized boolean isFinished() 
   {
 		return isFinished;
