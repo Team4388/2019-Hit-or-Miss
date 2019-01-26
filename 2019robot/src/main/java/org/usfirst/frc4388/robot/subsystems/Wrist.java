@@ -41,6 +41,7 @@ public class Wrist extends Subsystem
 
   //Encoder ticks to inches for encoders
   public static final double ENCODER_TICKS_TO_INCHES = Constants.kArmEncoderTicksPerDegree;
+  public static final double ENCODER_TICKS_TO_DEGREES = Constants.kWristEncoderTicksPerDegree * Math.PI;
   
   // PID controller and params
 	private MPTalonPIDController mpController;
@@ -58,22 +59,29 @@ public class Wrist extends Subsystem
   // Defined positions
 	public static final double MIN_POSITION_INCHES = 0.0;
   public static final double MAX_POSITION_INCHES = 83.4;
+
+  public static final double MIN_ANGLE_DEGREES = 0.0;   ////FIND ANGLE VALUES
+  public static final double MAX_ANGLE_DEGREES = 0.0;
+
   public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
   public static final double JOYSTICK_INCHES_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
+  public static final double JOYSTICK_Degrees_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
   
   //Misc
   private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
   private boolean isFinished;
   private double targetPositionInchesPID = 0;
+  private double targetAngleDegreesPID = 0;
 
   private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
+  private double joystickDegreesPerMs = JOYSTICK_Degrees_PER_MS_LO;
   
   public Wrist()
   {
     try
     {
       //PID wrist encoder and talon
-			wristRight = new CANTalonEncoder(RobotMap.WRIST_LEFT_MOTOR_CAN_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
+			wristRight = new CANTalonEncoder(RobotMap.WRIST_LEFT_MOTOR_CAN_ID, ENCODER_TICKS_TO_DEGREES, FeedbackDevice.QuadEncoder);
     }
     catch(Exception e)
     {
@@ -101,36 +109,37 @@ public class Wrist extends Subsystem
 	}
 
   //Setting the target position for the PID loop and set the control mode to PID
-  public void setPositionPID(double targetPositionInches) 
+  public void setPositionPID(double targetAngleInches) 
   {
     mpController.setPIDSlot(PID_SLOT);
-		updatePositionPID(targetPositionInches);
+		updatePositionPID(targetAngleInches);
 		setWristControlMode(WristControlMode.PID);	
 		setFinished(false);
   }
   
   //Setting range for target position
-  private double limitPosition(double targetPosition) {
-		if (targetPosition < MIN_POSITION_INCHES) {
-			return MIN_POSITION_INCHES;
+  private double limitPosition(double targetAngle) 
+  {
+		if (targetAngle < MIN_ANGLE_DEGREES) {
+			return MIN_ANGLE_DEGREES;
 		}
-		else if (targetPosition > MAX_POSITION_INCHES) {
-			return MAX_POSITION_INCHES;
+		else if (targetAngle > MAX_ANGLE_DEGREES) {
+			return MAX_ANGLE_DEGREES;
 		}
 		
-		return targetPosition;
+		return targetAngle;
 	}
   
   //Method for updating the PID target position
-  public void updatePositionPID(double targetPositionInches) 
+  public void updatePositionPID(double targetAngleDegrees) 
   {
- 		targetPositionInchesPID = limitPosition(targetPositionInches);
-		double startPositionInches = wristRight.getPositionWorld();
-		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
+ 		targetAngleDegreesPID = limitPosition(targetAngleDegrees);
+		double startAngleDegrees = wristRight.getPositionWorld();
+		mpController.setTarget(targetPositionInchesPID, targetAngleDegreesPID > startAngleDegrees ? KF_UP : KF_DOWN); 
   }
 
   //Getting the current encoder position
-  public double getPositionInches() 
+  public double getPositionDegrees() 
   {
 		return wristRight.getPositionWorld();
   }
@@ -161,11 +170,11 @@ public class Wrist extends Subsystem
   
   private void controlPID() 
   {
-		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-    double deltaPosition = joystickPosition * joystickInchesPerMs;
+		double joystickAngle = -Robot.oi.getOperatorController().getLeftYAxis();
+    double deltaAngle = joystickAngle * joystickDegreesPerMs;
 
-		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
-    updatePositionPID(targetPositionInchesPID);
+		targetAngleDegreesPID = targetAngleDegreesPID + deltaAngle;
+    updatePositionPID(targetAngleDegreesPID);
 	}
   
   //Method for controlling the motor with the joystick

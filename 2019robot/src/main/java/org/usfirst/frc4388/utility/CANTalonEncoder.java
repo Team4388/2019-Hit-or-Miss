@@ -64,7 +64,7 @@ public class CANTalonEncoder extends WPI_TalonSRX
 	{
     	//return convertEncoderTicksToWorld(this.getPosition());
     	return convertEncoderTicksToWorld(this.getSelectedSensorPosition(0));	//TODO: verify want 0="Primary closed-loop"
-    }
+	}
     
 	public void setVelocityWorld(double worldValue) 
 	{

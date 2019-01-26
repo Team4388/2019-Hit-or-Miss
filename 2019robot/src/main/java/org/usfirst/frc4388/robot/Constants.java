@@ -36,11 +36,13 @@ public class Constants {
 	public static double kArmBasicPercentOutputUp = -0.85;
 	public static double kArmBasicPercentOutputDown =.7;
     
+
     
-    // Wrist
-    public static int kWristEncoderTicksPerRev = 4096;
-    public static double kWristDegreesOfTravelPerRev = 360;
+    //Wrist
+    public static int kWristEncoderticksPerRev = 4096;
+    public static double kWristDegreesOfTravel = 360;
     public static double kWristEncoderTicksPerDegree = 11.38;
+	
     // CONTROL LOOP GAINS
 
     // PID gains for drive velocity loop (LOW GEAR)

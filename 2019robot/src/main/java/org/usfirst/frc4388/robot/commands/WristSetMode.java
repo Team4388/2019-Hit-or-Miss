@@ -20,10 +20,10 @@ public class WristSetMode extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	if (controlMode == WristControlMode.PID) {
-    		Robot.wrist.setPositionPID(Robot.wrist.getPositionInches());
+    		Robot.wrist.setPositionPID(Robot.wrist.getPositionDegrees());
     	}
     	else if (controlMode == WristControlMode.JOYSTICK_MANUAL) {
-    		Robot.wrist.setSpeed(0);
+    		Robot.wrist.setSpeedJoystick(0);
     	}
     }
 
