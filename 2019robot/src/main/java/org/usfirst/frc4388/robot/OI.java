@@ -65,7 +65,12 @@ public class OI
 		   //Wrist
 		   JoystickButton wristManualMode = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
 		   wristManualMode.whenPressed(new WristSetMode(WristControlMode.JOYSTICK_MANUAL));
-	        
+			
+		   
+// uncoment the line above
+
+
+
 	        
 	        //Operator Xbox
 /*

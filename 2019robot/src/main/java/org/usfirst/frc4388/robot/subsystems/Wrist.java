@@ -40,7 +40,7 @@ public class Wrist extends Subsystem
 	private CANTalonEncoder wristRight;
 
   //Encoder ticks to inches for encoders
-  public static final double ENCODER_TICKS_TO_INCHES = Constants.kArmEncoderTicksPerInch;
+  public static final double ENCODER_TICKS_TO_INCHES = Constants.kArmEncoderTicksPerDegree;
   
   // PID controller and params
 	private MPTalonPIDController mpController;

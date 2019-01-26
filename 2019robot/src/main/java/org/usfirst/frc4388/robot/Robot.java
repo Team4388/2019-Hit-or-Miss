@@ -65,7 +65,7 @@ public class Robot extends IterativeRobot
 		oi = OI.getInstance();
 		
     	controlLoop.addLoopable(drive);
-    	controlLoop.addLoopable(arm);
+    	//controlLoop.addLoopable(arm);
 			
 
         operationModeChooser = new SendableChooser<OperationMode>();
