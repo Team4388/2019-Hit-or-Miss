@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.buttons.*;
 import org.usfirst.frc4388.robot.subsystems.*;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import org.usfirst.frc4388.robot.subsystems.Drive;
+import org.usfirst.frc4388.robot.subsystems.Wrist.WristControlMode;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -59,7 +60,11 @@ public class OI
 	        
 	        JoystickButton shiftDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 	        shiftDown.whenPressed(new DriveSpeedShift(false));
-	       // shiftDown.whenPressed(new LEDIndicators(false));
+		   // shiftDown.whenPressed(new LEDIndicators(false));
+		   
+		   //Wrist
+		   JoystickButton wristManualMode = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
+		   wristManualMode.whenPressed(new WristSetMode(WristControlMode.JOYSTICK_MANUAL));
 	        
 	        
 	        //Operator Xbox

@@ -86,15 +86,6 @@ public class Wrist extends Subsystem
 
     manualOverride = Robot.oi.getOperatorJoystick().getRawButton(XboxController.A_BUTTON);
 
-    if(manualOverride == true)
-    {
-      setWristControlMode(wristControlMode.JOYSTICK_MANUAL);
-    }
-    else if(manualOverride == false)
-    {
-      setWristControlMode(wristControlMode.PID);
-    }
-
     while(getWristControlMode() == wristControlMode.JOYSTICK_MANUAL)
     {
       wristRight.set(wristJoystickInput);
@@ -163,6 +154,45 @@ public class Wrist extends Subsystem
   {
 		wristRight.set(ControlMode.PercentOutput, speed);
 		setWristControlMode(wristControlMode.JOYSTICK_MANUAL);
+  }
+
+  //@Override
+  public void onLoop(double timestamp) 
+  {
+		synchronized (Wrist.this) {
+			switch(getWristControlMode() ) {
+				case PID: 
+					controlPidWithJoystick();
+					break;
+				case JOYSTICK_MANUAL:
+					controlManualWithJoystick();
+					break;
+				default:
+					break;
+			}
+		}
+  }
+  
+  private void controlPidWithJoystick() 
+  {
+    
+
+    ///CHANGE ACCORDING TO DIFFERENT LEVELS ON SPACESHIP
+    /*
+		//double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+    //double deltaPosition = joystickPosition * joystickInchesPerMs;
+
+		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
+    updatePositionPID(targetPositionInchesPID);
+    */
+	}
+  
+  private void controlManualWithJoystick() 
+  {
+    double joystickSpeed;
+    
+    joystickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
+		setSpeedJoystick(joystickSpeed);
 	}
 
   public synchronized boolean isFinished() 
