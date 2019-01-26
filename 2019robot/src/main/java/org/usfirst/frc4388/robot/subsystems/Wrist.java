@@ -77,6 +77,30 @@ public class Wrist extends Subsystem
     }
   }
 
+  public void manualWristMove()
+  {
+    double wristJoystickInput;
+    boolean manualOverride;
+
+    wristJoystickInput = Robot.oi.getOperatorController().getLeftYAxis();
+
+    manualOverride = Robot.oi.getOperatorJoystick().getRawButton(XboxController.A_BUTTON);
+
+    if(manualOverride == true)
+    {
+      setWristControlMode(wristControlMode.JOYSTICK_MANUAL);
+    }
+    else if(manualOverride == false)
+    {
+      setWristControlMode(wristControlMode.PID);
+    }
+
+    while(getWristControlMode() == wristControlMode.JOYSTICK_MANUAL)
+    {
+      wristRight.set(wristJoystickInput);
+    }
+  }
+
   /*
   public double armAngle(double encoderValue)
   {
@@ -96,7 +120,7 @@ public class Wrist extends Subsystem
   private synchronized WristControlMode getWristControlMode() 
   {
 		return this.wristControlMode;
-	}
+  }
 
   public void setSpeed(double speed) 
   {
