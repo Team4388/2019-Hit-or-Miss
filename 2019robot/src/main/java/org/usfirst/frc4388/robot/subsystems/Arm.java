@@ -1,49 +1,62 @@
-
 package org.usfirst.frc4388.robot.subsystems;
-
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 import java.util.ArrayList;
 
-import org.usfirst.frc4388.controller.XboxController;
 import org.usfirst.frc4388.robot.Constants;
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.RobotMap;
-import org.usfirst.frc4388.utility.MPTalonPIDController;
-import org.usfirst.frc4388.robot.commands.*;
-import org.usfirst.frc4388.robot.subsystems.Drive.DriveControlMode;
 import org.usfirst.frc4388.utility.CANTalonEncoder;
-import org.usfirst.frc4388.utility.ControlLoopable;
+import org.usfirst.frc4388.utility.Loop;
+import org.usfirst.frc4388.utility.MPTalonPIDController;
 import org.usfirst.frc4388.utility.PIDParams;
-import org.usfirst.frc4388.utility.SoftwarePIDPositionController;
-
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import org.usfirst.frc4388.utility.TalonSRXEncoder;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-/**
- * Add your docs here.
- */
-public class Arm extends Subsystem
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public class Arm extends Subsystem implements Loop
 {
-  //Control Mode Array
-  public static enum ArmControlMode {PID, JOYSTICK_MANUAL};
+	private static Arm instance;
 
-  //Motor Controllers
-  private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();
+	public static enum ArmControlMode {PID, JOYSTICK_MANUAL };
+	
 
-	private CANTalonEncoder arm1;
+	// One revolution of the 1-3 GEAR RATION ON THE ARM	* 4096 ticks 
+	public static final double ENCODER_TICKS_TO_DEGREES = (36.0 / 12.0) * (36.0 / 24.0) * (34.0 / 24.0) * 4096.0 / (1.88 * Math.PI);   
+	
+	// Defined speeds
+	public static final double CLIMB_SPEED = -1.0;
+	public static final double TEST_SPEED_UP = 0.3;
+	public static final double TEST_SPEED_DOWN = -0.3;
+	public static final double AUTO_ZERO_SPEED = -0.3;
+	public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
+	
+	// Defined positions
+	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
+	public static final double ZERO_POSITION_INCHES = -0.25;
+	public static final double NEAR_ZERO_POSITION_INCHES = 0.0;
+	public static final double MIN_POSITION_INCHES = 0.0;
+	public static final double MAX_POSITION_INCHES = 83.4;
+	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
-  //Encoder ticks to inches for encoders
-  public static final double ENCODER_TICKS_TO_INCHES = Constants.kArmEncoderTicksPerDegree;
-  
-  // PID controller and params
+
+	// Motion profile max velocities and accel times
+	public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60; 
+	public static final double MP_T1 = 400;  // Fast = 300
+	public static final double MP_T2 = 150;  // Fast = 150
+	
+	// Motor controllers
+	private ArrayList<TalonSRXEncoder> motorControllers = new ArrayList<TalonSRXEncoder>();	
+
+	private CANTalonEncoder motor1;
+	private TalonSRX motor2;
+	
+	// PID controller and params
 	private MPTalonPIDController mpController;
 
 	public static int PID_SLOT = 0;
@@ -54,64 +67,68 @@ public class Arm extends Subsystem
 	private PIDParams pidPIDParamsLoGear = new PIDParams(0.45, 0.0, 0.0, 0.0, 0.0, 0.0);  
 	public static final double KF_UP = 0.005;
 	public static final double KF_DOWN = 0.0;
-  public static final double PID_ERROR_INCHES = 1.0;
+	public static final double PID_ERROR_INCHES = 1.0;
+	private long periodMs = (long)(Constants.kLooperDt * 1000.0);
 
-  // Defined positions
-	public static final double MIN_POSITION_INCHES = 0.0;
-  public static final double MAX_POSITION_INCHES = 83.4;
-  public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
-  public static final double JOYSTICK_INCHES_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
-  
-  //Misc
-  private ArmControlMode armControlMode = ArmControlMode.JOYSTICK_MANUAL;
-  private boolean isFinished;
-  private double targetPositionInchesPID = 0;
 
-  private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
-  
-  public Arm()
-  {
-    try
-    {
-      //PID arm encoder and talon
-			arm1 = new CANTalonEncoder(RobotMap.ARM_MOTOR1_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
-    }
-    catch(Exception e)
-    {
-      System.err.println("You thought the code would work, but it was me, error. An error occurred in the Arm Construtor");
-    }
-  }
-
-  //Method for setting the control mode for the arm
-  private synchronized void setArmControlMode(ArmControlMode controlMode) 
-  {
-		this.armControlMode = controlMode;
-  }
-  
-  //Getting the control mode for the arm
-  private synchronized ArmControlMode getArmControlMode() 
-  {
-		return this.armControlMode;
-  }
-
-  //Setting the speed for the motor on the arm along with setting the control mode to manual
-  public void setSpeed(double speed) 
-  {
-		arm1.set(ControlMode.PercentOutput, speed);
-		setArmControlMode(ArmControlMode.JOYSTICK_MANUAL);
+	// Misc
+	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;	
+	private boolean isFinished;
+	private ArmControlMode armControlMode = ArmControlMode.JOYSTICK_MANUAL;
+	private double targetPositionInchesPID = 0;
+	private boolean firstMpPoint;
+	
+	
+	private Arm() {
+		try {
+			motor1 = new CANTalonEncoder(RobotMap.ARM_MOTOR1_ID, ENCODER_TICKS_TO_DEGREES, FeedbackDevice.QuadEncoder);
+			//motor2 = CANTallon.createPermanentSlaveTalon(RobotMap.ARM_MOTOR_2_CAN_ID, RobotMap.ELEVATOR_MOTOR_1_CAN_ID);
+		
+			
+			
+		}
+		catch (Exception e) {
+			System.err.println("An error occurred in the DriveTrain constructor");
+		}
 	}
 
-  //Setting the target position for the PID loop and set the control mode to PID
-  public void setPositionPID(double targetPositionInches) 
-  {
-    mpController.setPIDSlot(PID_SLOT);
+	@Override
+	public void initDefaultCommand() {
+	}
+		
+	public void resetZeroPosition(double position) {
+		mpController.resetZeroPosition(position);
+	}	
+	
+	private synchronized void setArmControlMode(ArmControlMode controlMode) {
+		this.armControlMode = controlMode;
+	}
+	
+	private synchronized ArmControlMode getArmControlMode() {
+		return this.armControlMode;
+	}
+
+		
+	public void setSpeedJoystick(double speed) {
+		motor1.set(ControlMode.PercentOutput, speed);
+		setArmControlMode(ArmControlMode.JOYSTICK_MANUAL);
+	}
+		
+	public void setPositionPID(double targetPositionInches) {
+		mpController.setPIDSlot(PID_SLOT);
 		updatePositionPID(targetPositionInches);
 		setArmControlMode(ArmControlMode.PID);	
 		setFinished(false);
-  }
-  
-  //Setting range for target position
-  private double limitPosition(double targetPosition) {
+	}
+	
+	public void updatePositionPID(double targetPositionInches) {
+ 		targetPositionInchesPID = limitPosition(targetPositionInches);
+		double startPositionInches = motor1.getPositionWorld();
+		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
+	}
+
+	
+	private double limitPosition(double targetPosition) {
 		if (targetPosition < MIN_POSITION_INCHES) {
 			return MIN_POSITION_INCHES;
 		}
@@ -121,35 +138,25 @@ public class Arm extends Subsystem
 		
 		return targetPosition;
 	}
-  
-  //Method for updating the PID target position
-  public void updatePositionPID(double targetPositionInches) 
-  {
- 		targetPositionInchesPID = limitPosition(targetPositionInches);
-		double startPositionInches = arm1.getPositionWorld();
-		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
-  }
+	
+	@Override
+	public void onStart(double timestamp) {
+		mpController.setPIDSlot(PID_SLOT);
+		mpController.setPIDSlot(PID_SLOT);
+	}
 
-  //Getting the current encoder position
-  public double getPositionInches() 
-  {
-		return arm1.getPositionWorld();
-  }
-  
-  //Setting the speed for the motors in manual mode
-  public void setSpeedJoystick(double speed) 
-  {
-		arm1.set(ControlMode.PercentOutput, speed);
-		setArmControlMode(armControlMode.JOYSTICK_MANUAL);
-  }
+	@Override
+	public void onStop(double timestamp) {
+		// TODO Auto-generated method stub
+		
+	}
 
-  //@Override
-  public void onLoop(double timestamp) 
-  {
+	@Override
+	public void onLoop(double timestamp) {
 		synchronized (Arm.this) {
-			switch(getArmControlMode() ) {
+			switch( getArmControlMode() ) {
 				case PID: 
-					controlPID();
+					controlPidWithJoystick();
 					break;
 				case JOYSTICK_MANUAL:
 					controlManualWithJoystick();
@@ -158,52 +165,61 @@ public class Arm extends Subsystem
 					break;
 			}
 		}
-  }
-  
-  private void controlPID() 
-  {
+	}
+	
+	private void controlPidWithJoystick() {
 		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-    double deltaPosition = joystickPosition * joystickInchesPerMs;
-
+		double deltaPosition = joystickPosition *.5;
 		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
-    updatePositionPID(targetPositionInchesPID);
+		updatePositionPID(targetPositionInchesPID);
 	}
-  
-  //Method for controlling the motor with the joystick
-  private void controlManualWithJoystick() 
-  {
-    double joystickSpeed;
-    
-    joystickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
-		setSpeedJoystick(joystickSpeed);
+	
+	private void controlManualWithJoystick() {
+		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
+		setSpeedJoystick(joyStickSpeed);
 	}
+	
 
-  public synchronized boolean isFinished() 
-  {
+	public double getPositionInches() {
+		return motor1.getPositionWorld();
+	}
+	
+//	public double getAverageMotorCurrent() {
+//		return (Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID) + Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID) + Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID)) / 3;
+//	}
+		
+	public double getAverageMotorCurrent() {
+		return (motor1.getOutputCurrent() + motor2.getOutputCurrent() / 2);
+	}
+		
+	public synchronized boolean isFinished() {
 		return isFinished;
 	}
-  
-  public synchronized void setFinished(boolean isFinished) 
-  {
+	
+	public synchronized void setFinished(boolean isFinished) {
 		this.isFinished = isFinished;
 	}
-
-  @Override
-  public void initDefaultCommand() 
-  {
-  }
-
-  public void updateStatus(Robot.OperationMode operationMode) 
-	{
-		if (operationMode == Robot.OperationMode.TEST) 
-		{
-			try 
-			{
+		
+	public double getPeriodMs() {
+		return periodMs;
+	}
+	
+	public void updateStatus(Robot.OperationMode operationMode) {
+		if (operationMode == Robot.OperationMode.TEST) {
+			try {
+				SmartDashboard.putNumber("Elevator Position Inches", motor1.getPositionWorld());
+				SmartDashboard.putNumber("Elevator Average Amps", getAverageMotorCurrent());
+				SmartDashboard.putNumber("Elevator Target PID Position", targetPositionInchesPID);
 			}
-			catch (Exception e)
-			{
-				System.err.println("Arm update status error");
+			catch (Exception e) {
 			}
 		}
+	}	
+	
+	public static Arm getInstance() {
+		if(instance == null) {
+			instance = new Arm();
+		}
+		return instance;
 	}
 }
