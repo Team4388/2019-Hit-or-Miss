@@ -31,6 +31,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
  */
 public class Wrist extends Subsystem
 {
+  //Control Mode Array
   public static enum WristControlMode {PID, JOYSTICK_MANUAL};
 
   //Motor Controllers
@@ -56,12 +57,16 @@ public class Wrist extends Subsystem
 
   // Defined positions
 	public static final double MIN_POSITION_INCHES = 0.0;
-	public static final double MAX_POSITION_INCHES = 83.4;
+  public static final double MAX_POSITION_INCHES = 83.4;
+  public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
+  public static final double JOYSTICK_INCHES_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
   
   //Misc
   private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
   private boolean isFinished;
   private double targetPositionInchesPID = 0;
+
+  private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
   
   public Wrist()
   {
@@ -69,7 +74,6 @@ public class Wrist extends Subsystem
     {
       //PID wrist encoder and talon
 			wristRight = new CANTalonEncoder(RobotMap.WRIST_LEFT_MOTOR_CAN_ID, ENCODER_TICKS_TO_INCHES, FeedbackDevice.QuadEncoder);
-      //wristLeft = new WPI_TalonSRX(RobotMap.WRITST_RIGHT_MOTOR_CAN_ID);
     }
     catch(Exception e)
     {
@@ -77,56 +81,35 @@ public class Wrist extends Subsystem
     }
   }
 
-  public void manualWristMove()
-  {
-    double wristJoystickInput;
-    boolean manualOverride;
-
-    wristJoystickInput = Robot.oi.getOperatorController().getLeftYAxis();
-
-    manualOverride = Robot.oi.getOperatorJoystick().getRawButton(XboxController.A_BUTTON);
-
-    while(getWristControlMode() == wristControlMode.JOYSTICK_MANUAL)
-    {
-      wristRight.set(wristJoystickInput);
-    }
-  }
-
-  /*
-  public double armAngle(double encoderValue)
-  {
-    double angle = 0;
-
-    //Insert conversion from encoder value to angle of arm
-
-    return angle;
-  }
-  */
-
+  //Method for setting the control mode for the wrist
   private synchronized void setWristControlMode(WristControlMode controlMode) 
   {
 		this.wristControlMode = controlMode;
   }
   
+  //Getting the control mode for the wrist
   private synchronized WristControlMode getWristControlMode() 
   {
 		return this.wristControlMode;
   }
 
+  //Setting the speed for the motor on the wrist along with setting the control mode to manual
   public void setSpeed(double speed) 
   {
 		wristRight.set(ControlMode.PercentOutput, speed);
 		setWristControlMode(WristControlMode.JOYSTICK_MANUAL);
 	}
 
+  //Setting the target position for the PID loop and set the control mode to PID
   public void setPositionPID(double targetPositionInches) 
   {
-		mpController.setPIDSlot(PID_SLOT);
+    mpController.setPIDSlot(PID_SLOT);
 		updatePositionPID(targetPositionInches);
 		setWristControlMode(WristControlMode.PID);	
 		setFinished(false);
   }
   
+  //Setting range for target position
   private double limitPosition(double targetPosition) {
 		if (targetPosition < MIN_POSITION_INCHES) {
 			return MIN_POSITION_INCHES;
@@ -137,7 +120,8 @@ public class Wrist extends Subsystem
 		
 		return targetPosition;
 	}
-	
+  
+  //Method for updating the PID target position
   public void updatePositionPID(double targetPositionInches) 
   {
  		targetPositionInchesPID = limitPosition(targetPositionInches);
@@ -145,11 +129,13 @@ public class Wrist extends Subsystem
 		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
   }
 
+  //Getting the current encoder position
   public double getPositionInches() 
   {
 		return wristRight.getPositionWorld();
   }
   
+  //Setting the speed for the motors in manual mode
   public void setSpeedJoystick(double speed) 
   {
 		wristRight.set(ControlMode.PercentOutput, speed);
@@ -162,7 +148,7 @@ public class Wrist extends Subsystem
 		synchronized (Wrist.this) {
 			switch(getWristControlMode() ) {
 				case PID: 
-					controlPidWithJoystick();
+					controlPID();
 					break;
 				case JOYSTICK_MANUAL:
 					controlManualWithJoystick();
@@ -173,20 +159,16 @@ public class Wrist extends Subsystem
 		}
   }
   
-  private void controlPidWithJoystick() 
+  private void controlPID() 
   {
-    
-
-    ///CHANGE ACCORDING TO DIFFERENT LEVELS ON SPACESHIP
-    /*
-		//double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-    //double deltaPosition = joystickPosition * joystickInchesPerMs;
+		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+    double deltaPosition = joystickPosition * joystickInchesPerMs;
 
 		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
     updatePositionPID(targetPositionInchesPID);
-    */
 	}
   
+  //Method for controlling the motor with the joystick
   private void controlManualWithJoystick() 
   {
     double joystickSpeed;
