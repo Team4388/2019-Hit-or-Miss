@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,10 +29,6 @@ public class Arm extends Subsystem implements Loop
 	public static final double ENCODER_TICKS_TO_DEGREES = (36.0 / 12.0) * (36.0 / 24.0) * (34.0 / 24.0) * 4096.0 / (1.88 * Math.PI);   
 	
 	// Defined speeds
-	public static final double CLIMB_SPEED = -1.0;
-	public static final double TEST_SPEED_UP = 0.3;
-	public static final double TEST_SPEED_DOWN = -0.3;
-	public static final double AUTO_ZERO_SPEED = -0.3;
 	public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
 	
 	// Defined positions
@@ -63,8 +58,6 @@ public class Arm extends Subsystem implements Loop
 	public static int MP_SLOT = 1;
 
 	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);  
-	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);  
-	private PIDParams pidPIDParamsLoGear = new PIDParams(0.45, 0.0, 0.0, 0.0, 0.0, 0.0);  
 	public static final double KF_UP = 0.005;
 	public static final double KF_DOWN = 0.0;
 	public static final double PID_ERROR_INCHES = 1.0;
@@ -79,7 +72,7 @@ public class Arm extends Subsystem implements Loop
 	private boolean firstMpPoint;
 	
 	
-	private Arm() {
+	public Arm() {
 		try {
 			motor1 = new CANTalonEncoder(RobotMap.ARM_MOTOR1_ID, ENCODER_TICKS_TO_DEGREES, FeedbackDevice.QuadEncoder);
 			//motor2 = CANTallon.createPermanentSlaveTalon(RobotMap.ARM_MOTOR_2_CAN_ID, RobotMap.ELEVATOR_MOTOR_1_CAN_ID);
