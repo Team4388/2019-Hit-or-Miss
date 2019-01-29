@@ -28,6 +28,10 @@ public class Arm extends Subsystem implements Loop
 	// One revolution of the 1-3 GEAR RATION ON THE ARM	* 4096 ticks 
 	public static final double ENCODER_TICKS_TO_DEGREES = (36.0 / 12.0) * (36.0 / 24.0) * (34.0 / 24.0) * 4096.0 / (1.88 * Math.PI);   
 	
+	public double ARM_ANGLE_DEGREES = 0;
+
+	// Defined speeds
+	public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
 	
 	// Defined positions
 	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
@@ -81,6 +85,15 @@ public class Arm extends Subsystem implements Loop
 		catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
 		}
+	}
+
+	//Set the degree to negative angle after initializing 
+	public void setInitAngle()
+	{
+	  double armAngleToHoriz = 70;
+	  double initAngle = ENCODER_TICKS_TO_DEGREES - armAngleToHoriz;
+	  
+	  ARM_ANGLE_DEGREES = initAngle;
 	}
 
 	@Override
