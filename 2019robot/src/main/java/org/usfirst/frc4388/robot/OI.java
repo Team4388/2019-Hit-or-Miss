@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.buttons.*;
 import org.usfirst.frc4388.robot.subsystems.*;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import org.usfirst.frc4388.robot.subsystems.Drive;
+import org.usfirst.frc4388.robot.subsystems.Arm.ArmControlMode;
 import org.usfirst.frc4388.robot.subsystems.Wrist.WristControlMode;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
@@ -43,12 +44,7 @@ public class OI
 			m_operatorXbox = new XboxController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID);
 			
 	      /*  XBoxTriggerButton CarriageIntake = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.LEFT_TRIGGER);
-	        CarriageIntake.whenPressed(new IntakeSetSpeed(Carriage.CUBE_EJECT_SPEED));
-	        CarriageIntake.whenReleased(new IntakeSetSpeed(0.0));
-	        
-	        XBoxTriggerButton CarriageEject = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.RIGHT_TRIGGER);
-	        CarriageEject.whenPressed(new IntakeSetSpeed(Carriage.CUBE_INTAKE_SPEED));
-	        CarriageEject.whenReleased(new IntakeSetSpeed(0.0));
+
 	        */
 	        JoystickButton climbUp = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
 	        climbUp.whenPressed(new InitiateClimber(true));
@@ -66,7 +62,11 @@ public class OI
 		   JoystickButton wristManualMode = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
 		   wristManualMode.whenPressed(new WristSetMode(WristControlMode.JOYSTICK_MANUAL));
 			
-		   
+		   JoystickButton ArmAimAssist = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
+		   ArmAimAssist.whenPressed(new ArmSetMode(ArmControlMode.PID));
+
+
+
 // uncoment the line above
 
 

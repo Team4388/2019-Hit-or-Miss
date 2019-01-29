@@ -28,8 +28,6 @@ public class Arm extends Subsystem implements Loop
 	// One revolution of the 1-3 GEAR RATION ON THE ARM	* 4096 ticks 
 	public static final double ENCODER_TICKS_TO_DEGREES = (36.0 / 12.0) * (36.0 / 24.0) * (34.0 / 24.0) * 4096.0 / (1.88 * Math.PI);   
 	
-	// Defined speeds
-	public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
 	
 	// Defined positions
 	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
@@ -151,19 +149,18 @@ public class Arm extends Subsystem implements Loop
 				case PID: 
 					controlPidWithJoystick();
 					break;
-				case JOYSTICK_MANUAL:
+				default: JOYSTICK_MANUAL:
 					controlManualWithJoystick();
 					break;
-				default:
-					break;
+				
 			}
 		}
 	}
 	
 	private void controlPidWithJoystick() {
-		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-		double deltaPosition = joystickPosition *.5;
-		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
+		//double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+		//double deltaPosition = joystickPosition *.5;
+		targetPositionInchesPID = targetPositionInchesPID;// + deltaPosition;
 		updatePositionPID(targetPositionInchesPID);
 	}
 	
