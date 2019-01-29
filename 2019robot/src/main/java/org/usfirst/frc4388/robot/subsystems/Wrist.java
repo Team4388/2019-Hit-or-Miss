@@ -15,6 +15,7 @@ import org.usfirst.frc4388.utility.CANTalonEncoder;
 import org.usfirst.frc4388.utility.ControlLoopable;
 import org.usfirst.frc4388.utility.PIDParams;
 import org.usfirst.frc4388.utility.SoftwarePIDPositionController;
+import org.usfirst.frc4388.robot.subsystems.Arm;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -66,12 +67,14 @@ public class Wrist extends Subsystem
   public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
   public static final double JOYSTICK_INCHES_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
   public static final double JOYSTICK_Degrees_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
+
+  public double armAngleDegrees = Robot.arm.ARM_ANGLE_DEGREES;
   
   //Misc
   private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
   private boolean isFinished;
   private double targetPositionInchesPID = 0;
-  private double targetAngleDegreesPID = 0;
+  private double targetAngleDegreesPID = -(180 - armAngleDegrees);
 
   private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
   private double joystickDegreesPerMs = JOYSTICK_Degrees_PER_MS_LO;
