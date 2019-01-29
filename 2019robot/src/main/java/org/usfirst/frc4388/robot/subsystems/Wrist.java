@@ -60,8 +60,8 @@ public class Wrist extends Subsystem
 	public static final double MIN_POSITION_INCHES = 0.0;
   public static final double MAX_POSITION_INCHES = 83.4;
 
-  public static final double MIN_ANGLE_DEGREES = 0.0;   ////FIND ANGLE VALUES
-  public static final double MAX_ANGLE_DEGREES = 0.0;
+  public static final double MIN_ANGLE_DEGREES = -3;   ////FIND ANGLE VALUES
+  public static final double MAX_ANGLE_DEGREES = 3;
 
   public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
   public static final double JOYSTICK_INCHES_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
@@ -87,6 +87,13 @@ public class Wrist extends Subsystem
     {
       System.err.println("You thought the code would work, but it was me, error. An error occurred in the Wrist Construtor");
     }
+  }
+
+  //Set the degree to negative angle after initializing 
+  public void setInitAngle()
+  {
+    double armAngleToHoriz = 70;
+    double initAngle = ENCODER_TICKS_TO_DEGREES - armAngleToHoriz;
   }
 
   //Method for setting the control mode for the wrist

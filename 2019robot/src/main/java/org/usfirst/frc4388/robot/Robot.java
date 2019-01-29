@@ -49,8 +49,10 @@ public class Robot extends IterativeRobot
     private Command RRautonomousCommand;
     private Command RLautonomousCommand;
     private Command LRautonomousCommand;
-    private Command LLautonomousCommand;
-    
+	private Command LLautonomousCommand;
+	
+	public static final double OriginalDegreesWrist = arm.ENCODER_TICKS_TO_DEGREES;
+
     public void robotInit() 
     {
     	//Printing game data to riolog
@@ -70,16 +72,13 @@ public class Robot extends IterativeRobot
 	    operationModeChooser.addDefault("Test", OperationMode.TEST);
 	    operationModeChooser.addObject("Competition", OperationMode.COMPETITION);
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
-		
-		
-		
-		
-		
-		
 
-		
+		wrist.setInitAngle();
+
 		//ledLights.setAllLightsOn(false);
-      } catch (Exception e) {
+	  } 
+	  catch (Exception e) 
+	  {
     		System.err.println("An error occurred in robotInit()");
       }
     }
