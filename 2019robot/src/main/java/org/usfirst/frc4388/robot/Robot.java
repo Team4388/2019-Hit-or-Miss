@@ -50,8 +50,6 @@ public class Robot extends IterativeRobot
     private Command RLautonomousCommand;
     private Command LRautonomousCommand;
 	private Command LLautonomousCommand;
-	
-	public static final double OriginalDegreesWrist = arm.ENCODER_TICKS_TO_DEGREES;
 
     public void robotInit() 
     {
