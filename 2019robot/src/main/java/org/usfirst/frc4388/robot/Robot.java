@@ -71,7 +71,8 @@ public class Robot extends IterativeRobot
 	    operationModeChooser.addObject("Competition", OperationMode.COMPETITION);
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
-		wrist.setInitAngle();
+		//Initializing the angle of the arm to be 
+		arm.setInitAngle();
 
 		//ledLights.setAllLightsOn(false);
 	  } 

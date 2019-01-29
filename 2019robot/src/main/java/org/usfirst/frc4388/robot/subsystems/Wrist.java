@@ -42,8 +42,6 @@ public class Wrist extends Subsystem
   //Encoder ticks to inches for encoders
   public static final double ENCODER_TICKS_TO_INCHES = Constants.kArmEncoderTicksPerDegree;
   public static final double ENCODER_TICKS_TO_DEGREES = Constants.kWristEncoderTicksPerDegree * Math.PI;
-
-  public double WRIST_ANGLE_DEGREES = 0;
   
   // PID controller and params
 	private MPTalonPIDController mpController;
@@ -89,15 +87,6 @@ public class Wrist extends Subsystem
     {
       System.err.println("You thought the code would work, but it was me, error. An error occurred in the Wrist Construtor");
     }
-  }
-
-  //Set the degree to negative angle after initializing 
-  public void setInitAngle()
-  {
-    double armAngleToHoriz = 70;
-    double initAngle = ENCODER_TICKS_TO_DEGREES - armAngleToHoriz;
-    
-    WRIST_ANGLE_DEGREES = initAngle;
   }
 
   //Method for setting the control mode for the wrist
