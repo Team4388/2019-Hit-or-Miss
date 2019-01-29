@@ -32,7 +32,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 public class Wrist extends Subsystem
 {
   //Control Mode Array
-  public static enum WristControlMode {PID, JOYSTICK_MANUAL};
+  public static enum WristControlMode {PID, JOYSTICK_MANUAL, GRAB_BALL};
 
   //Motor Controllers
   private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();
