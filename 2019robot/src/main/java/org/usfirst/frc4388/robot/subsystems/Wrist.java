@@ -15,6 +15,8 @@ import org.usfirst.frc4388.utility.CANTalonEncoder;
 import org.usfirst.frc4388.utility.ControlLoopable;
 import org.usfirst.frc4388.utility.PIDParams;
 import org.usfirst.frc4388.utility.SoftwarePIDPositionController;
+import org.usfirst.frc4388.utility.MPTalonPIDPathController;
+import org.usfirst.frc4388.utility.MPTalonPIDController;
 import org.usfirst.frc4388.robot.subsystems.Arm;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -51,11 +53,11 @@ public class Wrist extends Subsystem
 	public static int MP_SLOT = 1;
 
 	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);  
-	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);  
-	private PIDParams pidPIDParamsLoGear = new PIDParams(0.45, 0.0, 0.0, 0.0, 0.0, 0.0);  
+	private PIDParams pidPIDParamsLevel = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);
 	public static final double KF_UP = 0.005;
 	public static final double KF_DOWN = 0.0;
   public static final double PID_ERROR_INCHES = 1.0;
+  private long periodMs = (long)(Constants.kLooperDt * 1000.0);
 
   // Defined positions
 	public static final double MIN_POSITION_INCHES = 0.0;
@@ -154,6 +156,13 @@ public class Wrist extends Subsystem
 		setWristControlMode(wristControlMode.JOYSTICK_MANUAL);
   }
 
+  public void onStart(double timestamp) 
+  {
+		//mpController.setPID(mpPIDParams);
+		mpController.setPID(pidPIDParamsLevel);
+		mpController.setPIDSlot(PID_SLOT);
+	}
+
   //@Override
   public void onLoop(double timestamp) 
   {
@@ -197,6 +206,11 @@ public class Wrist extends Subsystem
   public synchronized void setFinished(boolean isFinished) 
   {
 		this.isFinished = isFinished;
+	}
+
+  public double getPeriodMs() 
+  {
+		return periodMs;
 	}
 
   @Override
