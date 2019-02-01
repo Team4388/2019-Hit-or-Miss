@@ -32,10 +32,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 /**
  * Add your docs here.
  */
+
 public class Wrist extends Subsystem
 {
   //Control Mode Array
-  public static enum WristControlMode {PID, JOYSTICK_MANUAL, GRAB_BALL};
+  public static enum WristControlMode {PID, JOYSTICK_MANUAL, FLIP, GRAB_BALL};
 
   //Motor Controllers
   private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();
@@ -43,8 +44,7 @@ public class Wrist extends Subsystem
 	private CANTalonEncoder wristRight;
 
   //Encoder ticks to inches for encoders
-  public static final double ENCODER_TICKS_TO_INCHES = Constants.kArmEncoderTicksPerDegree;
-  public static final double ENCODER_TICKS_TO_DEGREES = Constants.kWristEncoderTicksPerDegree * Math.PI;
+  public static final double WRIST_ENCODER_TICKS_TO_DEGREES = ((4096/360)*(1/3));
   
   // PID controller and params
 	private MPTalonPIDController mpController;
@@ -86,12 +86,20 @@ public class Wrist extends Subsystem
     try
     {
       //PID wrist encoder and talon
-			wristRight = new CANTalonEncoder(RobotMap.WRIST_LEFT_MOTOR_CAN_ID, ENCODER_TICKS_TO_DEGREES, FeedbackDevice.QuadEncoder);
+			wristRight = new CANTalonEncoder(RobotMap.WRIST_LEFT_MOTOR_CAN_ID, WRIST_ENCODER_TICKS_TO_DEGREES, FeedbackDevice.QuadEncoder);
     }
     catch(Exception e)
     {
       System.err.println("You thought the code would work, but it was me, error. An error occurred in the Wrist Construtor");
     }
+  }
+
+  //Flipping the intake to the other side
+  public void flipIntake()
+  {
+    double currentWristAngle = wristRight.getPositionWorld();
+
+
   }
 
   //Method for setting the control mode for the wrist
@@ -173,7 +181,10 @@ public class Wrist extends Subsystem
 					break;
 				case JOYSTICK_MANUAL:
 					controlManualWithJoystick();
-					break;
+          break;
+        case FLIP:
+          controlPIDFlipIntake();
+          break;
 				default:
 					break;
 			}
@@ -196,7 +207,16 @@ public class Wrist extends Subsystem
     
     joystickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
 		setSpeedJoystick(joystickSpeed);
-	}
+  }
+  
+  private void controlPIDFlipIntake()
+  {
+    double currentWristAngle = wristRight.getPositionWorld();
+    double targetFlipAngle = currentWristAngle - 180; 
+    //Flip angle may need to be adjusted if angle shouldn't be 180
+
+    updatePositionPID(targetFlipAngle);
+  }
 
   public synchronized boolean isFinished() 
   {
