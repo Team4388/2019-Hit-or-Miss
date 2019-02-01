@@ -1,31 +1,25 @@
 package org.usfirst.frc4388.robot.commands;
 
 import org.usfirst.frc4388.robot.Robot;
-import org.usfirst.frc4388.robot.subsystems.Arm.ArmControlMode;
-import java.lang.Math;
+import org.usfirst.frc4388.robot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * Description 
+ *
  */
-public class ArmSetMode extends Command {
-
-	private ArmControlMode controlMode;
+public class ArmSetPositionPID extends Command {
 	
-    public ArmSetMode(ArmControlMode controlMode) {
-    	this.controlMode = controlMode;
+	private double targetPositionInches;
+
+    public ArmSetPositionPID(double targetPositionInches) {
+    	this.targetPositionInches = targetPositionInches;
         requires(Robot.arm);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	if (controlMode == ArmControlMode.PID) {
-    		Robot.wrist.setPositionPID(Robot.arm.getYPositionInches());
-    	}
-    	else if (controlMode == ArmControlMode.JOYSTICK_MANUAL) {
-    		Robot.wrist.setSpeedJoystick(0);
-    	}
+		Robot.arm.setPositionPID(targetPositionInches);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -34,7 +28,7 @@ public class ArmSetMode extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
+        return Math.abs(Robot.arm.getYPositionInches() - this.targetPositionInches) < Arm.PID_ERROR_INCHES;
     }
 
     // Called once after isFinished returns true

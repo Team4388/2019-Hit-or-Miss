@@ -41,15 +41,6 @@ public class Robot extends IterativeRobot
 	public static OperationMode operationMode = OperationMode.TEST;
 
 	private SendableChooser<OperationMode> operationModeChooser;
-	private SendableChooser<Command> RRautonTaskChooser;
-	private SendableChooser<Command> RLautonTaskChooser;
-	private SendableChooser<Command> LRautonTaskChooser;
-	private SendableChooser<Command> LLautonTaskChooser;
-
-    private Command RRautonomousCommand;
-    private Command RLautonomousCommand;
-    private Command LRautonomousCommand;
-	private Command LLautonomousCommand;
 
     public void robotInit() 
     {
@@ -71,8 +62,7 @@ public class Robot extends IterativeRobot
 	    operationModeChooser.addObject("Competition", OperationMode.COMPETITION);
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
-		//Initializing the angle of the arm to be 
-		arm.setInitAngle();
+	
 
 		//ledLights.setAllLightsOn(false);
 	  } 
@@ -93,7 +83,6 @@ public class Robot extends IterativeRobot
 
     public void autonomousInit() {    	
     	updateChoosers();
-    	
     	controlLoop.start();
     	drive.endGyroCalibration();
     	drive.resetEncoders();
@@ -110,10 +99,6 @@ public class Robot extends IterativeRobot
     }
 
     public void teleopInit() {
-        if (RRautonomousCommand != null) RRautonomousCommand.cancel();
-        if (RLautonomousCommand != null) RLautonomousCommand.cancel();
-        if (LRautonomousCommand != null) LRautonomousCommand.cancel();
-        if (LLautonomousCommand != null) LLautonomousCommand.cancel();
         drive.setToBrakeOnNeutral(false);	
     	updateChoosers();
         controlLoop.start();
@@ -137,10 +122,6 @@ public class Robot extends IterativeRobot
     
     private void updateChoosers() {
 		operationMode = (OperationMode)operationModeChooser.getSelected();
-		RRautonomousCommand = (Command)RRautonTaskChooser.getSelected();
-		RLautonomousCommand = (Command)RLautonTaskChooser.getSelected();
-		LRautonomousCommand = (Command)LRautonTaskChooser.getSelected();
-		LLautonomousCommand = (Command)LLautonTaskChooser.getSelected();
     }
     
 	public Alliance getAlliance() 

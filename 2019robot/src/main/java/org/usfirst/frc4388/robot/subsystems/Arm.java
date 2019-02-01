@@ -1,6 +1,7 @@
 package org.usfirst.frc4388.robot.subsystems;
 
 import java.util.ArrayList;
+import java.lang.Math;
 
 import org.usfirst.frc4388.robot.Constants;
 import org.usfirst.frc4388.robot.Robot;
@@ -14,6 +15,12 @@ import org.usfirst.frc4388.utility.TalonSRXEncoder;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,10 +30,15 @@ public class Arm extends Subsystem implements Loop
 	private static Arm instance;
 
 	public static enum ArmControlMode {PID, JOYSTICK_MANUAL };
-	
+	public static final double DEGREE_START_OFFSET = 70;
+
+	public static final double RADIUS_OF_ARM = 43.3;
+	public static final double OFF_SET_BELOW = 49.3;
 
 	// One revolution of the 1-3 GEAR RATION ON THE ARM	* 4096 ticks 
-	public static final double ENCODER_TICKS_TO_DEGREES = (36.0 / 12.0) * (36.0 / 24.0) * (34.0 / 24.0) * 4096.0 / (1.88 * Math.PI);   
+	public static final double ENCODER_TICKS_TO_DEGREES = ((4096/360)*(1/3))-(DEGREE_START_OFFSET);  
+	public static final double X_POSITION_MATH = ((RADIUS_OF_ARM)*(Math.cos(ENCODER_TICKS_TO_DEGREES)))+(OFF_SET_BELOW);
+	public static final double Y_POSITION_MATH = (RADIUS_OF_ARM)*(Math.sin(ENCODER_TICKS_TO_DEGREES));
 	
 	public double ARM_ANGLE_DEGREES = 0;
 
@@ -34,17 +46,14 @@ public class Arm extends Subsystem implements Loop
 	public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
 	
 	// Defined positions
-	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
-	public static final double ZERO_POSITION_INCHES = -0.25;
-	public static final double NEAR_ZERO_POSITION_INCHES = 0.0;
 	public static final double MIN_POSITION_INCHES = 0.0;
 	public static final double MAX_POSITION_INCHES = 83.4;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
 
+	LimitSwitchSource limitSwitchSource;
 	// Motion profile max velocities and accel times
 	public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60; 
-	public static final double MP_T1 = 400;  // Fast = 300
 	public static final double MP_T2 = 150;  // Fast = 150
 	
 	// Motor controllers
@@ -80,22 +89,13 @@ public class Arm extends Subsystem implements Loop
 			//motor2 = CANTallon.createPermanentSlaveTalon(RobotMap.ARM_MOTOR_2_CAN_ID, RobotMap.ELEVATOR_MOTOR_1_CAN_ID);
 		
 			
-			
+			motor1.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+    		motor1.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 		}
 		catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
 		}
 	}
-
-	//Set the degree to negative angle after initializing 
-	public void setInitAngle()
-	{
-	  double armAngleToHoriz = 70;
-	  double initAngle = ENCODER_TICKS_TO_DEGREES - armAngleToHoriz;
-	  
-	  ARM_ANGLE_DEGREES = initAngle;
-	}
-
 	@Override
 	public void initDefaultCommand() {
 	}
@@ -162,29 +162,37 @@ public class Arm extends Subsystem implements Loop
 				case PID: 
 					controlPidWithJoystick();
 					break;
-				default: JOYSTICK_MANUAL:
+				case JOYSTICK_MANUAL:
 					controlManualWithJoystick();
 					break;
+				
 				
 			}
 		}
 	}
 	
+
+
+
 	private void controlPidWithJoystick() {
 		//double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
 		//double deltaPosition = joystickPosition *.5;
 		targetPositionInchesPID = targetPositionInchesPID;// + deltaPosition;
 		updatePositionPID(targetPositionInchesPID);
 	}
-	
+
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
 		setSpeedJoystick(joyStickSpeed);
 	}
 	
 
-	public double getPositionInches() {
-		return motor1.getPositionWorld();
+	public double getYPositionInches() {
+		return motor1.getPositionWorld()*Y_POSITION_MATH;
+		
+	}
+	public double getXPositionInches() {
+		return motor1.getPositionWorld()*X_POSITION_MATH;
 	}
 	
 //	public double getAverageMotorCurrent() {
