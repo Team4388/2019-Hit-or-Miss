@@ -214,7 +214,7 @@ public class Wrist extends Subsystem
     double currentWristAngle = wristRight.getPositionWorld();
     double targetFlipAngle = currentWristAngle - 180; 
     //Flip angle may need to be adjusted if angle shouldn't be 180
-
+    
     updatePositionPID(targetFlipAngle);
   }
 
