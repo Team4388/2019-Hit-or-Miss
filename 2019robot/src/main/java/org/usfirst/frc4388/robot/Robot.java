@@ -103,7 +103,8 @@ public class Robot extends IterativeRobot
     	updateChoosers();
         controlLoop.start();
     	drive.resetEncoders();
-    	drive.endGyroCalibration();
+		drive.endGyroCalibration();
+		//Arm.setArmControlMode(Arm.ArmControlMode.JOYSTICK_MANUAL);
 
         updateStatus();
     }
