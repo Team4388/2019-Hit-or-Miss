@@ -112,6 +112,8 @@ public class Arm extends Subsystem implements Loop
 		return this.armControlMode;
 	}
 
+
+
 		
 	public void setSpeedJoystick(double speed) {
 		motor1.set(ControlMode.PercentOutput, speed);
@@ -127,7 +129,7 @@ public class Arm extends Subsystem implements Loop
 	
 	public void updatePositionPID(double targetPositionInches) {
  		targetPositionInchesPID = limitPosition(targetPositionInches);
-		double startPositionInches = motor1.getPositionWorld();
+		double startPositionInches = motor1.getPositionWorld()*Y_POSITION_MATH;
 		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
 	}
 
@@ -164,6 +166,8 @@ public class Arm extends Subsystem implements Loop
 					break;
 				case JOYSTICK_MANUAL:
 					controlManualWithJoystick();
+					break;
+				default:
 					break;
 				
 				
