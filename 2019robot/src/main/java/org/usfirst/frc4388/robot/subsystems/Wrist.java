@@ -79,6 +79,8 @@ public class Wrist extends Subsystem
 
   public static final double jumpBarAngle = 50;   //hard limit switch?
   public static final double armAngleForPIDSwitch = -45;   ///Change values
+
+  public static final boolean ballIntakeOut = true;
   
   //Misc
   private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
@@ -185,14 +187,21 @@ public class Wrist extends Subsystem
 		synchronized (Wrist.this) {
 			switch(getWristControlMode() ) {
         case PID:
+        
           if(armAngleDegrees > armAngleForPIDSwitch)
           {
             controlPID();
           } 
           else if(armAngleDegrees <= armAngleForPIDSwitch)
           {
+            if(ballIntakeOut)
+            {
+            }
+            else
+            {
+            }
           }
-					controlPID();
+
 					break;
 				case JOYSTICK_MANUAL:
 					controlManualWithJoystick();
@@ -240,11 +249,25 @@ public class Wrist extends Subsystem
   public void controlPIDBallIn()
   {
     updatePositionPID(targetAngleDegreesBallIn);
+    //Needs limit to lift up (so it can get over bar) in command group
   }
 
   public void controlPIDBallOut()
   {
+    updatePositionPID(targetAngleDegreesBallOut);
+    //Needs to be tuned a lot
+  }
 
+  public void controlPIDHatchIn()
+  {
+    updatePositionPID(targetAngleDegreesHatchIn);
+    //Needs limit to lift up (so it can get over bar) in command group
+  }
+
+  public void controlPIDHatchOut()
+  {
+    updatePositionPID(targetAngleDegreesHatchOut);
+    //Needs to be tuned a lot
   }
 
   public synchronized boolean isFinished() 

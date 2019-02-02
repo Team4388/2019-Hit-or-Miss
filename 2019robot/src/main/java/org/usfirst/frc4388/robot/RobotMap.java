@@ -2,17 +2,15 @@
 package org.usfirst.frc4388.robot;
 
 
-public class RobotMap {
+public class RobotMap 
+{
 	// USB Port IDs
 	public static final int DRIVER_JOYSTICK_1_USB_ID = 0;
 	public static final int OPERATOR_JOYSTICK_1_USB_ID = 1;
 
-
 	// MOTORS 
-	
 	public static final int DRIVETRAIN_LEFT_MOTOR1_CAN_ID = 2;
 	public static final int DRIVETRAIN_LEFT_MOTOR2_CAN_ID = 3;
-
 
 	public static final int DRIVETRAIN_RIGHT_MOTOR1_CAN_ID = 4;
 	public static final int DRIVETRAIN_RIGHT_MOTOR2_CAN_ID = 5;
@@ -29,8 +27,6 @@ public class RobotMap {
 	public static final int CLIMBER_LEFT = 12;
 	public static final int CLIMBER_RIGHT = 13;
 
-	
-	
 	// Pneumatics
 	public static final int DRIVETRAIN_SPEEDSHIFT_PCM_ID = 0;
 	public static final int DRIVETRAIN_SPEEDSHIFT2_PCM_ID = 1;
@@ -40,7 +36,4 @@ public class RobotMap {
 	public static final int LOWER_HATCH_INTAKE_PCM_ID = 5;
 	public static final int END_EFECTOR_EXPAND_PCM_ID = 6;
 	public static final int END_EFECTOR_CONTRACT_PCM_ID = 7;
-	
-
-
 }
