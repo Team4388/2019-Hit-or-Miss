@@ -36,7 +36,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 public class Wrist extends Subsystem
 {
   //Control Mode Array
-  public static enum WristControlMode {PID, JOYSTICK_MANUAL, FLIP_INTAKE, GRAB_BALL};
+  public static enum WristControlMode {PID, JOYSTICK_MANUAL, GRAB_BALL};
 
   //Motor Controllers
   private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();
@@ -72,12 +72,13 @@ public class Wrist extends Subsystem
 
   public double armAngleDegrees = Robot.arm.ARM_ANGLE_DEGREES;
 
-  public static final double targetAngleDegreesBallIn = -45;   ///Change values
+  public static final double targetAngleDegreesBallIn = 180; //only have to flip intake and go down to get ball
+  ///Change values
   public static final double targetAngleDegreesBallOut = 360;
-  public static final double targetAngleDegreesHatchIn = 55;
+  public static final double targetAngleDegreesHatchIn = 130;
   public static final double targetAngleDegreesHatchOut = 0;
 
-  public static final double jumpBarAngle = 50;   //hard limit switch?
+  public static final double jumpBarAngle = -50;   //hard limit switch?
   public static final double armAngleForPIDSwitch = -45;   ///Change values
 
   public static final boolean ballIntakeOut = true;
@@ -187,7 +188,6 @@ public class Wrist extends Subsystem
 		synchronized (Wrist.this) {
 			switch(getWristControlMode() ) {
         case PID:
-        
           if(armAngleDegrees > armAngleForPIDSwitch)
           {
             controlPID();
@@ -196,12 +196,27 @@ public class Wrist extends Subsystem
           {
             if(ballIntakeOut)
             {
+              if(armAngleDegrees > targetAngleDegreesBallIn)
+              {
+                controlPIDBallIn();
+              }
+              else
+              {
+                controlPIDBallOut();
+              }
             }
             else
             {
+              if(armAngleDegrees > targetAngleDegreesHatchIn)
+              {
+                controlPIDBallIn();
+              }
+              else
+              {
+                controlPIDHatchOut();
+              }
             }
           }
-
 					break;
 				case JOYSTICK_MANUAL:
 					controlManualWithJoystick();
