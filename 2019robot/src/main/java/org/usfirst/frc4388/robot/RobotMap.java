@@ -18,7 +18,7 @@ public class RobotMap {
 	public static final int DRIVETRAIN_RIGHT_MOTOR2_CAN_ID = 5;
 	
 	//carriage motors
-	public static final int WRIST_LEFT_MOTOR_CAN_ID = 6;
+	public static final int WRIST_RIGHT_MOTOR_CAN_ID = 6;
 	public static final int INTAKE_MOTOR = 7;
 	  
 	//Arm Motors

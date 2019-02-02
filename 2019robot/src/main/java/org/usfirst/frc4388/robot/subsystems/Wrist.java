@@ -94,7 +94,7 @@ public class Wrist extends Subsystem
     try
     {
       //PID wrist encoder and talon
-			wristRight = new CANTalonEncoder(RobotMap.WRIST_LEFT_MOTOR_CAN_ID, WRIST_ENCODER_TICKS_TO_DEGREES, FeedbackDevice.QuadEncoder);
+			wristRight = new CANTalonEncoder(RobotMap.WRIST_RIGHT_MOTOR_CAN_ID, WRIST_ENCODER_TICKS_TO_DEGREES, FeedbackDevice.QuadEncoder);
     }
     catch(Exception e)
     {
@@ -222,7 +222,7 @@ public class Wrist extends Subsystem
   {
     double joystickSpeed;
     
-    joystickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
+    joystickSpeed = -Robot.oi.getOperatorController().getRightYAxis();
 		setSpeedJoystick(joystickSpeed);
   }
   
@@ -240,6 +240,11 @@ public class Wrist extends Subsystem
   public void controlPIDBallIn()
   {
     updatePositionPID(targetAngleDegreesBallIn);
+  }
+
+  public void controlPIDBallOut()
+  {
+
   }
 
   public synchronized boolean isFinished() 
