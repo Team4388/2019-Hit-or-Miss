@@ -26,6 +26,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -103,6 +104,19 @@ public class Wrist extends Subsystem
     {
       System.err.println("You thought the code would work, but it was me, error. An error occurred in the Wrist Construtor");
     }
+  }
+
+  //Jump bar by putting power to the motors for a specific amount of time
+  //Jump bar output
+  public void jumpBar()
+  {
+    wristRight.set(0.8);
+  }
+
+  //Stop wrist motor
+  public void stopMotor()
+  {
+    wristRight.set(0);
   }
 
   //Method for setting the control mode for the wrist
