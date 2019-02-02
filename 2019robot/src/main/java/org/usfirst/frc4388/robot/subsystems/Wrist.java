@@ -78,7 +78,7 @@ public class Wrist extends Subsystem
   public static final double targetAngleDegreesHatchIn = 130;
   public static final double targetAngleDegreesHatchOut = 0;
 
-  public static final double jumpBarAngle = -50;   //hard limit switch?
+  public final double jumpBarArmAngle = -50;
   public static final double armAngleForPIDSwitch = -45;   ///Change values
 
   public static final boolean ballIntakeOut = true;
@@ -103,14 +103,6 @@ public class Wrist extends Subsystem
     {
       System.err.println("You thought the code would work, but it was me, error. An error occurred in the Wrist Construtor");
     }
-  }
-
-  //Flipping the intake to the other side
-  public void flipIntake()
-  {
-    double currentWristAngle = wristRight.getPositionWorld();
-
-
   }
 
   //Method for setting the control mode for the wrist

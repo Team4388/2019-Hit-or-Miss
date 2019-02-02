@@ -7,6 +7,7 @@
 
 package org.usfirst.frc4388.robot.commands;
 
+import org.usfirst.frc4388.robot.Robot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class GrabBallOutOfRobot extends CommandGroup {
@@ -15,6 +16,10 @@ public class GrabBallOutOfRobot extends CommandGroup {
    */
   public GrabBallOutOfRobot() 
   {
+    if(Robot.wrist.armAngleDegrees <= Robot.wrist.jumpBarArmAngle && Robot.wrist.armAngleDegrees >= Robot.wrist.jumpBarArmAngle)
+    {
+      
+    }
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
