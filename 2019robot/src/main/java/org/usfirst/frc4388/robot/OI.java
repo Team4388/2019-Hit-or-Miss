@@ -62,10 +62,9 @@ public class OI
 		   JoystickButton wristManualMode = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
 		   wristManualMode.whenPressed(new WristSetMode(WristControlMode.JOYSTICK_MANUAL));
 			
+		   //Arm
 		   JoystickButton ArmAimAssist = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
 		   ArmAimAssist.whenPressed(new ArmSetMode(ArmControlMode.PID));
-
-		   
 
 
 

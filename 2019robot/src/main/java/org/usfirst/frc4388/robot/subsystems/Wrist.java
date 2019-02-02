@@ -36,7 +36,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 public class Wrist extends Subsystem
 {
   //Control Mode Array
-  public static enum WristControlMode {PID, JOYSTICK_MANUAL, FLIP, GRAB_BALL};
+  public static enum WristControlMode {PID, JOYSTICK_MANUAL, FLIP_INTAKE, GRAB_BALL};
 
   //Motor Controllers
   private ArrayList<CANTalonEncoder> motorControllers = new ArrayList<CANTalonEncoder>();
@@ -52,7 +52,7 @@ public class Wrist extends Subsystem
 	public static int PID_SLOT = 0;
 	public static int MP_SLOT = 1;
 
-	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);  
+	  ///private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);  
 	private PIDParams pidPIDParamsLevel = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);
 	public static final double KF_UP = 0.005;
 	public static final double KF_DOWN = 0.0;
@@ -71,6 +71,14 @@ public class Wrist extends Subsystem
   public static final double JOYSTICK_Degrees_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
 
   public double armAngleDegrees = Robot.arm.ARM_ANGLE_DEGREES;
+
+  public static final double targetAngleDegreesBallIn = -45;   ///Change values
+  public static final double targetAngleDegreesBallOut = 360;
+  public static final double targetAngleDegreesHatchIn = 55;
+  public static final double targetAngleDegreesHatchOut = 0;
+
+  public static final double jumpBarAngle = 50;   //hard limit switch?
+  public static final double armAngleForPIDSwitch = -45;   ///Change values
   
   //Misc
   private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
@@ -176,15 +184,24 @@ public class Wrist extends Subsystem
   {
 		synchronized (Wrist.this) {
 			switch(getWristControlMode() ) {
-				case PID: 
+        case PID:
+          if(armAngleDegrees > armAngleForPIDSwitch)
+          {
+            controlPID();
+          } 
+          else if(armAngleDegrees <= armAngleForPIDSwitch)
+          {
+          }
 					controlPID();
 					break;
 				case JOYSTICK_MANUAL:
 					controlManualWithJoystick();
           break;
-        case FLIP:
+        /*
+        case FLIP_INTAKE:
           controlPIDFlipIntake();
           break;
+        */
 				default:
 					break;
 			}
@@ -200,7 +217,7 @@ public class Wrist extends Subsystem
     updatePositionPID(targetAngleDegreesPID);
 	}
   
-  //Method for controlling the motor with the joystick
+  //Controlling the motor with the joystick
   private void controlManualWithJoystick() 
   {
     double joystickSpeed;
@@ -209,13 +226,20 @@ public class Wrist extends Subsystem
 		setSpeedJoystick(joystickSpeed);
   }
   
-  private void controlPIDFlipIntake()
+  //Flip the intake from hatch to ball and visa versa
+  public void controlPIDFlipIntake()
   {
     double currentWristAngle = wristRight.getPositionWorld();
     double targetFlipAngle = currentWristAngle - 180; 
     //Flip angle may need to be adjusted if angle shouldn't be 180
-    
+
     updatePositionPID(targetFlipAngle);
+  }
+
+  //Controlling the PID for the intake going into the robot with ball side facing in
+  public void controlPIDBallIn()
+  {
+    updatePositionPID(targetAngleDegreesBallIn);
   }
 
   public synchronized boolean isFinished() 
