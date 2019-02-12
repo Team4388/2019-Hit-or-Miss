@@ -24,7 +24,13 @@ public class RobotMap {
 	//Elevator Motors
 	public static final int ELEVATOR_MOTOR1_ID = 6;
 	public static final int ELEVATOR_MOTOR2_ID = 7;
+
+	
+	//Climber Motors
 	public static final int CLIMBER_CAN_ID = 10;
+	public static final int CLIMBER_WHEEL1_ID = 9;
+	public static final int CLIMBER_WHEEL2_ID = 11;
+	public static final int CLIMBER_RATCHET_ID = 12;
 	
 	
 	// Pneumatics
