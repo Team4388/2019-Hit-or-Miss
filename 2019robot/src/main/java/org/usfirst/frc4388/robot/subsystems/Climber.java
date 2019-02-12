@@ -47,12 +47,6 @@ public class Climber extends Subsystem{
 	static float FRONT_FREQ;
 	static float FREQ_RATIO = 0.2443744576F;
 
-		//Time Control
-	static float TIME_TO_CLIMB = 1254;
-	static float TIME_TO_TILT = 1254;
-	static float TIME_TO_DRIVE = 1254;
-	static float TIME_TO_PULL = 1254;
-
 		//Limit and Saftey vars
 	LimitSwitchSource limitSwitchSource;
 	SensorCollection isPressed;
@@ -71,7 +65,7 @@ public class Climber extends Subsystem{
 			FRONT_FREQ = BACK_FREQ * FREQ_RATIO; // Sets the front motor speed to ~1/4 the back motor speed
 		} 
 		catch (Exception e) {
-			System.err.println("An error occurred in the climbing constructor");
+			System.err.println("The code broke before the guard did. An error occurred in the climbing constructor");
 		}
 	}
 
