@@ -15,7 +15,7 @@ public class InitiateClimber extends Command
 
 	@Override
 	protected void initialize() {
-		Robot.climber.setClimbSpeed(climb);
+		Robot.climber.setClimbSpeed(climb, speed);
 	}
 
 	@Override
