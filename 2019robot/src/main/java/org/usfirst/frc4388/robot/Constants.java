@@ -29,11 +29,11 @@ public class Constants {
 	public static double kDriveEncoderTicksPerInch = (double)kDriveEncoderTicksPerRev / (kDriveWheelDiameterInches * Math.PI);
 	
 	// Elevator
-	public static int kArmEncoderTickesPerRev = 256;
-    public static double kArmInchesOfTravelPerRev = 3.75;
-	public static double kArmEncoderTicksPerInch = 126.36;
-	public static double kArmBasicPercentOutputUp = -0.85;
-	public static double kArmBasicPercentOutputDown =.7;
+	public static int kElevatorEncoderTickesPerRev = 256;
+    public static double kElevatorInchesOfTravelPerRev = 3.75;
+	public static double kElevatorEncoderTicksPerInch = 126.36;
+	public static double kElevatorBasicPercentOutputUp = -0.85;
+	public static double kElevatorBasicPercentOutputDown =.7;
 	
     // CONTROL LOOP GAINS
 
