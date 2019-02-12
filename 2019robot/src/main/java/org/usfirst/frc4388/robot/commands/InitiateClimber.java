@@ -10,9 +10,10 @@ public class InitiateClimber extends Command
 	boolean climb;
 	float speed;
 
-	public InitiateClimber(boolean Climb) {
+	public InitiateClimber(boolean Climb, int speed) {
 		requires(Robot.climber);
 		this.climb = Climb;
+		this.speed = speed;
 	}
 
 	@Override

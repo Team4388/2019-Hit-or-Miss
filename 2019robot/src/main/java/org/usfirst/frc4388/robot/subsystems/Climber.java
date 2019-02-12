@@ -96,7 +96,6 @@ public class Climber extends Subsystem{
 				climberBack.set(BACK_FREQ * speed);
 				climberFront.set(FRONT_FREQ * speed);
 			}
-
 		}
 		if (Climb == false) {
 			climberBack.set(0);
@@ -105,7 +104,6 @@ public class Climber extends Subsystem{
 	}
 }
 /*TODO
- * add command code for starting climb (including button press)
  * add command code for flipping front out (including button press)
  * add saftey switch on second controller
  */

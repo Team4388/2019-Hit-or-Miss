@@ -49,9 +49,10 @@ public class OI
 	        CarriageEject.whenPressed(new IntakeSetSpeed(Carriage.CUBE_INTAKE_SPEED));
 	        CarriageEject.whenReleased(new IntakeSetSpeed(0.0));
 	        */
-	        JoystickButton climbUp = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
-	        climbUp.whenPressed(new InitiateClimber(true));
-	        climbUp.whenReleased(new InitiateClimber(false));
+	        JoystickButton climbUp = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
+			int speed = XboxController.RIGHT_TRIGGER_AXIS;
+			climbUp.whenPressed(new InitiateClimber(true, speed));
+			climbUp.whenReleased(new InitiateClimber(false, speed));
 	        
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 	        shiftUp.whenPressed(new DriveSpeedShift(true));
