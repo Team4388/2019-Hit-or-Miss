@@ -8,18 +8,12 @@ import edu.wpi.first.wpilibj.command.Command;
 public class InitiateClimber extends Command
 {
 	boolean climb;
-	boolean saftey;
 	float speed;
 
-	public InitiateClimber(boolean Climb, int speed) {
+	public InitiateClimber(boolean Climb, float speed) {
 		requires(Robot.climber);
 		this.climb = Climb;
 		this.speed = speed;
-	}
-
-	public startSaftey(boolean saftey){
-		requires(Robot.climber);
-		this.saftey = saftey;
 	}
 
 	@Override
@@ -28,7 +22,7 @@ public class InitiateClimber extends Command
 
 	@Override
 	protected void execute() {
-		if(climb && saftey){ //If climb and saftey button are pressed
+		if(climb){ //If climb and saftey button are pressed
 			Robot.climber.setClimbSpeed(climb, speed);
 		}
 		else{

@@ -26,6 +26,7 @@ import jaci.pathfinder.Pathfinder;
 
 
 
+
 public class OI 
 {
 		private static OI instance;
@@ -49,7 +50,7 @@ public class OI
 	        CarriageEject.whenPressed(new IntakeSetSpeed(Carriage.CUBE_INTAKE_SPEED));
 	        CarriageEject.whenReleased(new IntakeSetSpeed(0.0));
 	        */
-	        JoystickButton climbUp = new XBoxTriggerButton(m_operatorXbox, XboxController.RIGHT_TRIGGER);
+	        JoystickButton climbUp = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			float speed = XboxController.RIGHT_TRIGGER_AXIS;
 			climbUp.whenPressed(new InitiateClimber(true, speed));
 			climbUp.whenReleased(new InitiateClimber(false, speed));
@@ -72,10 +73,10 @@ public class OI
 			CloseIntake.whenPressed(new IntakePosition(false));
 			*/
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
-			safteySwitch.whenPressed(new startSaftey(true));
-			safteySwitch.whenReleased(new startSaftey(false));
+			safteySwitch.whenPressed(new setClimberSafety(true));
+			safteySwitch.whenReleased(new setClimberSafety(false));
 	     	
-	        SmartDashboard.putData("PRE GAME!!!!", new PreGame());
+	        //SmartDashboard.putData("PRE GAME!!!!", new PreGame());
 	       
 		  } catch (Exception e) {
 			  System.err.println("An error occurred in the OI constructor");

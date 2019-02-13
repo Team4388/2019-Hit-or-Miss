@@ -50,7 +50,7 @@ public class Climber extends Subsystem{
 		//Limit and Saftey vars
 	LimitSwitchSource limitSwitchSource;
 	SensorCollection isPressed;
-	boolean safteySwitch;
+	boolean safetySwitch;
 	
 	public Climber(){
 		try{
@@ -79,7 +79,8 @@ public class Climber extends Subsystem{
     }
     
 	public void setClimbSpeed(boolean Climb, float speed) {
-		if (Climb) {
+		if (Climb && safetySwitch) {
+			System.out.println("TriggerVal = " + speed);
 			if(isPressed.isFwdLimitSwitchClosed()){ //If back at max height
 				climberBack.set(0);
 				climberFront.set(FRONT_FREQ * speed);
@@ -89,14 +90,18 @@ public class Climber extends Subsystem{
 				climberFront.set(FRONT_FREQ * speed);
 			}		
 		}
-		if (Climb == false) {
+		if (Climb == false || safetySwitch == false) {
 			climberBack.set(0);
 			climberFront.set(0);
 		}
 	}
 
 
-	public flipRatchet(){
+	public void safetySwitch(boolean safetySwitch){
+		this.safetySwitch = safetySwitch;
+	}
+
+	public void flipRatchet(){
 		//Code to flip out the front arms of the climber WIP
 	}
 }
