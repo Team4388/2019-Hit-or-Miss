@@ -79,22 +79,25 @@ public class Climber extends Subsystem{
     }
     
 	public void setClimbSpeed(boolean Climb, float speed) {
-		if (Climb && safteySwitch) {
-			if(isPressed.isFwdLimitSwitchClosed()) //If back at max height
-			{
+		if (Climb) {
+			if(isPressed.isFwdLimitSwitchClosed()){ //If back at max height
 				climberBack.set(0);
 				climberFront.set(FRONT_FREQ * speed);
 			}
-			else if (isPressed.isFwdLimitSwitchClosed() == false) //If back not at max height
-			{
+			else if (isPressed.isFwdLimitSwitchClosed() == false){ //If back not at max height
 				climberBack.set(BACK_FREQ * speed);
 				climberFront.set(FRONT_FREQ * speed);
-			}
+			}		
 		}
 		if (Climb == false) {
 			climberBack.set(0);
 			climberFront.set(0);
 		}
+	}
+
+
+	public flipRatchet(){
+		//Code to flip out the front arms of the climber WIP
 	}
 }
 /*TODO
