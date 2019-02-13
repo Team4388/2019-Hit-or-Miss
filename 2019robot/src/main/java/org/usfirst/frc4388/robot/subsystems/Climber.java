@@ -78,7 +78,7 @@ public class Climber extends Subsystem{
     public void periodic() {
     }
     
-	public void setClimbSpeed(boolean Climb, float speed) {
+	public void setClimbSpeed(boolean Climb, double speed) {
 		if (Climb && safetySwitch) {
 			System.out.println("TriggerVal = " + speed);
 			if(isPressed.isFwdLimitSwitchClosed()){ //If back at max height

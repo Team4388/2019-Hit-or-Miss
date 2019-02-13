@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.command.Command;
 public class InitiateClimber extends Command
 {
 	boolean climb;
-	float speed;
+	double speed;
 
-	public InitiateClimber(boolean Climb, float speed) {
+	public InitiateClimber(boolean Climb, double speed) {
 		requires(Robot.climber);
 		this.climb = Climb;
 		this.speed = speed;

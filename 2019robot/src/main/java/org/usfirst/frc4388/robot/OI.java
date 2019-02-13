@@ -51,7 +51,7 @@ public class OI
 	        CarriageEject.whenReleased(new IntakeSetSpeed(0.0));
 	        */
 	        JoystickButton climbUp = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
-			float speed = XboxController.RIGHT_TRIGGER_AXIS;
+			double speed = m_driverXbox.getRightTriggerAxis();
 			climbUp.whenPressed(new InitiateClimber(true, speed));
 			climbUp.whenReleased(new InitiateClimber(false, speed));
 	        
