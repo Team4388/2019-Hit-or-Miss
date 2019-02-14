@@ -101,8 +101,6 @@ public class Wrist extends Subsystem
   private double joystickDegreesPerMs = JOYSTICK_Degrees_PER_MS_LO;
   
   LimitSwitchSource limitSwitchSource;
-  private boolean pressed;
-  SensorCollection isPressed;
 
   public Wrist()
   {
