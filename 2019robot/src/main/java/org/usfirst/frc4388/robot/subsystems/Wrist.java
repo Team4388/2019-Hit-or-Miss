@@ -28,6 +28,10 @@ import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 /**
@@ -83,6 +87,9 @@ public class Wrist extends Subsystem
   public static final double armAngleForPIDSwitch = -45;   ///Change values
 
   public static final boolean ballIntakeOut = true;
+
+  //control mode for joystick control
+	private DriveControlMode controlMode = DriveControlMode.JOYSTICK;
   
   //Misc
   private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
@@ -93,12 +100,20 @@ public class Wrist extends Subsystem
   private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
   private double joystickDegreesPerMs = JOYSTICK_Degrees_PER_MS_LO;
   
+  LimitSwitchSource limitSwitchSource;
+  private boolean pressed;
+  SensorCollection isPressed;
+
   public Wrist()
   {
     try
     {
       //PID wrist encoder and talon
-			wristRight = new CANTalonEncoder(RobotMap.WRIST_RIGHT_MOTOR_CAN_ID, WRIST_ENCODER_TICKS_TO_DEGREES, FeedbackDevice.QuadEncoder);
+      wristRight = new CANTalonEncoder(RobotMap.WRIST_RIGHT_MOTOR_CAN_ID, WRIST_ENCODER_TICKS_TO_DEGREES, FeedbackDevice.QuadEncoder);
+      
+      //Limit Switch
+      wristRight.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+      wristRight.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
     }
     catch(Exception e)
     {
