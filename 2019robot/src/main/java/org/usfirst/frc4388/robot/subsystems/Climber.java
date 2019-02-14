@@ -80,12 +80,11 @@ public class Climber extends Subsystem{
     
 	public void setClimbSpeed(boolean Climb, double speed) {
 		if (Climb && safetySwitch) {
-			System.out.println("TriggerVal = " + speed);
-			if(isPressed.isFwdLimitSwitchClosed()){ //If back at max height
+			if(isPressed.isFwdLimitSwitchClosed()){ //If leg at max height
 				climberBack.set(0);
 				climberFront.set(FRONT_FREQ * speed);
 			}
-			else if (!isPressed.isFwdLimitSwitchClosed()){ //If back not at max height
+			else if (!isPressed.isFwdLimitSwitchClosed()){ //If leg not at max height
 				climberBack.set(BACK_FREQ * speed);
 				climberFront.set(FRONT_FREQ * speed);
 			}		
