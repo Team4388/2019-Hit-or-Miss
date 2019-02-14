@@ -85,12 +85,12 @@ public class Climber extends Subsystem{
 				climberBack.set(0);
 				climberFront.set(FRONT_FREQ * speed);
 			}
-			else if (isPressed.isFwdLimitSwitchClosed() == false){ //If back not at max height
+			else if (!isPressed.isFwdLimitSwitchClosed()){ //If back not at max height
 				climberBack.set(BACK_FREQ * speed);
 				climberFront.set(FRONT_FREQ * speed);
 			}		
 		}
-		if (Climb == false || safetySwitch == false) {
+		if (!Climb || !safetySwitch) {
 			climberBack.set(0);
 			climberFront.set(0);
 		}
@@ -102,10 +102,10 @@ public class Climber extends Subsystem{
 	}
 
 	public void flipRatchet(){
-		//Code to flip out the front arms of the climber WIP
+		///TODO: Code to flip out the front arms of the climber WIP
 	}
 }
-/*TODO
+/*
  * add command code for flipping front out (including button press)
  * add saftey switch on second controller
  */

@@ -20,7 +20,7 @@ public class setClimberSafety extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(safety){
+    if(safety){ //If saftey button is pressed
       Robot.climber.safetySwitch(true);
     }
     else{

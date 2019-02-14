@@ -22,7 +22,7 @@ public class InitiateClimber extends Command
 
 	@Override
 	protected void execute() {
-		if(climb){ //If climb and saftey button are pressed
+		if(climb){ //If climb button is pressed
 			Robot.climber.setClimbSpeed(climb, speed);
 		}
 		else{
