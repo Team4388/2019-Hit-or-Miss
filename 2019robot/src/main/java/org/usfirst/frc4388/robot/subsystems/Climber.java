@@ -100,8 +100,8 @@ public class Climber extends Subsystem{
 		this.safetySwitch = safetySwitch;
 	}
 
-	public void flipRatchet(){
-		///TODO: Code to flip out the front arms of the climber WIP
+	public void flipRatchet(boolean flip, double speed){
+		climberFront.set(FRONT_FREQ * speed);
 	}
 }
 /*
