@@ -7,6 +7,8 @@ public class RobotMap {
 	public static final int DRIVER_JOYSTICK_1_USB_ID = 0;
 	public static final int OPERATOR_JOYSTICK_1_USB_ID = 1;
 
+	public static final int pilot = 0;
+	public static final int copilot = 1;
 
 	// MOTORS 
 	
@@ -24,8 +26,8 @@ public class RobotMap {
 	//Arm Motors
 	public static final int ARM_MOTOR1_ID = 8;
 	public static final int ARM_MOTOR2_ID = 9;
-	public static final int CLIMBER_CAN_ID = 10;
-	public static final int FLIP_OUT_CLIMBER = 11;
+	public static final int CLIMBER_LEGS_CAN_ID = 10;
+	public static final int FLIPPY_BOIS_CAN_ID = 11;
 	public static final int CLIMBER_LEFT = 12;
 	public static final int CLIMBER_RIGHT = 13;
 

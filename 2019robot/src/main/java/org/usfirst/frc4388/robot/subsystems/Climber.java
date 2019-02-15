@@ -28,7 +28,7 @@ public class Climber extends Subsystem{
 		
 		try{
 			
-			Climber = new WPI_TalonSRX(RobotMap.CLIMBER_CAN_ID);
+			Climber = new WPI_TalonSRX(RobotMap.CLIMBER_LEGS_CAN_ID);
 			
 		} catch (Exception e) {
 			

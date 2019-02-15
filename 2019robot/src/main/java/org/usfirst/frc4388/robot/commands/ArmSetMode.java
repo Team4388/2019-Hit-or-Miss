@@ -1,13 +1,14 @@
+
+
 package org.usfirst.frc4388.robot.commands;
 
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.subsystems.Arm.ArmControlMode;
-import java.lang.Math;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * Description 
+ *
  */
 public class ArmSetMode extends Command {
 
@@ -20,11 +21,14 @@ public class ArmSetMode extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	if (controlMode == ArmControlMode.PID) {
-    		Robot.wrist.setPositionPID(Robot.arm.getYPositionInches());
+    	if (controlMode == ArmControlMode.JOYSTICK_PID) {
+    		Robot.arm.setPositionPID(Robot.arm.getPositionInches());
     	}
     	else if (controlMode == ArmControlMode.JOYSTICK_MANUAL) {
-    		Robot.wrist.setSpeedJoystick(0);
+    		Robot.arm.setSpeedJoystick(0);
+    	}
+    	else {
+    		Robot.arm.setSpeed(0.0);
     	}
     }
 

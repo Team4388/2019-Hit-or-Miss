@@ -28,7 +28,7 @@ public class ArmSetPositionPID extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Math.abs(Robot.arm.getYPositionInches() - this.targetPositionInches) < Arm.PID_ERROR_INCHES;
+        return Math.abs(Robot.arm.getPositionInches() - this.targetPositionInches) < Arm.PID_ERROR_INCHES;
     }
 
     // Called once after isFinished returns true

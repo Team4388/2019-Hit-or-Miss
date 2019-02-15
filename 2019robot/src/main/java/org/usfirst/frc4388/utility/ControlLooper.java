@@ -4,6 +4,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
+import org.usfirst.frc4388.robot.subsystems.Arm;
+import org.usfirst.frc4388.robot.subsystems.Drive;
+
 /**
  * ControlLooper.java
  * <p>
@@ -15,7 +18,7 @@ import java.util.Vector;
  *
  * @author Tom Bottiglieri
  */
-
+/*
 public class ControlLooper 
 {
 	private Timer controlLoopTimer;	
@@ -72,8 +75,12 @@ public class ControlLooper
         }
 	}
 	
-    public void addLoopable(ControlLoopable c) {
-        loopables.addElement(c);
-        c.setPeriodMs(periodMs);
+    public void addLoopable(Drive drive) {
+        loopables.addElement(drive);
+        drive.setPeriodMs(periodMs);
     }
-}
+
+
+	public void register(Arm arm) {
+	}
+}*/

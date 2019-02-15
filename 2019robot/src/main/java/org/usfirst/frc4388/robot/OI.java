@@ -51,11 +51,11 @@ public class OI
 	        climbUp.whenReleased(new InitiateClimber(false));
 	        
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
-	        shiftUp.whenPressed(new DriveSpeedShift(true));
+	        //shiftUp.whenPressed(new DriveSpeedShift());
 	       // shiftUp.whenPressed(new LEDIndicators(true));
 	        
 	        JoystickButton shiftDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
-	        shiftDown.whenPressed(new DriveSpeedShift(false));
+	       // shiftDown.whenPressed(new DriveSpeedShift(false));
 		   // shiftDown.whenPressed(new LEDIndicators(false));
 		   
 		   //Wrist
@@ -63,8 +63,7 @@ public class OI
 		   wristManualMode.whenPressed(new WristSetMode(WristControlMode.JOYSTICK_MANUAL));
 			
 		   //Arm
-		   JoystickButton ArmAimAssist = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
-		   ArmAimAssist.whenPressed(new ArmSetMode(ArmControlMode.PID));
+
 
 
 

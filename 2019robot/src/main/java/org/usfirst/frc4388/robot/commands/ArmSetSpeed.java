@@ -2,26 +2,23 @@ package org.usfirst.frc4388.robot.commands;
 
 import org.usfirst.frc4388.robot.Robot;
 
-import org.usfirst.frc4388.robot.subsystems.*;
-
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
 public class ArmSetSpeed extends Command {
-
-	private double RaiseSpeed;
 	
-	// Constructor with speed
-    public ArmSetSpeed(double RaiseSpeed) {
-    	this.RaiseSpeed = RaiseSpeed;
-       // requires(Robot.elevatorAuton);
+	private double speed;
+
+    public ArmSetSpeed(double speed) {
+    	this.speed = speed;
+        requires(Robot.arm);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	//Robot.elevatorAuton.setRaiseSpeed(RaiseSpeed);
+    	Robot.arm.setSpeed(speed);
     }
 
     // Called repeatedly when this Command is scheduled to run

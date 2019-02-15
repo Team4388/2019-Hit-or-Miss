@@ -2,9 +2,9 @@ package org.usfirst.frc4388.utility;
 
 import java.util.ArrayList;
 
-import org.usfirst.frc4388.robot.Constants;
 import org.usfirst.frc4388.robot.subsystems.Drive;
 
+//import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class MMTalonPIDController
@@ -12,7 +12,7 @@ public class MMTalonPIDController
 	protected static enum MMControlMode { STRAIGHT, TURN };
 	public static enum MMTalonTurnType { TANK, LEFT_SIDE_ONLY, RIGHT_SIDE_ONLY };
 
-	protected ArrayList<CANTalonEncoder> motorControllers;	
+	protected ArrayList<TalonSRXEncoder> motorControllers;	
 	protected long periodMs;
 	protected PIDParams pidParams;	
 	protected boolean useGyroLock;
@@ -23,73 +23,54 @@ public class MMTalonPIDController
 	protected MMTalonTurnType turnType;
 	protected double targetValue;
 	
-	public MMTalonPIDController(long periodMs, PIDParams pidParams, ArrayList<CANTalonEncoder> motorControllers) 
+	public MMTalonPIDController(long periodMs, PIDParams pidParams, ArrayList<TalonSRXEncoder> motorControllers) 
 	{
 		this.motorControllers = motorControllers;
 		this.periodMs = periodMs;
 		setPID(pidParams);
 	}
-	
-	private int convertInchesPerSecToTicksPer100ms(double inchesPerSec) {
-		return (int)Math.round(Constants.kDriveEncoderTicksPerInch * inchesPerSec / 10);
-	}
     
 	public void setPID(PIDParams pidParams) {
 		this.pidParams = pidParams;
 		
-		for (CANTalonEncoder motorController : motorControllers) {
-			//motorController.setPID(pidParams.kP, pidParams.kI, pidParams.kD);
-			//motorController.setF(pidParams.kF);
-			motorController.config_kP(0, pidParams.kP, 0);	//TODO: verify want parameter slot 0, with no timeout
-			motorController.config_kI(0, pidParams.kI, 0);	//TODO: verify want parameter slot 0, with no timeout
-			motorController.config_kD(0, pidParams.kD, 0);	//TODO: verify want parameter slot 0, with no timeout
-			motorController.config_kF(0, pidParams.kF, 0);	//TODO: verify want parameter slot 0, with no timeout
+		for (TalonSRXEncoder motorController : motorControllers) {
+			motorController.setPIDF(0, pidParams.kP, pidParams.kI, pidParams.kD, pidParams.kF);
 		}
 	}
 	
-	public void setMMStraightTarget(double startValue, double targetValue, double maxVelocityInchesPerSec, double maxAccelerationInchesPerSecPerSec, boolean useGyroLock, double desiredAngle, boolean resetEncoder) {
+	public void setMMStraightTarget(double startValue, double targetValue, double maxVelocity, double maxAcceleration, boolean useGyroLock, double desiredAngle, boolean resetEncoder) {
 		controlMode = MMControlMode.STRAIGHT;
 		this.startGyroAngle = desiredAngle;
 		this.useGyroLock = useGyroLock;
 		this.targetValue = targetValue;
 		
 		// Set up the motion profile 
-		for (CANTalonEncoder motorController : motorControllers) {
+		for (TalonSRXEncoder motorController : motorControllers) {
 			if (resetEncoder) {
-				//motorController.setPosition(0);
-				motorController.setSelectedSensorPosition(0, 0, 0);	//TODO: verify want 0="Primary closed-loop", with no timeout
+				motorController.setPosition(0);
 			}
-			//motorController.setMotionMagicCruiseVelocity(maxVelocity);
-			//motorController.setMotionMagicAcceleration(maxAcceleration);
-			//motorController.set(targetValue);
-			//motorController.changeControlMode(TalonControlMode.MotionMagic);
-			motorController.configMotionCruiseVelocity(convertInchesPerSecToTicksPer100ms(maxVelocityInchesPerSec), 0);
-			motorController.configMotionAcceleration(convertInchesPerSecToTicksPer100ms(maxAccelerationInchesPerSecPerSec), 0);
+			motorController.configMotionCruiseVelocity((int)maxVelocity, TalonSRXEncoder.TIMEOUT_MS);
+			motorController.configMotionAcceleration((int)maxAcceleration, TalonSRXEncoder.TIMEOUT_MS);
 			motorController.set(ControlMode.MotionMagic, targetValue);
 		}
 	}
 			
 	public void setZeroPosition() {
-		for (CANTalonEncoder motorController : motorControllers) {
-			//motorController.setPosition(0);
-			//motorController.set(0);
-			//motorController.changeControlMode(TalonControlMode.Position);
-			motorController.setSelectedSensorPosition(0, 0, 0);	//TODO: verify want 0="Primary closed-loop", with no timeout
-			motorController.set(ControlMode.Position, 0);
+		for (TalonSRXEncoder motorController : motorControllers) {
+			motorController.setPosition(0);
+			motorController.set(ControlMode.MotionMagic, targetValue);
 		}
 	}
 
 	public void resetZeroPosition() {
-		for (CANTalonEncoder motorController : motorControllers) {
-			//motorController.setPosition(0);
-			motorController.setSelectedSensorPosition(0, 0, 0);	//TODO: verify want 0="Primary closed-loop", with no timeout
+		for (TalonSRXEncoder motorController : motorControllers) {
+			motorController.setPosition(0);
 		}
 	}
 
 	public void resetZeroPosition(double angle) {
-		for (CANTalonEncoder motorController : motorControllers) {
-			//motorController.setPosition(angle);
-			motorController.setSelectedSensorPosition((int)angle, 0, 0);	//TODO URGENT: convert angle to raw sensor position
+		for (TalonSRXEncoder motorController : motorControllers) {
+			motorController.setPositionWorld(angle);
 		}
 	}
 
@@ -120,14 +101,12 @@ public class MMTalonPIDController
 			leftTarget = targetValue - deltaDistance;
 			
 			// Update the controllers with updated set points.
-			for (CANTalonEncoder motorController : motorControllers) {
+			for (TalonSRXEncoder motorController : motorControllers) {
 				if (motorController.isRight()) {
-					//motorController.set(rightTarget);
-			    	motorController.set(motorController.getControlMode(), rightTarget);	//TODO: change to explicit mode set?
+					motorController.set(ControlMode.MotionMagic, rightTarget);
 				}
 				else {
-					//motorController.set(leftTarget);
-			    	motorController.set(motorController.getControlMode(), leftTarget);	//TODO: change to explicit mode set?
+					motorController.set(ControlMode.MotionMagic, leftTarget);
 				}
 			}
 		}

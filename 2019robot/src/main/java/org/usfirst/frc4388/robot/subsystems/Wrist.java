@@ -70,7 +70,7 @@ public class Wrist extends Subsystem
   public static final double JOYSTICK_INCHES_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
   public static final double JOYSTICK_Degrees_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
 
-  public double armAngleDegrees = Robot.arm.ARM_ANGLE_DEGREES;
+  public double armAngleDegrees = 90;
 
   public static final double targetAngleDegreesBallIn = -45;   ///Change values
   public static final double targetAngleDegreesBallOut = 360;
@@ -175,7 +175,7 @@ public class Wrist extends Subsystem
   public void onStart(double timestamp) 
   {
 		//mpController.setPID(mpPIDParams);
-		mpController.setPID(pidPIDParamsLevel);
+	//	mpController.setPID(pidPIDParamsLevel);
 		mpController.setPIDSlot(PID_SLOT);
 	}
 
