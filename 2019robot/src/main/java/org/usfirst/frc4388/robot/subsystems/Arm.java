@@ -1,6 +1,7 @@
 package org.usfirst.frc4388.robot.subsystems;
 import java.util.ArrayList;
 
+import org.usfirst.frc4388.controller.XboxController;
 import org.usfirst.frc4388.robot.Constants;
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.RobotMap;
@@ -11,6 +12,15 @@ import org.usfirst.frc4388.utility.TalonSRXEncoder;
 import org.usfirst.frc4388.utility.TalonSRXFactory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -20,7 +30,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Arm extends Subsystem implements Loop
 {
-	private static Arm instance;
+	//PID encoder and motor
+	private CANTalonEncoder armMotor;
+	//private WPI_TalonSRX ArmLeft;
 
 	public static enum ArmControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL };
 
@@ -58,10 +70,11 @@ public class Arm extends Subsystem implements Loop
 	public static final double MP_T1 = 400;  // Fast = 300
 	public static final double MP_T2 = 150;  // Fast = 150
 	
-	// Motor controllers
-	private ArrayList<TalonSRXEncoder> motorControllers = new ArrayList<TalonSRXEncoder>();	
+	//PID controller Max Scale
+	private SoftwarePIDPositionController pidPositionControllerLowest;
+	//private PIDParams PositionPIDParamsLowest = new PIDParams(2.0, 0.0, 0.0);
+	private PIDParams PositionPLowest;
 
-	private TalonSRXEncoder motor1;
 	private TalonSRX motor2;
 	
 	// PID controller and params
@@ -105,67 +118,51 @@ public class Arm extends Subsystem implements Loop
 			
 			
 		}
-		catch (Exception e) {
-			System.err.println("An error occurred in the DriveTrain constructor");
-		}
-	}
-
-	@Override
-	public void initDefaultCommand() {
-	}
-		
-	public void resetZeroPosition(double position) {
-		mpController.resetZeroPosition(position);
-	}	
-	
-	private synchronized void setElevatorControlMode(ArmControlMode controlMode) {
-		this.elevatorControlMode = controlMode;
-	}
-	
-	private synchronized ArmControlMode getElevatorControlMode() {
-		return this.elevatorControlMode;
-	}
-
-	public void setSpeed(double speed) {
-		motor1.set(ControlMode.PercentOutput, speed);
-		setElevatorControlMode(ArmControlMode.MANUAL);
-	}
-		
-	public void setSpeedJoystick(double speed) {
-		motor1.set(ControlMode.PercentOutput, speed);
-		setElevatorControlMode(ArmControlMode.JOYSTICK_MANUAL);
-	}
-		
-	public void setPositionPID(double targetPositionInches) {
-		mpController.setPIDSlot(PID_SLOT);
-		updatePositionPID(targetPositionInches);
-		setElevatorControlMode(ArmControlMode.JOYSTICK_PID);	
-		setFinished(false);
-	}
-	
-	public void updatePositionPID(double targetPositionInches) {
- 		targetPositionInchesPID = limitPosition(targetPositionInches);
-		double startPositionInches = motor1.getPositionWorld();
-		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
-	}
-	
-	public void setPositionMP(double targetPositionInches) {
-		double startPositionInches = motor1.getPositionWorld();
-		mpController.setMPTarget(startPositionInches, limitPosition(targetPositionInches), MP_MAX_VELOCITY_INCHES_PER_SEC, MP_T1, MP_T2); 
-		setFinished(false);
 		firstMpPoint = true;
 		setElevatorControlMode(ArmControlMode.MOTION_PROFILE);
  	}
+
+    
+	//PID encoder position
+	public double getEncoderArmPosition()
+	{
+		return armMotor.getPositionWorld();
+	}
 	
-	private double limitPosition(double targetPosition) {
-		if (targetPosition < MIN_POSITION_INCHES) {
-			return MIN_POSITION_INCHES;
-		}
-		else if (targetPosition > MAX_POSITION_INCHES) {
-			return MAX_POSITION_INCHES;
-		}
-		
-		return targetPosition;
+	public double getArmHeightInchesAboveFloor()
+	{
+		return armMotor.getPositionWorld();
+	}
+
+	public synchronized void setControlMode(DriveControlMode controlMode) 
+	{
+ 		this.controlMode = controlMode;
+ 		
+ 		isFinished = false;
+	}
+	/*
+	public void setArmPIDMaxScale(double ArmPosition, double maxError, double minError)
+	{
+		double ArmTargetPos = 0;
+		this.targetPPosition = ArmTargetPos;
+		pidPositionControllerMaxScale.setPIDPositionTarget(ArmTargetPos, maxError, minError);      ///////TARGET POSITION WHERE??
+		Robot.Arm.setControlMode(DriveControlMode.MOVE_POSITION_MAX_SCALE);
+	}
+	
+	public void setArmPIDLowScale(double ArmPosition, double maxError, double minError)
+	{
+		double ArmTargetPos = 0;
+		this.targetPPosition = ArmTargetPos;
+		pidPositionControllerMaxScale.setPIDPositionTarget(ArmTargetPos, maxError, minError);
+		Robot.Arm.setControlMode(DriveControlMode.MOVE_POSITION_LOW_SCALE);
+	}
+	
+	public void setArmPIDSwitch(double ArmPosition, double maxError, double minError)
+	{
+		double ArmTargetPos = 0;
+		this.targetPPosition = ArmTargetPos;
+		pidPositionControllerMaxScale.setPIDPositionTarget(ArmTargetPos, maxError, minError);
+		Robot.Arm.setControlMode(DriveControlMode.MOVE_POSITION_SWITCH);
 	}
 	
 	@Override
@@ -177,11 +174,9 @@ public class Arm extends Subsystem implements Loop
 		mpController.setPID(pidPIDParamsHiGear, PID_SLOT);
 		mpController.setPIDSlot(PID_SLOT);
 	}
-
-	@Override
-	public void onStop(double timestamp) {
-		// TODO Auto-generated method stub
-		
+	*/
+	public void rawSetOutput(double output){
+		armMotor.set(/*ControlMode.PercentOutput,*/ output);
 	}
 
 	@Override
@@ -209,8 +204,24 @@ public class Arm extends Subsystem implements Loop
 				default:
 					break;
 			}
+			pressed = true;
 		}
+		else
+		{
+			if 	(controlMode == DriveControlMode.STOP_MOTORS){
+				{
+				Robot.arm.setControlMode(DriveControlMode.JOYSTICK);
+				}
+			
+			pressed = false;
+			}
+		}
+
 	}
+		
+		//pressed = (isPressed.isFwdLimitSwitchClosed() == true) ? true : false;
+	
+	
 	
 	private void controlPidWithJoystick() {
 		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
@@ -258,11 +269,8 @@ public class Arm extends Subsystem implements Loop
 		return isFinished;
 	}
 	
-	public synchronized void setFinished(boolean isFinished) {
-		this.isFinished = isFinished;
-	}
-		
-	public double getPeriodMs() {
+	public double getPeriodMs()
+	{
 		return periodMs;
 	}
 	
@@ -278,15 +286,10 @@ public class Arm extends Subsystem implements Loop
 //				SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
 				SmartDashboard.putNumber("Elevator Target PID Position", targetPositionInchesPID);
 			}
-			catch (Exception e) {
+			catch (Exception e) 
+			{
+				System.err.println("Drivetrain update status error");
 			}
 		}
-	}	
-	
-	public static Arm getInstance() {
-		if(instance == null) {
-			instance = new Arm();
-		}
-		return instance;
 	}
 }

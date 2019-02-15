@@ -7,29 +7,35 @@
 
 package org.usfirst.frc4388.robot.commands;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import org.usfirst.frc4388.robot.Robot;
 
-public class GrabBallOutOfRobot extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
+
+/**
+* Add your docs here.
+*/
+
+public class GrabBallOutOfRobot extends CommandGroup 
+{
   public GrabBallOutOfRobot() 
   {
-    // Add Commands here:
-    // e.g. addSequential(new Command1());
-    // addSequential(new Command2());
-    // these will run in order.
+    //Add rest of sequentials for this command group
 
-    // To run multiple commands at the same time,
-    // use addParallel()
-    // e.g. addParallel(new Command1());
-    // addSequential(new Command2());
-    // Command1 and Command2 will run in parallel.
+    addSequential(new FlipIntake());
+    //Move Arm until bar jump angle 
 
-    // A command group will require all of the subsystems that each member
-    // would require.
-    // e.g. if Command1 requires chassis, and Command2 requires arm,
-    // a CommandGroup containing them would require both the chassis and the
-    // arm.
+    //Jump bar in robot
+    if(Robot.wrist.armAngleDegrees <= Robot.wrist.jumpBarArmAngle && Robot.wrist.armAngleDegrees >= Robot.wrist.jumpBarArmAngle)
+    {
+      addParallel(new WaitCommand(2));
+      addSequential(new RunWristMotorJumpBar());
+      addSequential(new StopWristMotor());
+    }
+
+    //continue arm movement until ball is in intake ///SENSOR for ball in robot
+
+    //Move ball out of robot to 360 degrees
+      //move arm and wrist in parallel
   }
 }
