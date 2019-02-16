@@ -103,8 +103,6 @@ public class Climber extends Subsystem{
 		}
 	}
 
-}
-
 	public void safetySwitch(boolean safetySwitch){
 		this.safetySwitch = safetySwitch;
 	}
