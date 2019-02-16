@@ -40,6 +40,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -192,13 +193,16 @@ public class Drive extends Subsystem implements ControlLoopable
     private AHRS gyroNavX;
 	private boolean useGyroLock;
 	private double gyroLockAngleDeg;
-	//private double kPGyro = 0.04;
-	private double kPGyro = 0.0625;
+	private double kPGyro = 0.07;
+	//private double kPGyro = 0.0625;
+	
 	private boolean isCalibrating = false;
 	private double gyroOffsetDeg = 0;
 
 	public Drive() {
 		try {
+			//System.err.println("Beginning of Drive.");
+
 			leftDrive1 = new CANSparkMax(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, MotorType.kBrushless);
 			//leftDrive1 = new CANSparkMax(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.QuadEncoder);
 			leftDrive2 = new CANSparkMax(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID, MotorType.kBrushless);
@@ -209,6 +213,9 @@ public class Drive extends Subsystem implements ControlLoopable
 			rightDrive2 = new CANSparkMax(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID, MotorType.kBrushless);
 			encoderRight = new CANEncoder(rightDrive1);
 			rightDrive2.follow(rightDrive1);
+			
+			//System.err.println("After Constructors.");
+
 			//gyroPigeon = new PigeonImu(leftDrive2);
 			gyroNavX = new AHRS(SPI.Port.kMXP);
 			
@@ -218,17 +225,17 @@ public class Drive extends Subsystem implements ControlLoopable
 			//leftDrive1.clearStickyFaults();
 			//leftDrive1.setVoltageRampRate(VOLTAGE_RAMP_RATE);
 			//leftDrive1.setNominalClosedLoopVoltage(12.0);
-			leftDrive1.clearStickyFaults(0);
+			leftDrive1.clearFaults();
 			leftDrive1.setInverted(false);//false on comp 2108, false on microbot
-			leftDrive1.setSensorPhase(true);//true on comp 2108, false on microbot
-			leftDrive1.setSafetyEnabled(false);
+			//leftDrive1.setSensorPhase(true);//true on comp 2108, false on microbot //not needed for spark
+			//leftDrive1.setSafetyEnabled(false); //not needed for spark
 			//leftDrive1.setCurrentLimit(15);
 			//leftDrive1.enableCurrentLimit(true);
-			leftDrive1.setNeutralMode(NeutralMode.Brake);
-			leftDrive1.configOpenloopRamp(OPEN_LOOP_RAMP_SECONDS, 0);
-			leftDrive1.configClosedloopRamp(CLOSED_LOOP_RAMP_SECONDS, 0);
-			leftDrive1.configNominalOutputForward(+1.0f, 0);
-			leftDrive1.configNominalOutputReverse(-1.0f, 0);
+			leftDrive1.setIdleMode(IdleMode.kBrake);
+			//leftDrive1.configOpenloopRamp(OPEN_LOOP_RAMP_SECONDS, 0); // not needed for spark?
+			//leftDrive1.configClosedloopRamp(CLOSED_LOOP_RAMP_SECONDS, 0); // not needed for spark?
+			//leftDrive1.configNominalOutputForward(+1.0f, 0); // not needed for spark?
+			//leftDrive1.configNominalOutputReverse(-1.0f, 0); // not needed for spark?
 
 			
 //	        if (leftDrive1.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder) != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
@@ -237,40 +244,43 @@ public class Drive extends Subsystem implements ControlLoopable
 			
 
 			leftDrive2.setInverted(false);//false on comp 2108, false on microbot
-			leftDrive2.setSafetyEnabled(false);
-			leftDrive2.setNeutralMode(NeutralMode.Brake);
-			leftDrive2.set(ControlMode.Follower, leftDrive1.getDeviceID());
+			//leftDrive2.setSafetyEnabled(false);
+			leftDrive2.setIdleMode(IdleMode.kBrake);
+			//leftDrive2.set(ControlMode.Follower, leftDrive1.getDeviceID()); // set above
 	
 
 			
 			//rightDrive1.clearStickyFaults();
 			//rightDrive1.setVoltageRampRate(VOLTAGE_RAMP_RATE);
 			//rightDrive1.setNominalClosedLoopVoltage(12.0);
-			rightDrive1.clearStickyFaults(0);
-			rightDrive1.setInverted(true);//true on comp 2108, false on microbot
-			rightDrive1.setSensorPhase(true);//true on comp 2108, true on microbot
-			rightDrive1.setSafetyEnabled(false);
-			rightDrive1.setNeutralMode(NeutralMode.Brake);
-			rightDrive1.configOpenloopRamp(OPEN_LOOP_RAMP_SECONDS, 0);
-			rightDrive1.configClosedloopRamp(CLOSED_LOOP_RAMP_SECONDS, 0);
-			rightDrive1.configNominalOutputForward(+1.0f, 0);
-			rightDrive1.configNominalOutputReverse(-1.0f, 0);
+			rightDrive1.clearFaults();
+			rightDrive1.setInverted(false);//true on comp 2108, false on microbot
+			//rightDrive1.setSensorPhase(true);//true on comp 2108, true on microbot
+			//rightDrive1.setSafetyEnabled(false);
+			rightDrive1.setIdleMode(IdleMode.kBrake);
+			//rightDrive1.configOpenloopRamp(OPEN_LOOP_RAMP_SECONDS, 0);
+			//rightDrive1.configClosedloopRamp(CLOSED_LOOP_RAMP_SECONDS, 0);
+			//rightDrive1.configNominalOutputForward(+1.0f, 0);
+			//rightDrive1.configNominalOutputReverse(-1.0f, 0);
 //	        if (rightDrive1.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder) != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
 //	            DriverStation.reportError("Could not detect right drive encoder encoder!", false);
 //	        }
 			
 
-			rightDrive2.setInverted(true);//True on comp 2108, false on microbot
-			rightDrive2.setSafetyEnabled(false);
-			rightDrive2.setNeutralMode(NeutralMode.Brake);
-			rightDrive2.set(ControlMode.Follower, rightDrive1.getDeviceID());
+			rightDrive2.setInverted(false);//True on comp 2108, false on microbot
+			//rightDrive2.setSafetyEnabled(false);
+			rightDrive2.setIdleMode(IdleMode.kBrake);
+			//rightDrive2.set(ControlMode.Follower, rightDrive1.getDeviceID());
 
-
-			leftPIDController = new CANPIDController(leftDrive1);
-			rightPIDController = new CANPIDController(rightDrive1);
+			//System.err.println("After motor settings.");
+			
+			CANPIDController leftDrive1_Controller = new CANPIDController(leftDrive1);
+			CANPIDController rightDrive1_Controller = new CANPIDController(rightDrive1);
 							
-			motorControllers.add(leftPIDController);
-			motorControllers.add(rightPIDController);
+			motorControllers.add(leftDrive1_Controller);
+			motorControllers.add(rightDrive1_Controller);
+
+			//System.err.println("After motorControllers.");
 
 			//m_drive = new RobotDrive(leftDrive1, rightDrive1);
 			//m_drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
@@ -281,8 +291,11 @@ public class Drive extends Subsystem implements ControlLoopable
 			//m_drive.setInvertedMotor(DifferentialDrive.MotorType.kRearRight, true);	//TODO URGENT: verify
 			m_drive.setSafetyEnabled(false);
 			
+		
 			//speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_PCM_ID);
+			//System.err.println("End of Drive.");
 		}
+
 		catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
 		}
@@ -290,15 +303,15 @@ public class Drive extends Subsystem implements ControlLoopable
 
 	public void setToBrakeOnNeutral(boolean brakeVsCoast) {
 		if (brakeVsCoast) {
-			leftDrive1.setNeutralMode(NeutralMode.Brake);
-			leftDrive2.setNeutralMode(NeutralMode.Brake);
-			rightDrive1.setNeutralMode(NeutralMode.Brake);
-			rightDrive2.setNeutralMode(NeutralMode.Brake);
+			leftDrive1.setIdleMode(IdleMode.kBrake);
+			leftDrive2.setIdleMode(IdleMode.kBrake);
+			rightDrive1.setIdleMode(IdleMode.kBrake);
+			rightDrive2.setIdleMode(IdleMode.kBrake);
 		} else {
-			leftDrive1.setNeutralMode(NeutralMode.Coast);
-			leftDrive2.setNeutralMode(NeutralMode.Coast);
-			rightDrive1.setNeutralMode(NeutralMode.Coast);
-			rightDrive2.setNeutralMode(NeutralMode.Coast);
+			leftDrive1.setIdleMode(IdleMode.kCoast);
+			leftDrive2.setIdleMode(IdleMode.kCoast);
+			rightDrive1.setIdleMode(IdleMode.kCoast);
+			rightDrive2.setIdleMode(IdleMode.kCoast);
 		}
 	}
 	
@@ -366,8 +379,7 @@ public class Drive extends Subsystem implements ControlLoopable
 		mpStraightController.setMPStraightTarget(0, distanceInches, maxVelocity, MP_STRAIGHT_T1, MP_STRAIGHT_T2, useGyroLock, yawAngle, true); 
 		setControlMode(DriveControlMode.MP_STRAIGHT);
 	}
-	
-	//public void setStraightMPCached(String key, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
+		//public void setStraightMPCached(String key, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
 	//	double yawAngle = useAbsolute ? BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle) : getGyroAngleDeg();
 	//	mpStraightController.setPID(mpStraightPIDParams);
 	//	mpStraightController.setMPStraightTarget(key, useGyroLock, yawAngle, true); 
@@ -437,8 +449,8 @@ public class Drive extends Subsystem implements ControlLoopable
 	}
     
     public void updatePose() {
-        double left_distance = leftDrive1.getPositionWorld();
-        double right_distance = rightDrive1.getPositionWorld();
+        double left_distance = encoderLeft.getPosition();
+        double right_distance = encoderRight.getPosition();
         Rotation2d gyro_angle = Rotation2d.fromDegrees(-getGyroAngleDeg());
         lastPose = currentPose;
         currentPose = generateOdometryFromSensors(left_distance - left_encoder_prev_distance_, right_distance - right_encoder_prev_distance_, gyro_angle);
@@ -470,20 +482,20 @@ public class Drive extends Subsystem implements ControlLoopable
 		if (controlMode == DriveControlMode.JOYSTICK) {
 			//leftDrive1.changeControlMode(TalonControlMode.PercentVbus);
 			//rightDrive1.changeControlMode(TalonControlMode.PercentVbus);
-			leftDrive1.set(ControlMode.PercentOutput, 0);	//TODO URGENT: make sure not called when robot moving
-			rightDrive1.set(ControlMode.PercentOutput, 0);	//TODO URGENT: make sure not called when robot moving
+			leftDrive1.set(0);	//TODO URGENT: make sure not called when robot moving
+			rightDrive1.set(0);	//TODO URGENT: make sure not called when robot moving
 		}
 		else if (controlMode == DriveControlMode.MANUAL) {
 			//leftDrive1.changeControlMode(TalonControlMode.PercentVbus);
 			//rightDrive1.changeControlMode(TalonControlMode.PercentVbus);
-			leftDrive1.set(ControlMode.PercentOutput, 0);	//TODO URGENT: make sure not called when robot moving
-			rightDrive1.set(ControlMode.PercentOutput, 0);	//TODO URGENT: make sure not called when robot moving
+			leftDrive1.set(0);	//TODO URGENT: make sure not called when robot moving
+			rightDrive1.set(0);	//TODO URGENT: make sure not called when robot moving
 		}
 		else if (controlMode == DriveControlMode.CLIMB) {
 			//leftDrive1.changeControlMode(TalonControlMode.PercentVbus);
 			//rightDrive1.changeControlMode(TalonControlMode.PercentVbus);
-			leftDrive1.set(ControlMode.PercentOutput, 0);	//TODO URGENT: make sure not called when robot moving
-			rightDrive1.set(ControlMode.PercentOutput, 0);	//TODO URGENT: make sure not called when robot moving
+			leftDrive1.set(0);	//TODO URGENT: make sure not called when robot moving
+			rightDrive1.set(0);	//TODO URGENT: make sure not called when robot moving
 		}
 		else if (controlMode == DriveControlMode.HOLD) {
 			mpStraightController.setPID(mpHoldPIDParams);
@@ -493,10 +505,10 @@ public class Drive extends Subsystem implements ControlLoopable
 			//rightDrive1.changeControlMode(TalonControlMode.Position);
 			//rightDrive1.setPosition(0);
 			//rightDrive1.set(0);
-			leftDrive1.setSelectedSensorPosition(0, 0, 0);	//TODO: verify want 0="Primary closed-loop", with no timeout
-			leftDrive1.set(ControlMode.Position, 0);
-			rightDrive1.setSelectedSensorPosition(0, 0, 0);	//TODO: verify want 0="Primary closed-loop", with no timeout
-			rightDrive1.set(ControlMode.Position, 0);
+			//leftDrive1.setSelectedSensorPosition(0, 0, 0);	//not needed for spark?  TODO: verify want 0="Primary closed-loop", with no timeout
+			leftDrive1.set(0);
+			//rightDrive1.setSelectedSensorPosition(0, 0, 0);	//not needed for spark?  TODO: verify want 0="Primary closed-loop", with no timeout
+			rightDrive1.set(0);
 		}
 		isFinished = false;
 	}
@@ -646,7 +658,7 @@ public class Drive extends Subsystem implements ControlLoopable
 			m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
 					m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
 		}
-		
+
 		m_drive.arcadeDrive(m_moveOutput, m_steerOutput*.75);
 		// break;
 		// case CONTROLLER_XBOX_ARCADE_RIGHT:
@@ -680,14 +692,10 @@ public class Drive extends Subsystem implements ControlLoopable
 
 	public void rawDriveLeftRight(double leftPercentOutput, double rightPercentOutput) {
 		
-			if (elevatorRight.getSelectedSensorPosition(0) >= 3550) {
-				leftDrive1.set(ControlMode.PercentOutput, leftPercentOutput*.5);
-				rightDrive1.set(ControlMode.PercentOutput, rightPercentOutput*.5);
-			}
-			else /*(elevatorRight.getSelectedSensorPosition(0) < 3550)*/ {
-				leftDrive1.set(ControlMode.PercentOutput, leftPercentOutput);
-				rightDrive1.set(ControlMode.PercentOutput, rightPercentOutput);
-			}
+			
+				leftDrive1.set(leftPercentOutput);
+				rightDrive1.set(rightPercentOutput);
+			
 	}
 
 	private boolean inDeadZone(double input) {
@@ -759,9 +767,8 @@ public class Drive extends Subsystem implements ControlLoopable
 	}
 	
 	@Override
-	
 	public void setPeriodMs(long periodMs) {
-		/*
+		/*                                       FIX TODAY
 		mpStraightController = new MPTalonPIDController(periodMs, mpStraightPIDParams, motorControllers);
 		mpTurnController = new MPSoftwarePIDController(periodMs, mpTurnPIDParams, motorControllers);
 		pidTurnController = new SoftwarePIDController(pidTurnPIDParams, motorControllers);
@@ -801,23 +808,24 @@ public class Drive extends Subsystem implements ControlLoopable
     }
 
     public double getLeftPositionWorld() {
-    	return leftDrive1.getPositionWorld();
+    	return 0;//leftDrive1.getPositionWorld(); FIX TODAY
     }
 
     public double getRightPositionWorld() {
-    	return rightDrive1.getPositionWorld();
+    	return 0;//rightDrive1.getPositionWorld(); FIX TODAY
     }
 
 	public void updateStatus(Robot.OperationMode operationMode) {
 		if (operationMode == Robot.OperationMode.TEST) {
 			try {
+				SmartDashboard.putNumber("Gyro Value", getGyroAngleDeg());
 				SmartDashboard.putNumber("Update Period (ms)", lastControlLoopUpdatePeriod * 1000.0);
-				SmartDashboard.putNumber("Right Pos Ticks", rightDrive1.getSelectedSensorPosition(0));
-				SmartDashboard.putNumber("Left Pos Ticks", leftDrive1.getSelectedSensorPosition(0));
-				SmartDashboard.putNumber("Right Pos Inches", rightDrive1.getPositionWorld());
-				SmartDashboard.putNumber("Left Pos Inches", leftDrive1.getPositionWorld());
-				SmartDashboard.putNumber("Right Vel Ft-Sec", rightDrive1.getVelocityWorld() / 12);
-				SmartDashboard.putNumber("Left Vel Ft-Sec", leftDrive1.getVelocityWorld() / 12);
+				SmartDashboard.putNumber("Right Pos Ticks", 0);//rightDrive1.getSelectedSensorPosition(0));   FIX TODAY
+				SmartDashboard.putNumber("Left Pos Ticks", 0);//leftDrive1.getSelectedSensorPosition(0));
+				SmartDashboard.putNumber("Right Pos Inches", -encoderRight.getPosition());//rightDrive1.getPositionWorld());
+				SmartDashboard.putNumber("Left Pos Inches", encoderLeft.getPosition());//leftDrive1.getPositionWorld());
+				SmartDashboard.putNumber("Right Vel Ft-Sec", 0);//rightDrive1.getVelocityWorld() / 12);
+				SmartDashboard.putNumber("Left Vel Ft-Sec", 0);//leftDrive1.getVelocityWorld() / 12);
 				//SmartDashboard.putNumber("Left 1 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID));
 				//SmartDashboard.putNumber("Left 2 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID));
 //				SmartDashboard.putNumber("Left 3 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID));

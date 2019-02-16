@@ -47,15 +47,31 @@ public class OI
 	        
 	        XBoxTriggerButton CarriageEject = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.RIGHT_TRIGGER);
 	        CarriageEject.whenPressed(new IntakeSetSpeed(Carriage.CUBE_INTAKE_SPEED));
-	        CarriageEject.whenReleased(new IntakeSetSpeed(0.0));
-	        */
-	        JoystickButton climbUp = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
-	        climbUp.whenPressed(new InitiateClimber(true));
-	        climbUp.whenReleased(new InitiateClimber(false));
+			CarriageEject.whenReleased(new IntakeSetSpeed(0.0));
+			*/
+			//JoystickButton endEfector = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
+			//endEfector.toggleWhenActive(new WristPlacement(true));
+
+
+
+		
+			JoystickButton liftHatchIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
+			liftHatchIntake.whenPressed(new LiftHatchDropBall());
+
+
+			JoystickButton liftBallIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
+			//liftBallIntake.whenPressed(new HatchFlip(false));
+			liftBallIntake.whenPressed(new LiftBallDropHatch());
+
+
+
+
+	       // climbUp.whenPressed(new InitiateClimber(true));
+	        //climbUp.whenReleased(new InitiateClimber(false));
 	        
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 	        shiftUp.whenPressed(new DriveSpeedShift(true));
-	       // shiftUp.whenPressed(new LEDIndicators(true));
+	        //shiftUp.whenPressed(new LEDIndicators(true));
 	        
 	        JoystickButton shiftDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 	        shiftDown.whenPressed(new DriveSpeedShift(false));

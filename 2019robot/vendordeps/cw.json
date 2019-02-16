@@ -1,0 +1,21 @@
+{
+    "fileName": "cw.json",
+    "name": "cw",
+    "version": "3.1.344",
+    "uuid":"13",
+    "mavenUrls": [
+        "https://mvnrepository.com"
+    ],
+    "jsonUrl": "file:///C:/dev/cw.json",
+    "javaDependencies": [
+        {
+            "groupId": "com.googlecode.json-simple",
+            "artifactId": "json-simple",
+            "version": "1.1.1"
+        }
+    ],
+    "jniDependencies": [],
+    "cppDependencies": [
+       
+    ]
+}

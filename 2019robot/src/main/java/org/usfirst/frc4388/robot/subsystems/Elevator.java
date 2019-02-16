@@ -217,7 +217,7 @@ public class Elevator extends Subsystem implements ControlLoopable
     	
     	double elevatorPos = getEncoderElevatorPosition();
     	
-    	moveElevatorInput = Robot.oi.getOperatorController().getLeftYAxis();
+    	//moveElevatorInput = Robot.oi.getOperatorController().getLeftYAxis();
     	
     	//double moveElevatorSensitivity = adjustJoystickSensitivity(moveScale, moveTrim, moveElevatorInput, moveNonLinear, MOVE_NON_LINEARITY);
     	
@@ -226,11 +226,11 @@ public class Elevator extends Subsystem implements ControlLoopable
     	
     	if(elevatorTuningPressed == true)
       	{     		
-     		elevatorRight.set(moveElevatorInput * 0.5);
+     		//elevatorRight.set(moveElevatorInput * 0.5);
       	}
      	else if(elevatorTuningPressed == false)
      	{
-     		elevatorRight.set(moveElevatorInput);
+     		//elevatorRight.set(moveElevatorInput);
      	}
      		
      		/*
