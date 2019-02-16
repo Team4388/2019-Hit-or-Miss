@@ -41,14 +41,14 @@ public class OI
 			m_driverXbox = new XboxController(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
 			m_operatorXbox = new XboxController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID);
 			
-	      /*  XBoxTriggerButton CarriageIntake = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.LEFT_TRIGGER);
-	        CarriageIntake.whenPressed(new IntakeSetSpeed(Carriage.CUBE_EJECT_SPEED));
-	        CarriageIntake.whenReleased(new IntakeSetSpeed(0.0));
+	        XBoxTriggerButton CarriageIntake = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.LEFT_TRIGGER);
+	        CarriageIntake.whenPressed(new SetIntakeSpeed(BallIntake.BALL_INTAKE_SPEED));
+	        CarriageIntake.whenReleased(new SetIntakeSpeed(0.0));
 	        
 	        XBoxTriggerButton CarriageEject = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.RIGHT_TRIGGER);
-	        CarriageEject.whenPressed(new IntakeSetSpeed(Carriage.CUBE_INTAKE_SPEED));
-			CarriageEject.whenReleased(new IntakeSetSpeed(0.0));
-			*/
+	        CarriageEject.whenPressed(new SetIntakeSpeed(BallIntake.BALL_EXTAKE_SPEED));
+			CarriageEject.whenReleased(new SetIntakeSpeed(0.0));
+			
 			//JoystickButton endEfector = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
 			//endEfector.toggleWhenActive(new WristPlacement(true));
 

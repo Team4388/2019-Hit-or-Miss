@@ -21,8 +21,8 @@ public class BallIntake extends Subsystem {
 
 	private WPI_TalonSRX BallIntakeMain;
 	public static enum BallIntakeControlMode { JOYSTICK, MP_STRAIGHT, HOLD, MANUAL};
-	public static final double BALL_INTAKE_SPEED = 0.40;
-	public static final double BALL_EXTAKE_SPEED = -1.0;
+	public static final double BALL_INTAKE_SPEED = -1.0;
+	public static final double BALL_EXTAKE_SPEED = 1.0;
 	public static final double CUBE_STOP_SPEED = 0;
 	/////^^^^^^^^^ replace this line with the modes we need
 	
@@ -35,7 +35,7 @@ public class BallIntake extends Subsystem {
 	
 	public BallIntake() {
 		try {
-			BallIntakeMain = new WPI_TalonSRX(RobotMap.CLIMBER_CAN_ID);
+			BallIntakeMain = new WPI_TalonSRX(RobotMap.INTAKE_BELT_DRIVE_CAN_ID);
 			//\][carriageLeft.set(CurrentLimit, value);
 			
     }
