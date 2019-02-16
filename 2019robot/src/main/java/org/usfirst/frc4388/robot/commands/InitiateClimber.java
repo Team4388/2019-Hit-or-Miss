@@ -1,28 +1,36 @@
 package org.usfirst.frc4388.robot.commands;
 
 import org.usfirst.frc4388.robot.Robot;
+import org.usfirst.frc4388.robot.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class InitiateClimber extends Command
 {
 	boolean climb;
-	
-	public InitiateClimber(boolean climb) {
-		this.climb=climb;
+	double speed;
+
+	public InitiateClimber(boolean climb, double speed) {
 		requires(Robot.climber);
+		this.climb = climb;
+		this.speed = speed;
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.climber.setClimbSpeed(climb);
+		
 	}
 
 	@Override
 	protected void execute() {
-    }
-
-    // Make this return true when this Command no longer needs to run execute()
+		if(climb){ //If climb button is pressed
+			Robot.climber.setClimbSpeed(climb, speed);
+		}
+		else{
+			Robot.climber.setClimbSpeed(false, 0);
+		}
+	}
+	   // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
         return true;
     }
@@ -30,9 +38,9 @@ public class InitiateClimber extends Command
     // Called once after isFinished returns true
     protected void end() {
     }
-    
+
 	@Override
 	protected void interrupted() {
-			
+
 	}
 }
