@@ -57,7 +57,6 @@ public class Climber extends Subsystem{
 			climberBack = new WPI_TalonSRX(RobotMap.CLIMBER_CAN_ID);
 			climberFront = new WPI_TalonSRX(RobotMap.CLIMBER_WHEEL1_ID);
 			climberFront2 = new WPI_TalonSRX(RobotMap.CLIMBER_WHEEL2_ID);
-			flipOutMotor = new WPI_TalonSRX(RobotMap.CLIMBER_RATCHET_ID);
 			climberFront2.set(ControlMode.Follower, climberFront.getDeviceID());
 
 			climberBack.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
