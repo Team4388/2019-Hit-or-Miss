@@ -51,9 +51,6 @@ public class OI
 			*/
 			//JoystickButton endEfector = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
 			//endEfector.toggleWhenActive(new WristPlacement(true));
-
-
-
 		
 			JoystickButton liftHatchIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			liftHatchIntake.whenPressed(new LiftHatchDropBall());
@@ -64,10 +61,14 @@ public class OI
 			liftBallIntake.whenPressed(new LiftBallDropHatch());
 
 
-
-
-	       // climbUp.whenPressed(new InitiateClimber(true));
-	        //climbUp.whenReleased(new InitiateClimber(false));
+			JoystickButton climbUp = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
+			double speed = m_driverXbox.getRightTriggerAxis();
+			climbUp.whenPressed(new InitiateClimber(true, speed));
+			climbUp.whenReleased(new InitiateClimber(false, speed));
+			
+			JoystickButton ratchetFlip = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
+			ratchetFlip.whenPressed(new ratchetFlip(true, speed));
+			ratchetFlip.whenReleased(new ratchetFlip(false, speed));
 	        
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 	        shiftUp.whenPressed(new DriveSpeedShift(true));
@@ -84,10 +85,13 @@ public class OI
 	        openIntake.whenPressed(new IntakePosition(true));
 	        
 	        JoystickButton CloseIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
-	        CloseIntake.whenPressed(new IntakePosition(false));
+			CloseIntake.whenPressed(new IntakePosition(false));
+			*/
+			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
+			safteySwitch.whenPressed(new setClimberSafety(true));
+			safteySwitch.whenReleased(new setClimberSafety(false));
 	     	
-	        SmartDashboard.putData("PRE GAME!!!!", new PreGame());
-	       */
+	        //SmartDashboard.putData("PRE GAME!!!!", new PreGame());
 		  } catch (Exception e) {
 			  System.err.println("An error occurred in the OI constructor");
 		  }
