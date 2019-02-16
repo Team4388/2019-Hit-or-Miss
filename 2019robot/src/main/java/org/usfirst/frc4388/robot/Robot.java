@@ -12,7 +12,7 @@ import org.usfirst.frc4388.robot.subsystems.Pnumatics;
 import org.usfirst.frc4388.robot.subsystems.Wrist;
 //import org.usfirst.frc4388.utility.ControlLooper;
 import org.usfirst.frc4388.utility.Looper;
-//import org.usfirst.frc4388.utility.control.RobotStateEstimator;
+import org.usfirst.frc4388.utility.control.RobotStateEstimator;
 import org.usfirst.frc4388.utility.math.RigidTransform2d;
 import org.usfirst.frc4388.utility.control.RobotState;
 
@@ -32,7 +32,7 @@ public class Robot extends TimedRobot
 
 	public static OI oi;
 
-	//public static final Drive drive = Drive.getInstance();
+	public static final Drive drive = Drive.getInstance();
 	public static final Arm arm = Arm.getInstance();
 	
 
@@ -71,9 +71,9 @@ public class Robot extends TimedRobot
    		setPeriod(Constants.kLooperDt * 2);
 		System.out.println("Main loop period = " + getPeriod());
 		oi = OI.getInstance();
-		//controlLoop.register(drive);
+		controlLoop.register(drive);
 		controlLoop.register(arm);
-		//controlLoop.register(RobotStateEstimator.getInstance());
+		controlLoop.register(RobotStateEstimator.getInstance());
 	
     	operationModeChooser = new SendableChooser<OperationMode>();
 	    operationModeChooser.addDefault("Competition", OperationMode.COMPETITION);
@@ -93,7 +93,7 @@ public class Robot extends TimedRobot
  
 	@Override
 	public void disabledInit() {
-		//drive.setLimeLED(false);
+		drive.setLimeLED(false);
     }
 	@Override
 	public void disabledPeriodic() {
@@ -103,7 +103,7 @@ public class Robot extends TimedRobot
 	@Override
     public void autonomousInit() {  
 		controlLoop.start();
-    	//drive.setIsRed(getAlliance().equals(Alliance.Red));
+    	drive.setIsRed(getAlliance().equals(Alliance.Red));
     	arm.resetZeroPosition(Arm.ZERO_POSITION_INCHES);
     	updateChoosers();
     	drive.endGyroCalibration();
@@ -171,7 +171,7 @@ public class Robot extends TimedRobot
 	
 	public void updateStatus() 
 	{
-    	//drive.updateStatus(operationMode);
+    	drive.updateStatus(operationMode);
 		arm.updateStatus(operationMode);
 		robotState.updateStatus(operationMode);
 
