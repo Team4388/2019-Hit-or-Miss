@@ -28,7 +28,19 @@ public class LaserToDash extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    SmartDashboard.putNumber("Laser Raw Out", Robot.rangefinder.getDistance());
+    String p1, p2;
+    try{
+      String toParse = Robot.rangefinder.getDistance();
+      String[] parts = toParse.split("s");
+      p1 = parts[0];
+      p2 = parts[1];
+    }
+    catch(Exception nullException){
+      p1 = "0";
+      p2 = "0";
+    }
+    SmartDashboard.putNumber("Laser 1 raw out", Double.parseDouble(p1));
+    SmartDashboard.putNumber("Laser 2 raw out", Double.parseDouble(p2));
   }
 
   // Make this return true when this Command no longer needs to run execute()

@@ -28,7 +28,7 @@ public class Rangefinder extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
     setDefaultCommand(new LaserToDash());
   }
-  public double getDistance(){
-    return Double.valueOf(laser1.readString());
+  public String getDistance(){
+    return laser1.readString();
   }
 }
