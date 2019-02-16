@@ -96,7 +96,7 @@ public class MMTalonPIDController
 		// Update the set points 
 		if (controlMode == MMControlMode.STRAIGHT) {
 			double gyroDelta = useGyroLock ? startGyroAngle - currentGyroAngle: 0;
-			double deltaDistance = calcTrackDistance(gyroDelta, MMTalonTurnType.TANK, Drive.TRACK_WIDTH_INCHES);
+			double deltaDistance = calcTrackDistance(gyroDelta, MMTalonTurnType.TANK, 1);
 			rightTarget = targetValue + deltaDistance;
 			leftTarget = targetValue - deltaDistance;
 			

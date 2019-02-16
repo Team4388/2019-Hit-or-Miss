@@ -35,7 +35,7 @@ public class PathGenerator {
         Trajectory trajectory = Pathfinder.generate(points, config);
         centerPoints = trajectory.segments;       
 
-	    TankModifier modifier = new TankModifier(trajectory).modify(Drive.TRACK_WIDTH_INCHES);
+	    TankModifier modifier = new TankModifier(trajectory).modify(1);
 	    leftPoints = modifier.getLeftTrajectory().segments;
 	    rightPoints = modifier.getRightTrajectory().segments; 
 
