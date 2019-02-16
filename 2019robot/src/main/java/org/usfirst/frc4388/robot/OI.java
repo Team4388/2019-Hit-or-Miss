@@ -61,14 +61,14 @@ public class OI
 			liftBallIntake.whenPressed(new LiftBallDropHatch());
 
 
-			JoystickButton climbUp = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
+			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			double speed = m_driverXbox.getRightTriggerAxis();
 			climbUp.whenPressed(new InitiateClimber(true, speed));
 			climbUp.whenReleased(new InitiateClimber(false, speed));
 			
-			JoystickButton ratchetFlip = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
-			ratchetFlip.whenPressed(new ratchetFlip(true, speed));
-			ratchetFlip.whenReleased(new ratchetFlip(false, speed));
+			JoystickButton ratchetFlip = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.Y_BUTTON);
+			ratchetFlip.whenPressed(new ratchetFlip(0.5));
+			ratchetFlip.whenReleased(new ratchetFlip(0));
 	        
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 	        shiftUp.whenPressed(new DriveSpeedShift(true));

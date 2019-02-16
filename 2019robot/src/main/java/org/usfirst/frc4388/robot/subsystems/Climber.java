@@ -107,7 +107,7 @@ public class Climber extends Subsystem{
 		this.safetySwitch = safetySwitch;
 	}
 
-	public void flipRatchet(boolean flip, double speed){
-		climberFront.set(FRONT_FREQ * speed);
+	public void flipRatchet(double speed){
+		climberFront.set(speed);
 	}
 }
