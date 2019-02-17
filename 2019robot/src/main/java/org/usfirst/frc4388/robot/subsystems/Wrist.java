@@ -73,8 +73,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	// Motor controllers
 	private ArrayList<TalonSRXEncoder> motorControllers = new ArrayList<TalonSRXEncoder>();	
 
-	private TalonSRXEncoder motor1;
-	private TalonSRX motor2;
+	private TalonSRXEncoder wristmotor1;
 	
 	// PID controller and params
 	private MPTalonPIDController mpController;
@@ -102,19 +101,19 @@ public class Wrist extends Subsystem implements ControlLoopable
 	
 	public Wrist() {
 		try {
-			motor1 = TalonSRXFactory.createTalonEncoder(RobotMap.WRIST_MOTOR_ID, (ENCODER_TICKS_TO_INCHES), false, FeedbackDevice.QuadEncoder);
+			wristmotor1 = TalonSRXFactory.createTalonEncoder(RobotMap.WRIST_MOTOR_ID, (ENCODER_TICKS_TO_INCHES), false, FeedbackDevice.QuadEncoder);
 			
 			
-			motor1.setInverted(true);
+			wristmotor1.setInverted(true);
 										
 //	        if (motor1.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder) != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
 //	            Driver.reportError("Could not detect elevator motor 1 encoder encoder!", false);
 //	        }
-			motor1.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
-			motor1.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
-			motor1.setNeutralMode(NeutralMode.Brake);
+			wristmotor1.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+			wristmotor1.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+			wristmotor1.setNeutralMode(NeutralMode.Brake);
 			
-			motorControllers.add(motor1);
+			motorControllers.add(wristmotor1);
 			
 			
 		}
@@ -140,12 +139,12 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}
 
 	public void setSpeed(double speed) {
-		motor1.set(ControlMode.PercentOutput, speed*0.3);
+		wristmotor1.set(ControlMode.PercentOutput, speed*0.3);
 		setWristControlMode(WristControlMode.MANUAL);
 	}
 		
 	public void setSpeedJoystick(double speed) {
-		motor1.set(ControlMode.PercentOutput, speed);
+		wristmotor1.set(ControlMode.PercentOutput, speed);
 		setWristControlMode(WristControlMode.JOYSTICK_MANUAL);
 	}
 		
@@ -158,12 +157,12 @@ public class Wrist extends Subsystem implements ControlLoopable
 	
 	public void updatePositionPID(double targetPositionInches) {
  		targetPositionInchesPID = limitPosition(targetPositionInches);
-		double startPositionInches = motor1.getPositionWorld();
+		double startPositionInches = wristmotor1.getPositionWorld();
 		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
 	}
 	
 	public void setPositionMP(double targetPositionInches) {
-		double startPositionInches = motor1.getPositionWorld();
+		double startPositionInches = wristmotor1.getPositionWorld();
 		mpController.setMPTarget(startPositionInches, limitPosition(targetPositionInches), MP_MAX_VELOCITY_INCHES_PER_SEC, MP_T1, MP_T2); 
 		setFinished(false);
 		firstMpPoint = true;
@@ -281,7 +280,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}
 
 	private void ControlWithJoystickhold(){
-		double holdPosition = motor1.getPositionWorld();
+		double holdPosition = wristmotor1.getPositionWorld();
 		updatePositionPID(holdPosition);
 
 	}
@@ -309,7 +308,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}
 */
 	public double getPositionInches() {
-		return motor1.getPositionWorld();
+		return wristmotor1.getPositionWorld();
 	}
 	
 //	public double getAverageMotorCurrent() {
@@ -317,7 +316,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 //	}
 		
 	public double getAverageMotorCurrent() {
-		return (motor1.getOutputCurrent() + motor2.getOutputCurrent()) / 2;
+		return (wristmotor1.getOutputCurrent());
 	}
 		
 	public synchronized boolean isFinished() {
@@ -335,9 +334,8 @@ public class Wrist extends Subsystem implements ControlLoopable
 	public void updateStatus(Robot.OperationMode operationMode) {
 		if (operationMode == Robot.OperationMode.TEST) {
 			try {
-				SmartDashboard.putNumber("Elevator Position Inches", motor1.getPositionWorld());
-				SmartDashboard.putNumber("Elevator Motor 1 Amps", motor1.getOutputCurrent());
-				SmartDashboard.putNumber("Elevator Motor 2 Amps", motor2.getOutputCurrent());
+				SmartDashboard.putNumber("Elevator Position Inches", wristmotor1.getPositionWorld());
+				SmartDashboard.putNumber("Elevator Motor 1 Amps", wristmotor1.getOutputCurrent());
 				SmartDashboard.putNumber("Elevator Average Amps", getAverageMotorCurrent());
 //				SmartDashboard.putNumber("Elevator Motor 1 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID));
 //				SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
