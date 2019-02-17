@@ -20,6 +20,7 @@ import org.usfirst.frc4388.robot.OI;
 import org.usfirst.frc4388.robot.subsystems.*;
 import org.usfirst.frc4388.utility.ControlLooper;
 import org.usfirst.frc4388.robot.subsystems.Drive;
+import org.usfirst.frc4388.robot.subsystems.Wrist;
 
 import org.usfirst.frc4388.robot.subsystems.Drive.DriveControlMode;;
 
@@ -30,6 +31,7 @@ public class Robot extends IterativeRobot
 	
 	public static final Drive drive = new Drive();
 	public static final Arm arm = new Arm();
+	public static final Wrist wrist = new Wrist();
 
 
  
