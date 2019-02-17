@@ -1,26 +1,25 @@
-package org.usfirst.frc.team3310.robot.commands;
+package org.usfirst.frc4388.robot.commands;
 
-import org.usfirst.frc.team3310.robot.Robot;
-import org.usfirst.frc.team3310.robot.subsystems.Elevator;
+import org.usfirst.frc4388.robot.Robot;
+import org.usfirst.frc4388.robot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ElevatorAutoZero extends Command
+public class ArmAutoZero extends Command
 {
 	private double MIN_ELEVATOR_POSITION_CHANGE = 0.05;
-	private double lastElevatorPosition;
+	private double lastArmPosition;
 	private int encoderCount;
 	
-	public ElevatorAutoZero(boolean interrutible) {
-		requires(Robot.intake);
-		requires(Robot.elevator);
+	public ArmAutoZero(boolean interrutible) {
+			requires(Robot.arm);
 		setInterruptible(interrutible);
 	}
 
 	@Override
 	protected void initialize() {
-		lastElevatorPosition = Elevator.MAX_POSITION_INCHES;
-		Robot.elevator.setSpeed(Elevator.AUTO_ZERO_SPEED);
+		lastArmPosition = Arm.MAX_POSITION_INCHES;
+		Robot.arm.setSpeed(Arm.AUTO_ZERO_SPEED);
 		encoderCount = 0;
 //		System.out.println("Auto zero initialize");
 	}
@@ -32,14 +31,14 @@ public class ElevatorAutoZero extends Command
 
 	@Override
 	protected boolean isFinished() {
-		Robot.elevator.setSpeed(Elevator.AUTO_ZERO_SPEED);
-		double currentElevatorPosition = Robot.elevator.getPositionInches();
-		double elevatorPositionChange = lastElevatorPosition - currentElevatorPosition;
-		lastElevatorPosition = currentElevatorPosition;
-		boolean test = encoderCount > 2 && Math.abs(elevatorPositionChange) < MIN_ELEVATOR_POSITION_CHANGE && Robot.elevator.getAverageMotorCurrent() > Elevator.AUTO_ZERO_MOTOR_CURRENT;
-		System.out.println("encoderCount = " + encoderCount + ", test = " + test + ", elevator change = " + elevatorPositionChange + ", current = " + Robot.elevator.getAverageMotorCurrent());
+		Robot.arm.setSpeed(Arm.AUTO_ZERO_SPEED);
+		double currentArmPosition = Robot.arm.getPositionInches();
+		double armPositionChange = lastArmPosition - currentArmPosition;
+		lastArmPosition = currentArmPosition;
+		boolean test = encoderCount > 2 && Math.abs(armPositionChange) < MIN_ELEVATOR_POSITION_CHANGE && Robot.arm.getAverageMotorCurrent() > Arm.AUTO_ZERO_MOTOR_CURRENT;
+		System.out.println("encoderCount = " + encoderCount + ", test = " + test + ", arm change = " + armPositionChange + ", current = " + Robot.arm.getAverageMotorCurrent());
 		
-		if (Math.abs(elevatorPositionChange) < MIN_ELEVATOR_POSITION_CHANGE) {
+		if (Math.abs(armPositionChange) < MIN_ELEVATOR_POSITION_CHANGE) {
 			encoderCount++;
 		}
 		else {
@@ -51,10 +50,10 @@ public class ElevatorAutoZero extends Command
 
 	@Override
 	protected void end() {
-		Robot.elevator.setSpeed(0);
-		Robot.elevator.resetZeroPosition(Elevator.ZERO_POSITION_INCHES);
-		Robot.elevator.setPositionPID(Elevator.MIN_POSITION_INCHES);
-//		System.out.println("Elevator Zeroed");
+		Robot.arm.setSpeed(0);
+		Robot.arm.resetZeroPosition(Arm.ZERO_POSITION_INCHES);
+		Robot.arm.setPositionPID(Arm.MIN_POSITION_INCHES);
+//		System.out.println("Arm Zeroed");
 	}
 
 	@Override

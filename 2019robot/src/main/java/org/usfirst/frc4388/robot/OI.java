@@ -48,6 +48,13 @@ public class OI
 	        XBoxTriggerButton CarriageEject = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.RIGHT_TRIGGER);
 	        CarriageEject.whenPressed(new SetIntakeSpeed(BallIntake.BALL_EXTAKE_SPEED));
 			CarriageEject.whenReleased(new SetIntakeSpeed(0.0));
+
+			JoystickButton Expand = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.Y_BUTTON);
+			Expand.whenPressed(new WristPlacement(true));
+			
+			JoystickButton Contract = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
+	        Contract.whenPressed(new WristPlacement(true));
+			
 			
 			//JoystickButton endEfector = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
 			//endEfector.toggleWhenActive(new WristPlacement(true));
@@ -78,8 +85,7 @@ public class OI
 	        shiftDown.whenPressed(new DriveSpeedShift(false));
 	       // shiftDown.whenPressed(new LEDIndicators(false));
 	        
-	        
-	        //Operator Xbox
+
 /*
 	        JoystickButton openIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 	        openIntake.whenPressed(new IntakePosition(true));

@@ -1,32 +1,32 @@
-package org.usfirst.frc.team3310.robot.commands;
+package org.usfirst.frc4388.robot.commands;
 
-import org.usfirst.frc.team3310.robot.Robot;
-import org.usfirst.frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
+import org.usfirst.frc4388.robot.Robot;
+import org.usfirst.frc4388.robot.subsystems.Arm.ArmControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class ElevatorSetMode extends Command {
+public class ArmSetMode extends Command {
 
-	private ElevatorControlMode controlMode;
+	private ArmControlMode controlMode;
 	
-    public ElevatorSetMode(ElevatorControlMode controlMode) {
+    public ArmSetMode(ArmControlMode controlMode) {
     	this.controlMode = controlMode;
-        requires(Robot.elevator);
+        requires(Robot.arm);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	if (controlMode == ElevatorControlMode.JOYSTICK_PID) {
-    		Robot.elevator.setPositionPID(Robot.elevator.getPositionInches());
+    	if (controlMode == ArmControlMode.JOYSTICK_PID) {
+    		Robot.arm.setPositionPID(Robot.arm.getPositionInches());
     	}
-    	else if (controlMode == ElevatorControlMode.JOYSTICK_MANUAL) {
-    		Robot.elevator.setSpeedJoystick(0);
+    	else if (controlMode == ArmControlMode.JOYSTICK_MANUAL) {
+    		Robot.arm.setSpeedJoystick(0);
     	}
     	else {
-    		Robot.elevator.setSpeed(0.0);
+    		Robot.arm.setSpeed(0.0);
     	}
     }
 
