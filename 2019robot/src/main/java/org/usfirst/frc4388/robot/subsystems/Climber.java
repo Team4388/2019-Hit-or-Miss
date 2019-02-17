@@ -113,24 +113,6 @@ public class Climber extends Subsystem{
 			climberBack.set(0);
 		}
 	}
-	
-	///DEPRICATED
-	public void setClimbSpeed(double speed) {
-		if (safetySwitch) {
-			if (isPressed.isRevLimitSwitchClosed() && speed < 0){ //If leg at min height, and the input would retract the leg
-				climberBack.set(0);
-				climberFront.set(0);
-			}
-			else if(isPressed.isFwdLimitSwitchClosed() && speed > 0){ //If leg at max height, and the input would extend the leg
-				climberBack.set(0);
-				climberFront.set(FRONT_FREQ * speed);
-			}
-			else { //If leg not at max height */
-				climberBack.set(BACK_FREQ * speed);
-				climberFront.set(FRONT_FREQ * speed);
-			}		
-		}
-	}
 
 	public void safetySwitch(boolean safetySwitch){
 		this.safetySwitch = safetySwitch;
