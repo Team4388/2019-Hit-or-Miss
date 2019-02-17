@@ -46,7 +46,7 @@ public class Climber extends Subsystem{
 
 	//Frequency Control
 	static float BACK_FREQ = 1;
-	static float FRONT_FREQ;
+	static float FRONT_FREQ = 1;
 	static float FREQ_RATIO = 0.2443744576F;
 
 	//Limit and Saftey vars
@@ -69,6 +69,7 @@ public class Climber extends Subsystem{
 			climberBack.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			climberBack.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			climberBack.setNeutralMode(NeutralMode.Brake);
+			climberFront.setNeutralMode(NeutralMode.Brake);
 			FRONT_FREQ = BACK_FREQ * FREQ_RATIO; // Sets the front motor speed to ~1/4 the back motor speed
 		} 
 		catch (Exception e) {
@@ -99,22 +100,23 @@ public class Climber extends Subsystem{
 			else if(isPressed.isFwdLimitSwitchClosed() && speed > 0){ //If leg at max height, and the input would extend the leg
 				climberBack.set(0);
 				climberFront.set(FRONT_FREQ * speed);
-			}
-			else { //If leg not at max height */
-				climberBack.set(BACK_FREQ * speed);
-				climberFront.set(FRONT_FREQ * speed);
-			//}		
+			} */
+			if (speed < 0){
+				climberBack.set(-0.3 * speed);
+			} 
+			else { //If leg not at max height
+				climberBack.set(-0.5 * speed);
+				climberFront.set(speed);
+			}		
 		}
 		else {
 			climberBack.set(0);
-			climberFront.set(0);
 		}
 	}
 	
 	///DEPRICATED
 	public void setClimbSpeed(double speed) {
 		if (safetySwitch) {
-			/*
 			if (isPressed.isRevLimitSwitchClosed() && speed < 0){ //If leg at min height, and the input would retract the leg
 				climberBack.set(0);
 				climberFront.set(0);
@@ -126,7 +128,7 @@ public class Climber extends Subsystem{
 			else { //If leg not at max height */
 				climberBack.set(BACK_FREQ * speed);
 				climberFront.set(FRONT_FREQ * speed);
-			//}		
+			}		
 		}
 	}
 
