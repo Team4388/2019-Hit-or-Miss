@@ -49,8 +49,8 @@ public class OI
 	        CarriageEject.whenPressed(new SetIntakeSpeed(BallIntake.BALL_EXTAKE_SPEED));
 			CarriageEject.whenReleased(new SetIntakeSpeed(0.0));
 			
-			//JoystickButton endEfector = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
-			//endEfector.toggleWhenActive(new WristPlacement(true));
+			JoystickButton liftBothIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
+			liftBothIntake.whenPressed(new HatchAndBallUp());
 		
 			JoystickButton liftHatchIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			liftHatchIntake.whenPressed(new LiftHatchDropBall());
