@@ -1,6 +1,7 @@
 package org.usfirst.frc4388.robot.commands;
 
 import org.usfirst.frc4388.robot.Robot;
+import org.usfirst.frc4388.robot.subsystems.Climber;
 import org.usfirst.frc4388.robot.Constants;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -15,9 +16,9 @@ public class ratchetFlip extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    //if (InitiateClimber.SPEED == 0){
+    if (Climber.SPEED == 0){
       Robot.climber.flipRatchet(speed);
-    //}
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -57,6 +57,8 @@ public class Climber extends Subsystem{
 	//Climb Trigger
 	double rightTriggerInput;
 	double leftTriggerInput;
+
+	public static double SPEED;
 	
 	public Climber(){
 		
@@ -69,6 +71,7 @@ public class Climber extends Subsystem{
 			climberBack.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			climberBack.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			climberBack.setNeutralMode(NeutralMode.Brake);
+			climberBack.setInverted(true);
 			climberFront.setNeutralMode(NeutralMode.Brake);
 			FRONT_FREQ = BACK_FREQ * FREQ_RATIO; // Sets the front motor speed to ~1/4 the back motor speed
 		} 
@@ -88,7 +91,7 @@ public class Climber extends Subsystem{
 
 		rightTriggerInput = OI.getInstance().getDriverController().getRightTriggerAxis();
 		leftTriggerInput = OI.getInstance().getDriverController().getLeftTriggerAxis();
-		double speed = rightTriggerInput - leftTriggerInput;
+		//SPEED = rightTriggerInput - leftTriggerInput;
 
 		// Put code here to be run every loop
 		if (safetySwitch) {
@@ -100,14 +103,16 @@ public class Climber extends Subsystem{
 			else if(isPressed.isFwdLimitSwitchClosed() && speed > 0){ //If leg at max height, and the input would extend the leg
 				climberBack.set(0);
 				climberFront.set(FRONT_FREQ * speed);
-			} */
-			if (speed < 0){
-				climberBack.set(-0.3 * speed);
+			} *//*
+			if (SPEED < 0){
+				climberBack.set(0.3 * SPEED);
 			} 
 			else { //If leg not at max height
-				climberBack.set(-0.5 * speed);
-				climberFront.set(speed);
-			}		
+				climberBack.set(0.5 * SPEED);
+				climberFront.set(SPEED);
+			}*/
+			climberBack.set(rightTriggerInput * 0.1);
+			climberFront.set(leftTriggerInput);		
 		}
 		else {
 			climberBack.set(0);
