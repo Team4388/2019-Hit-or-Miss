@@ -7,30 +7,24 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class InitiateClimber extends Command
 {
-	static boolean CLIMB;
-	double speed;
+	static double SPEED;
 
-	public InitiateClimber(boolean climb, double speed) {
+	public InitiateClimber(double speed) {
 		requires(Robot.climber);
-		this.CLIMB = climb;
-		this.speed = speed;
+		this.SPEED = speed;
 	}
 
 	@Override
 	protected void initialize() {
-		
+		Robot.climber.setClimbSpeed(SPEED);
 	}
 
 	@Override
 	protected void execute() {
-		if(CLIMB){ //If climb button is pressed
-			Robot.climber.setClimbSpeed(CLIMB, speed);
-		}
-		else{
-			Robot.climber.setClimbSpeed(false, 0);
-		}
+		
 	}
-	   // Make this return true when this Command no longer needs to run execute()
+	
+	// Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
         return true;
     }

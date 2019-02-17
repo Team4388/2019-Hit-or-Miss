@@ -15,7 +15,9 @@ public class ratchetFlip extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.climber.flipRatchet(speed);
+    if (InitiateClimber.SPEED == 0){
+      Robot.climber.flipRatchet(speed);
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run

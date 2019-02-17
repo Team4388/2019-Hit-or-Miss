@@ -83,11 +83,10 @@ public class Climber extends Subsystem{
     @Override
     public void periodic() {
         // Put code here to be run every loop
-
     }
     
-	public void setClimbSpeed(boolean Climb, double speed) {
-		if (Climb && safetySwitch) {
+	public void setClimbSpeed(double speed) {
+		if (safetySwitch) {
 			if(isPressed.isFwdLimitSwitchClosed()){ //If leg at max height
 				climberBack.set(0);
 				climberFront.set(FRONT_FREQ * speed);
@@ -97,7 +96,7 @@ public class Climber extends Subsystem{
 				climberFront.set(FRONT_FREQ * speed);
 			}		
 		}
-		if (!Climb || !safetySwitch) {
+		if (!safetySwitch) {
 			climberBack.set(0);
 			climberFront.set(0);
 		}
