@@ -15,11 +15,6 @@ public class PIDParams
     public PIDParams() {	
     }
     
-    public PIDParams(double kP)
-    {
-    	this.kP = kP;
-    }
-    
     public PIDParams(double kP, double kI, double kD) {
         this.kP = kP;
         this.kI = kI;

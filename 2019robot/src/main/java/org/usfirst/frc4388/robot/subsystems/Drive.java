@@ -8,11 +8,11 @@ import org.usfirst.frc4388.robot.Constants;
 import org.usfirst.frc4388.robot.OI;
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.RobotMap;
-import org.usfirst.frc4388.utility.AdaptivePurePursuitController;
+import org.usfirst.frc4388.utility.control.AdaptivePurePursuitController;
 import org.usfirst.frc4388.utility.BHRMathUtils;
-import org.usfirst.frc4388.utility.CANTalonEncoder;
+//import org.usfirst.frc4388.utility.CANTalonEncoder;
 import org.usfirst.frc4388.utility.ControlLoopable;
-import org.usfirst.frc4388.utility.Kinematics;
+import org.usfirst.frc4388.utility.control.Kinematics;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import org.usfirst.frc4388.utility.MPTalonPIDController;
@@ -22,12 +22,12 @@ import org.usfirst.frc4388.utility.MPTalonPIDPathVelocityController;
 import org.usfirst.frc4388.utility.MotionProfilePoint;
 //import org.usfirst.frc4388.utility.MotionProfileBoxCar;
 import org.usfirst.frc4388.utility.PIDParams;
-import org.usfirst.frc4388.utility.Path;
-import org.usfirst.frc4388.utility.PathGenerator;
-import org.usfirst.frc4388.utility.RigidTransform2d;
-import org.usfirst.frc4388.utility.Rotation2d;
+//import org.usfirst.frc4388.utility.Path;
+//import org.usfirst.frc4388.utility.PathGenerator;
+import org.usfirst.frc4388.utility.math.RigidTransform2d;
+import org.usfirst.frc4388.utility.math.Rotation2d;
 import org.usfirst.frc4388.utility.SoftwarePIDController;
-import org.usfirst.frc4388.utility.Translation2d;
+import org.usfirst.frc4388.utility.math.Translation2d;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -373,12 +373,33 @@ public class Drive extends Subsystem implements ControlLoopable
 	//	}
 	//}
 	
+
+
+
+
+
+
+
+
+
+
+	/*
 	public void setStraightMP(double distanceInches, double maxVelocity, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
 		double yawAngle = useAbsolute ? BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle) : getGyroAngleDeg();
 		mpStraightController.setPID(mpStraightPIDParams);
 		mpStraightController.setMPStraightTarget(0, distanceInches, maxVelocity, MP_STRAIGHT_T1, MP_STRAIGHT_T2, useGyroLock, yawAngle, true); 
 		setControlMode(DriveControlMode.MP_STRAIGHT);
 	}
+*/
+
+
+
+
+
+
+
+
+
 		//public void setStraightMPCached(String key, boolean useGyroLock, boolean useAbsolute, double desiredAbsoluteAngle) {
 	//	double yawAngle = useAbsolute ? BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle) : getGyroAngleDeg();
 	//	mpStraightController.setPID(mpStraightPIDParams);
@@ -416,7 +437,7 @@ public class Drive extends Subsystem implements ControlLoopable
 		pidTurnController.setPIDTurnTarget(relativeTurnAngleDeg + getGyroAngleDeg(), maxError, maxPrevError, turnType);
 		setControlMode(DriveControlMode.PID_TURN);
 	}
-
+/*
 	public void setPathMP(PathGenerator path) {
 		mpPathController.setPID(mpPathPIDParams);
 		mpPathController.setMPPathTarget(path); 
@@ -438,7 +459,7 @@ public class Drive extends Subsystem implements ControlLoopable
     	adaptivePursuitController.setPath(Constants.kPathFollowingLookahead, Constants.kPathFollowingMaxAccel, path, reversed, 0.25); 
 		setControlMode(DriveControlMode.ADAPTIVE_PURSUIT);
     }
-
+*/
     public void setDriveHold(boolean status) {
 		if (status) {
 			setControlMode(DriveControlMode.HOLD);
@@ -469,13 +490,15 @@ public class Drive extends Subsystem implements ControlLoopable
      * 
      * @return Set of Strings with Path Markers that the robot has crossed.
      */
+
+	 /*
     public synchronized Set<String> getPathMarkersCrossed() {
         if (controlMode != DriveControlMode.ADAPTIVE_PURSUIT) {
             return null;
         } else {
             return adaptivePursuitController.getMarkersCrossed();
         }
-    }
+    }*/
 
     public synchronized void setControlMode(DriveControlMode controlMode) {
  		this.controlMode = controlMode;
@@ -497,6 +520,16 @@ public class Drive extends Subsystem implements ControlLoopable
 			leftDrive1.set(0);	//TODO URGENT: make sure not called when robot moving
 			rightDrive1.set(0);	//TODO URGENT: make sure not called when robot moving
 		}
+
+
+
+
+
+
+
+
+
+		/*
 		else if (controlMode == DriveControlMode.HOLD) {
 			mpStraightController.setPID(mpHoldPIDParams);
 			//leftDrive1.changeControlMode(TalonControlMode.Position);
@@ -509,7 +542,7 @@ public class Drive extends Subsystem implements ControlLoopable
 			leftDrive1.set(0);
 			//rightDrive1.setSelectedSensorPosition(0, 0, 0);	//not needed for spark?  TODO: verify want 0="Primary closed-loop", with no timeout
 			rightDrive1.set(0);
-		}
+		}*/
 		isFinished = false;
 	}
 	
@@ -538,13 +571,13 @@ public class Drive extends Subsystem implements ControlLoopable
 			else if (controlMode == DriveControlMode.MP_PATH) {
 				isFinished = mpPathController.controlLoopUpdate(getGyroAngleDeg()); 
 			}
-			else if (controlMode == DriveControlMode.MP_PATH_VELOCITY) {
+			/*else if (controlMode == DriveControlMode.MP_PATH_VELOCITY) {
 				isFinished = mpPathVelocityController.controlLoopUpdate(getGyroAngleDeg()); 
 			}
 			else if (controlMode == DriveControlMode.ADAPTIVE_PURSUIT) {
 				updatePose();
 				isFinished = adaptivePursuitController.controlLoopUpdate(currentPose); 
-			}
+			}*/
 		}
 	}
 	

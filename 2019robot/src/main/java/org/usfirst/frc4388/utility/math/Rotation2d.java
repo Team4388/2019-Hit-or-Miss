@@ -1,14 +1,21 @@
-package org.usfirst.frc4388.utility;
+package org.usfirst.frc4388.utility.math;
+
+import static org.usfirst.frc4388.utility.Util.epsilonEquals;
 
 import java.text.DecimalFormat;
 
 /**
- * A rotation in a 2d coordinate frame represented a point on the unit circle
- * (cosine and sine).
+ * A rotation in a 2d coordinate frame represented a point on the unit circle (cosine and sine).
  * 
  * Inspired by Sophus (https://github.com/strasdat/Sophus/tree/master/sophus)
  */
 public class Rotation2d implements Interpolable<Rotation2d> {
+    protected static final Rotation2d kIdentity = new Rotation2d();
+
+    public static final Rotation2d identity() {
+        return kIdentity;
+    }
+
     protected static final double kEpsilon = 1E-9;
 
     protected double cos_angle_;
@@ -31,6 +38,10 @@ public class Rotation2d implements Interpolable<Rotation2d> {
         sin_angle_ = other.sin_angle_;
     }
 
+    public Rotation2d(Translation2d direction, boolean normalize) {
+        this(direction.x(), direction.y(), normalize);
+    }
+
     public static Rotation2d fromRadians(double angle_radians) {
         return new Rotation2d(Math.cos(angle_radians), Math.sin(angle_radians), false);
     }
@@ -40,9 +51,8 @@ public class Rotation2d implements Interpolable<Rotation2d> {
     }
 
     /**
-     * From trig, we know that sin^2 + cos^2 == 1, but as we do math on this
-     * object we might accumulate rounding errors. Normalizing forces us to
-     * re-scale the sin and cos to reset rounding errors.
+     * From trig, we know that sin^2 + cos^2 == 1, but as we do math on this object we might accumulate rounding errors.
+     * Normalizing forces us to re-scale the sin and cos to reset rounding errors.
      */
     public void normalize() {
         double magnitude = Math.hypot(cos_angle_, sin_angle_);
@@ -64,7 +74,7 @@ public class Rotation2d implements Interpolable<Rotation2d> {
     }
 
     public double tan() {
-        if (cos_angle_ < kEpsilon) {
+        if (Math.abs(cos_angle_) < kEpsilon) {
             if (sin_angle_ >= 0.0) {
                 return Double.POSITIVE_INFINITY;
             } else {
@@ -83,17 +93,19 @@ public class Rotation2d implements Interpolable<Rotation2d> {
     }
 
     /**
-     * We can rotate this Rotation2d by adding together the effects of it and
-     * another rotation.
+     * We can rotate this Rotation2d by adding together the effects of it and another rotation.
      * 
      * @param other
-     *            The other rotation. See:
-     *            https://en.wikipedia.org/wiki/Rotation_matrix
+     *            The other rotation. See: https://en.wikipedia.org/wiki/Rotation_matrix
      * @return This rotation rotated by other.
      */
     public Rotation2d rotateBy(Rotation2d other) {
         return new Rotation2d(cos_angle_ * other.cos_angle_ - sin_angle_ * other.sin_angle_,
                 cos_angle_ * other.sin_angle_ + sin_angle_ * other.cos_angle_, true);
+    }
+
+    public Rotation2d normal() {
+        return new Rotation2d(-sin_angle_, cos_angle_, false);
     }
 
     /**
@@ -103,6 +115,14 @@ public class Rotation2d implements Interpolable<Rotation2d> {
      */
     public Rotation2d inverse() {
         return new Rotation2d(cos_angle_, -sin_angle_, false);
+    }
+
+    public boolean isParallel(Rotation2d other) {
+        return epsilonEquals(Translation2d.cross(toTranslation(), other.toTranslation()), 0.0, kEpsilon);
+    }
+
+    public Translation2d toTranslation() {
+        return new Translation2d(cos_angle_, sin_angle_);
     }
 
     @Override

@@ -3,8 +3,8 @@ package org.usfirst.frc4388.robot.subsystems;
 import org.usfirst.frc4388.robot.RobotMap;
 import org.usfirst.frc4388.robot.commands.*;
 import org.usfirst.frc4388.robot.subsystems.Drive.DriveControlMode;
-import org.usfirst.frc4388.utility.CANTalonEncoder;
-import org.usfirst.frc4388.utility.ControlLoopable;
+import org.usfirst.frc4388.utility.TalonSRXEncoder;
+import org.usfirst.frc4388.utility.Looper;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.usfirst.frc4388.robot.OI;

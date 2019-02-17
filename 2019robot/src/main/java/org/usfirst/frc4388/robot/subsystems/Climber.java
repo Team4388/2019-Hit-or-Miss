@@ -12,10 +12,10 @@ import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.RobotMap;
 import org.usfirst.frc4388.robot.commands.*;
 import org.usfirst.frc4388.robot.subsystems.Drive.DriveControlMode;
-import org.usfirst.frc4388.utility.CANTalonEncoder;
-import org.usfirst.frc4388.utility.ControlLoopable;
+import org.usfirst.frc4388.utility.TalonSRXEncoder;
+import org.usfirst.frc4388.utility.Looper;
 import org.usfirst.frc4388.utility.PIDParams;
-import org.usfirst.frc4388.utility.SoftwarePIDPositionController;
+import org.usfirst.frc4388.utility.SoftwarePIDController;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 

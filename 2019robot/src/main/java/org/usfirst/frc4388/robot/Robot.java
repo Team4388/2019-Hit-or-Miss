@@ -32,7 +32,6 @@ public class Robot extends IterativeRobot
 
 
  
-	public static final Elevator elevator = new Elevator();
 	public static final BallIntake ballIntake = new BallIntake();
     
 
@@ -58,7 +57,6 @@ public class Robot extends IterativeRobot
 		oi = OI.getInstance();
 		
     	controlLoop.addLoopable(drive);
-    	controlLoop.addLoopable(elevator);
 			
 
         operationModeChooser = new SendableChooser<OperationMode>();
@@ -144,7 +142,6 @@ public class Robot extends IterativeRobot
     
     public void updateStatus() {
     	drive.updateStatus(operationMode);
-    	elevator.updateStatus(operationMode);
 
    }
 

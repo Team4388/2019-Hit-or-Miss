@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,8 +21,8 @@ import org.json.simple.parser.ParseException;
 /**
  * ConstantsBase
  * 
- * Base class for storing robot constants. Anything stored as a public static
- * field will be reflected and be able to set externally
+ * Base class for storing robot constants. Anything stored as a public static field will be reflected and be able to set
+ * externally
  */
 public abstract class ConstantsBase {
     HashMap<String, Boolean> modifiedKeys = new HashMap<String, Boolean>();
@@ -54,6 +56,18 @@ public abstract class ConstantsBase {
         return new File(filePath);
     }
 
+    public boolean truncateUserConstants() {
+        try {
+            Files.write(getFile().toPath(), new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
+            loadFromFile();
+            return true;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean setConstant(String name, Double value) {
         return setConstantRaw(name, value);
     }
@@ -77,6 +91,9 @@ public abstract class ConstantsBase {
                     success = true;
                     if (!value.equals(current)) {
                         modifiedKeys.put(name, true);
+                        System.out.println("Constant Modified:" + field.getName());
+                    } else {
+                        System.out.println("Constant Not Modified:" + field.getName());
                     }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     System.out.println("Could not set field: " + name);
@@ -116,7 +133,7 @@ public abstract class ConstantsBase {
 
     public Collection<Constant> getConstants() {
         List<Constant> constants = (List<Constant>) getAllConstants();
-        int stop = constants.size() - 1;
+        int stop = constants.size();
         for (int i = 0; i < constants.size(); ++i) {
             Constant c = constants.get(i);
             if ("kEndEditableArea".equals(c.name)) {

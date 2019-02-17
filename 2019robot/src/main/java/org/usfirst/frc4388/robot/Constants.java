@@ -8,7 +8,7 @@ package org.usfirst.frc4388.robot;
  */
 
 public class Constants {
-
+    public static double kLooperDt = 0.01;
     public static double kDriveWheelDiameterInches = 6.04; 
     public static double kTrackLengthInches = 10;
     public static double kTrackWidthInches = 26.5;

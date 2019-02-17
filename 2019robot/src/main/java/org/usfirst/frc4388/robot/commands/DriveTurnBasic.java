@@ -4,7 +4,7 @@ import org.usfirst.frc4388.robot.Constants;
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.subsystems.Drive.DriveControlMode;
 import org.usfirst.frc4388.utility.BHRMathUtils;
-import org.usfirst.frc4388.utility.CANTalonEncoder;
+import org.usfirst.frc4388.utility.TalonSRXEncoder;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;

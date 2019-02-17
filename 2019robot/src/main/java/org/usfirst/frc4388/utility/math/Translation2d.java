@@ -1,12 +1,17 @@
-package org.usfirst.frc4388.utility;
+package org.usfirst.frc4388.utility.math;
 
 import java.text.DecimalFormat;
 
 /**
- * A translation in a 2d coordinate frame. Translations are simply shifts in an
- * (x, y) plane.
+ * A translation in a 2d coordinate frame. Translations are simply shifts in an (x, y) plane.
  */
 public class Translation2d implements Interpolable<Translation2d> {
+    protected static final Translation2d kIdentity = new Translation2d();
+
+    public static final Translation2d identity() {
+        return kIdentity;
+    }
+
     protected double x_;
     protected double y_;
 
@@ -25,20 +30,29 @@ public class Translation2d implements Interpolable<Translation2d> {
         y_ = other.y_;
     }
 
+    public Translation2d(Translation2d start, Translation2d end) {
+        x_ = end.x_ - start.x_;
+        y_ = end.y_ - start.y_;
+    }
+
     /**
      * The "norm" of a transform is the Euclidean distance in x and y.
      * 
-     * @return Sqrt(x^2 + y^2)
+     * @return sqrt(x^2 + y^2)
      */
     public double norm() {
         return Math.hypot(x_, y_);
     }
 
-    public double getX() {
+    public double norm2() {
+        return x_ * x_ + y_ * y_;
+    }
+
+    public double x() {
         return x_;
     }
 
-    public double getY() {
+    public double y() {
         return y_;
     }
 
@@ -62,8 +76,7 @@ public class Translation2d implements Interpolable<Translation2d> {
     }
 
     /**
-     * We can also rotate Translation2d's. See:
-     * https://en.wikipedia.org/wiki/Rotation_matrix
+     * We can also rotate Translation2d's. See: https://en.wikipedia.org/wiki/Rotation_matrix
      * 
      * @param rotation
      *            The rotation to apply.
@@ -71,6 +84,10 @@ public class Translation2d implements Interpolable<Translation2d> {
      */
     public Translation2d rotateBy(Rotation2d rotation) {
         return new Translation2d(x_ * rotation.cos() - y_ * rotation.sin(), x_ * rotation.sin() + y_ * rotation.cos());
+    }
+
+    public Rotation2d direction() {
+        return new Rotation2d(x_, y_, true);
     }
 
     /**
@@ -96,9 +113,29 @@ public class Translation2d implements Interpolable<Translation2d> {
         return new Translation2d(x * (other.x_ - x_) + x_, x * (other.y_ - y_) + y_);
     }
 
+    public Translation2d scale(double s) {
+        return new Translation2d(x_ * s, y_ * s);
+    }
+
     @Override
     public String toString() {
         final DecimalFormat fmt = new DecimalFormat("#0.000");
         return "(" + fmt.format(x_) + "," + fmt.format(y_) + ")";
+    }
+
+    public static double dot(Translation2d a, Translation2d b) {
+        return a.x_ * b.x_ + a.y_ * b.y_;
+    }
+
+    public static Rotation2d getAngle(Translation2d a, Translation2d b) {
+        double cos_angle = dot(a, b) / (a.norm() * b.norm());
+        if (Double.isNaN(cos_angle)) {
+            return new Rotation2d();
+        }
+        return Rotation2d.fromRadians(Math.acos(Math.min(1.0, Math.max(cos_angle, -1.0))));
+    }
+
+    public static double cross(Translation2d a, Translation2d b) {
+        return a.x_ * b.y_ - a.y_ * b.x_;
     }
 }

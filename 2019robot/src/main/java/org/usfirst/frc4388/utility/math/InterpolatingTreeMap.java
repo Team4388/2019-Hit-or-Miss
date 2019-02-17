@@ -1,12 +1,11 @@
-package org.usfirst.frc4388.utility;
+package org.usfirst.frc4388.utility.math;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Interpolating Tree Maps are used to get values at points that are not defined
- * by making a guess from points that are defined. This uses linear
- * interpolation.
+ * Interpolating Tree Maps are used to get values at points that are not defined by making a guess from points that are
+ * defined. This uses linear interpolation.
  * 
  * @param <K>
  *            The type of the key (must implement InverseInterpolable)
@@ -58,8 +57,7 @@ public class InterpolatingTreeMap<K extends InverseInterpolable<K> & Comparable<
      *
      * @param key
      *            Lookup for a value (does not have to exist)
-     * @return V or null; V if it is Interpolable or exists, null if it is at a
-     *         bound and cannot average
+     * @return V or null; V if it is Interpolable or exists, null if it is at a bound and cannot average
      */
     public V getInterpolated(K key) {
         V gotval = get(key);
@@ -69,8 +67,7 @@ public class InterpolatingTreeMap<K extends InverseInterpolable<K> & Comparable<
             K bottomBound = floorKey(key);
 
             /**
-             * If attempting interpolation at ends of tree, return the nearest
-             * data point
+             * If attempting interpolation at ends of tree, return the nearest data point
              */
             if (topBound == null && bottomBound == null) {
                 return null;
