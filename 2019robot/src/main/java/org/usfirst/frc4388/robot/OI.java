@@ -53,7 +53,7 @@ public class OI
 			Expand.whenPressed(new WristPlacement(true));
 			
 			JoystickButton Contract = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
-	        Contract.whenPressed(new WristPlacement(true));
+	        Contract.whenPressed(new WristPlacement(false));
 			
 			
 			//JoystickButton endEfector = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);

@@ -102,7 +102,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	public Wrist() {
 		try {
 			wristmotor1 = TalonSRXFactory.createTalonEncoder(RobotMap.WRIST_MOTOR_ID, (ENCODER_TICKS_TO_INCHES), false, FeedbackDevice.QuadEncoder);
-			
+			System.err.println("the tallon shold be made in wrist");
 			
 			wristmotor1.setInverted(true);
 										
@@ -139,7 +139,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}
 
 	public void setSpeed(double speed) {
-		wristmotor1.set(ControlMode.PercentOutput, speed*0.3);
+		wristmotor1.set(ControlMode.PercentOutput, speed);
 		setWristControlMode(WristControlMode.MANUAL);
 	}
 		
@@ -287,7 +287,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getRightYAxis();
-		setSpeedJoystick(joyStickSpeed*.10);
+		setSpeedJoystick(joyStickSpeed*.50);
 	}
 	/*
 	public void setShiftState(ElevatorSpeedShiftState state) {

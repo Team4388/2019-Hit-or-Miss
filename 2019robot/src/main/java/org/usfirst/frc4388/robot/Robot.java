@@ -30,6 +30,7 @@ public class Robot extends IterativeRobot
 	
 	public static final Drive drive = new Drive();
 	public static final Arm arm = new Arm();
+	public static final Wrist wrist = new Wrist();
 
 
  
@@ -59,6 +60,7 @@ public class Robot extends IterativeRobot
 		
 		controlLoop.addLoopable(drive);
 		controlLoop.addLoopable(arm);
+		controlLoop.addLoopable(wrist);
 			
 
         operationModeChooser = new SendableChooser<OperationMode>();
