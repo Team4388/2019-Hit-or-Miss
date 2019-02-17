@@ -15,23 +15,18 @@ public class setClimberSafety extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.climber.safetySwitch(safety);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(safety){ //If saftey button is pressed
-      Robot.climber.safetySwitch(true);
-    }
-    else{
-      Robot.climber.safetySwitch(false);
-    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true

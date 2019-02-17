@@ -9,4 +9,8 @@ public interface IHandController {
 	public double getRightXAxis();
 	
 	public double getRightYAxis();
+
+	public double getLeftTriggerAxis();
+
+	public double getRightTriggerAxis();
 }

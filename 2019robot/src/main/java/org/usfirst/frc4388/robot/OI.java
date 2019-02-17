@@ -64,10 +64,10 @@ public class OI
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
 
-			double speed = m_driverXbox.getRightTriggerAxis() - m_driverXbox.getLeftTriggerAxis();
-			climbUp.whileActive(new InitiateClimber(speed));
-			climbDown.whileActive(new InitiateClimber(speed));
-			
+			//double speed = m_driverXbox.getRightTriggerAxis() - m_driverXbox.getLeftTriggerAxis();
+			//climbUp.whenActive(new InitiateClimber(m_driverXbox.getRightTriggerAxis()));
+			//climbDown.whenActive(new InitiateClimber(-m_driverXbox.getLeftTriggerAxis()));
+
 			JoystickButton ratchetFlip = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.Y_BUTTON);
 			ratchetFlip.whenPressed(new ratchetFlip(0.5));
 			ratchetFlip.whenReleased(new ratchetFlip(0));
@@ -82,7 +82,7 @@ public class OI
 	        
 	        
 	        //Operator Xbox
-/*
+			/*
 	        JoystickButton openIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 	        openIntake.whenPressed(new IntakePosition(true));
 	        

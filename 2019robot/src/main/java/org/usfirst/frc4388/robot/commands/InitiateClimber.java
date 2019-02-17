@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public class InitiateClimber extends Command
 {
 	static double SPEED;
-
 	public InitiateClimber(double speed) {
 		requires(Robot.climber);
 		this.SPEED = speed;
