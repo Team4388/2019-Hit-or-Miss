@@ -26,32 +26,39 @@ import jaci.pathfinder.Pathfinder;
 
 
 
-public class OI 
+public class OI
 {
 		private static OI instance;
-		
+
 		private XboxController m_driverXbox;
 		private XboxController m_operatorXbox;
 
-		private OI() 
+		private OI()
 		{
-		  try 
+		  try
 		  {
 			// Driver controller
 			m_driverXbox = new XboxController(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
 			m_operatorXbox = new XboxController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID);
-			
+
 	        XBoxTriggerButton CarriageIntake = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.LEFT_TRIGGER);
 	        CarriageIntake.whenPressed(new SetIntakeSpeed(BallIntake.BALL_INTAKE_SPEED));
 	        CarriageIntake.whenReleased(new SetIntakeSpeed(0.0));
-	        
+
 	        XBoxTriggerButton CarriageEject = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.RIGHT_TRIGGER);
 	        CarriageEject.whenPressed(new SetIntakeSpeed(BallIntake.BALL_EXTAKE_SPEED));
 			CarriageEject.whenReleased(new SetIntakeSpeed(0.0));
-			
+
+			JoystickButton Expand = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.Y_BUTTON);
+			Expand.whenPressed(new WristPlacement(true));
+
+			JoystickButton Contract = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
+	        Contract.whenPressed(new WristPlacement(false));
+
+
 			JoystickButton liftBothIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
 			liftBothIntake.whenPressed(new HatchAndBallUp());
-		
+
 			JoystickButton liftHatchIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			liftHatchIntake.whenPressed(new LiftHatchDropBall());
 
@@ -67,34 +74,32 @@ public class OI
 			JoystickButton ratchetFlip = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.Y_BUTTON);
 			ratchetFlip.whenPressed(new ratchetFlip(0.5));
 			ratchetFlip.whenReleased(new ratchetFlip(0));
-	        
+
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 	        shiftUp.whenPressed(new DriveSpeedShift(true));
 	        //shiftUp.whenPressed(new LEDIndicators(true));
-	        
+
 	        JoystickButton shiftDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 	        shiftDown.whenPressed(new DriveSpeedShift(false));
 	       // shiftDown.whenPressed(new LEDIndicators(false));
-	        
-	        
 	        //Operator Xbox
 			/*
 	        JoystickButton openIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 	        openIntake.whenPressed(new IntakePosition(true));
-	        
+
 	        JoystickButton CloseIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			CloseIntake.whenPressed(new IntakePosition(false));
 			*/
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
 			safteySwitch.whenPressed(new setClimberSafety(true));
 			safteySwitch.whenReleased(new setClimberSafety(false));
-	     	
+
 	        //SmartDashboard.putData("PRE GAME!!!!", new PreGame());
 		  } catch (Exception e) {
 			  System.err.println("An error occurred in the OI constructor");
 		  }
 		}
-		
+
 		public static OI getInstance() {
 			if(instance == null) {
 				instance = new OI();
@@ -106,7 +111,7 @@ public class OI
 			return m_driverXbox;
 		}
 
-		public IHandController getOperatorController() 
+		public IHandController getOperatorController()
 		{
 			return m_operatorXbox;
 		}
@@ -116,4 +121,3 @@ public class OI
 			return m_operatorXbox.getJoyStick();
 		}
 	}
-

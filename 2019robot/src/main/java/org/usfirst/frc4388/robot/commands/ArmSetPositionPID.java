@@ -1,27 +1,25 @@
 package org.usfirst.frc4388.robot.commands;
 
 import org.usfirst.frc4388.robot.Robot;
-
-import org.usfirst.frc4388.robot.subsystems.*;
+import org.usfirst.frc4388.robot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class ElevatorSetSpeed extends Command {
-
-	private double RaiseSpeed;
+public class ArmSetPositionPID extends Command {
 	
-	// Constructor with speed
-    public ElevatorSetSpeed(double RaiseSpeed) {
-    	this.RaiseSpeed = RaiseSpeed;
-       // requires(Robot.elevatorAuton);
+	private double targetPositionInches;
+
+    public ArmSetPositionPID(double targetPositionInches) {
+    	this.targetPositionInches = targetPositionInches;
+        requires(Robot.arm);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	//Robot.elevatorAuton.setRaiseSpeed(RaiseSpeed);
+		Robot.arm.setPositionPID(targetPositionInches);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -30,7 +28,7 @@ public class ElevatorSetSpeed extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
+        return Math.abs(Robot.arm.getPositionInches() - this.targetPositionInches) < Arm.PID_ERROR_INCHES;
     }
 
     // Called once after isFinished returns true
