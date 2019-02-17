@@ -29,6 +29,7 @@ public class Robot extends IterativeRobot
 	public static OI oi;
 	
 	public static final Drive drive = new Drive();
+	public static final Arm arm = new Arm();
 
 
  
@@ -56,7 +57,8 @@ public class Robot extends IterativeRobot
       try {
 		oi = OI.getInstance();
 		
-    	controlLoop.addLoopable(drive);
+		controlLoop.addLoopable(drive);
+		controlLoop.addLoopable(arm);
 			
 
         operationModeChooser = new SendableChooser<OperationMode>();
