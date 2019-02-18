@@ -869,7 +869,7 @@ public class Drive extends Subsystem implements ControlLoopable
 				//SmartDashboard.putBoolean("Hopper Sensor Blue", isHopperSensorBlueOn());
 				SmartDashboard.putBoolean("Drive Hold", controlMode == DriveControlMode.HOLD);
 				//SmartDashboard.putNumber("Yaw Angle Pigeon Deg", getGyroPigeonAngleDeg());
-				SmartDashboard.putNumber("Yaw Angle Deg", getGyroAngleDeg());
+				SmartDashboard.putNumber("Yaw Angle Deg", Math.abs(getGyroAngleDeg() % 360));
 				MotionProfilePoint mpPoint = mpTurnController.getCurrentPoint(); 
 				double delta = mpPoint != null ? getGyroAngleDeg() - mpTurnController.getCurrentPoint().position : 0;
 				SmartDashboard.putNumber("Gyro Delta", delta);
@@ -881,14 +881,22 @@ public class Drive extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Move Output", m_moveOutput);
 				SmartDashboard.putNumber("Steer Input", m_steerInput);
 				SmartDashboard.putNumber("Move Input", m_moveInput);
+				SmartDashboard.putString("MODE", "TEST");
+				if (encoderLeft.getPosition() != 0 && encoderRight.getPosition() != 0){
+					SmartDashboard.putNumber("Distance Inches", (encoderLeft.getPosition()-encoderRight.getPosition())/2);//rightDrive1.getPositionWorld());
+				}
 			}
 			catch (Exception e) {
 				System.err.println("Drivetrain update status error");
 			}
 		}
-		else {
-			
+		else if (operationMode == Robot.OperationMode.COMPETITION) {
+			SmartDashboard.putNumber("Yaw Angle Deg", Math.abs(getGyroAngleDeg() % 360));
+			SmartDashboard.putString("MODE", "SICKO");
+			if (encoderLeft.getPosition() != 0 && encoderRight.getPosition() != 0){
+				SmartDashboard.putNumber("Distance Inches", (encoderLeft.getPosition()-encoderRight.getPosition())/2);//rightDrive1.getPositionWorld());
+			}
+			SmartDashboard.putNumber("Update Period (ms)", lastControlLoopUpdatePeriod * 1000.0);
 		}
 	}	
-	
 }
