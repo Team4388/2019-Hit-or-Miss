@@ -336,12 +336,12 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 	
 	public void updateStatus(Robot.OperationMode operationMode) {
-		if (operationMode == Robot.OperationMode.TEST) {
 			try {
 				SmartDashboard.putNumber("Elevator Position Inches", motor1.getPositionWorld());
 				SmartDashboard.putNumber("Elevator Motor 1 Amps", motor1.getOutputCurrent());
 				SmartDashboard.putNumber("Elevator Motor 2 Amps", motor2.getOutputCurrent());
 				SmartDashboard.putNumber("Elevator Average Amps", getAverageMotorCurrent());
+				
 //				SmartDashboard.putNumber("Elevator Motor 1 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID));
 //				SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
 //				SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
@@ -349,7 +349,7 @@ public class Arm extends Subsystem implements ControlLoopable
 			}
 			catch (Exception e) {
 			}
-		}
+		
 	}	
 	
 	public static Arm getInstance() {

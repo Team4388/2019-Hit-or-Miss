@@ -144,7 +144,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}
 		
 	public void setSpeedJoystick(double speed) {
-		wristmotor1.set(ControlMode.PercentOutput, speed);
+		wristmotor1.set(ControlMode.PercentOutput, speed*.7);
 		setWristControlMode(WristControlMode.JOYSTICK_MANUAL);
 	}
 		
