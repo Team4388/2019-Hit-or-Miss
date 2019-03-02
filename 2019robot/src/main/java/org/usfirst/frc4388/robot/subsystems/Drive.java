@@ -42,6 +42,10 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.DigitalInput;
@@ -101,8 +105,14 @@ public class Drive extends Subsystem implements ControlLoopable
 	private CANSparkMax leftDrive2;	
 	private CANSparkMax rightDrive1;
 	private CANSparkMax rightDrive2;
-	private CANEncoder encoderLeft;
-	private CANEncoder encoderRight;
+	private CANEncoder left_distance;
+	private CANEncoder right_distance;
+
+	
+
+
+	private CANSparkMax m_motor;
+	private CANEncoder m_encoder;
 
 	private DifferentialDrive m_drive;
 	
@@ -206,19 +216,21 @@ public class Drive extends Subsystem implements ControlLoopable
 			leftDrive1 = new CANSparkMax(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, MotorType.kBrushless);
 			//leftDrive1 = new CANSparkMax(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID, ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.QuadEncoder);
 			leftDrive2 = new CANSparkMax(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID, MotorType.kBrushless);
-			encoderLeft = new CANEncoder(leftDrive1);
-			leftDrive2.follow(leftDrive1);
+			//encoderLeft = new CANEncoder(leftDrive1);
+	
 
 			rightDrive1 = new CANSparkMax(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID, MotorType.kBrushless);
 			rightDrive2 = new CANSparkMax(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID, MotorType.kBrushless);
-			encoderRight = new CANEncoder(rightDrive1);
-			rightDrive2.follow(rightDrive1);
+
+		
+			//leftDrive1.restoreFactoryDefaults();
 			
 			//System.err.println("After Constructors.");
 
 			//gyroPigeon = new PigeonImu(leftDrive2);
 			gyroNavX = new AHRS(SPI.Port.kMXP);
-			
+			leftDrive2.follow(leftDrive1);
+			rightDrive2.follow(rightDrive1);
 			//hopperSensorRed = new DigitalInput(RobotMap.HOPPER_SENSOR_RED_DIO_ID);
 			//hopperSensorBlue = new DigitalInput(RobotMap.HOPPER_SENSOR_BLUE_DIO_ID);
 	
@@ -226,7 +238,7 @@ public class Drive extends Subsystem implements ControlLoopable
 			//leftDrive1.setVoltageRampRate(VOLTAGE_RAMP_RATE);
 			//leftDrive1.setNominalClosedLoopVoltage(12.0);
 			leftDrive1.clearFaults();
-			leftDrive1.setInverted(false);//false on comp 2108, false on microbot
+			leftDrive1.setInverted(false);//false on practice, true on comp
 			//leftDrive1.setSensorPhase(true);//true on comp 2108, false on microbot //not needed for spark
 			//leftDrive1.setSafetyEnabled(false); //not needed for spark
 			//leftDrive1.setCurrentLimit(15);
@@ -243,7 +255,7 @@ public class Drive extends Subsystem implements ControlLoopable
 //	        }
 			
 
-			leftDrive2.setInverted(false);//false on comp 2108, false on microbot
+			leftDrive2.setInverted(false);//false on practice. true on comp
 			//leftDrive2.setSafetyEnabled(false);
 			leftDrive2.setIdleMode(IdleMode.kBrake);
 			//leftDrive2.set(ControlMode.Follower, leftDrive1.getDeviceID()); // set above
@@ -254,7 +266,7 @@ public class Drive extends Subsystem implements ControlLoopable
 			//rightDrive1.setVoltageRampRate(VOLTAGE_RAMP_RATE);
 			//rightDrive1.setNominalClosedLoopVoltage(12.0);
 			rightDrive1.clearFaults();
-			rightDrive1.setInverted(false);//true on comp 2108, false on microbot
+			rightDrive1.setInverted(false);//false on comp, false on practice
 			//rightDrive1.setSensorPhase(true);//true on comp 2108, true on microbot
 			//rightDrive1.setSafetyEnabled(false);
 			rightDrive1.setIdleMode(IdleMode.kBrake);
@@ -267,7 +279,7 @@ public class Drive extends Subsystem implements ControlLoopable
 //	        }
 			
 
-			rightDrive2.setInverted(false);//True on comp 2108, false on microbot
+			rightDrive2.setInverted(false);//True on comp 2019, false on practice
 			//rightDrive2.setSafetyEnabled(false);
 			rightDrive2.setIdleMode(IdleMode.kBrake);
 			//rightDrive2.set(ControlMode.Follower, rightDrive1.getDeviceID());
@@ -470,13 +482,14 @@ public class Drive extends Subsystem implements ControlLoopable
 	}
     
     public void updatePose() {
-        double left_distance = encoderLeft.getPosition();
-        double right_distance = encoderRight.getPosition();
+		//m_encoder = m_motor.getEncoder();
+        left_distance = leftDrive1.getEncoder();
+        right_distance = rightDrive1.getEncoder();
         Rotation2d gyro_angle = Rotation2d.fromDegrees(-getGyroAngleDeg());
         lastPose = currentPose;
-        currentPose = generateOdometryFromSensors(left_distance - left_encoder_prev_distance_, right_distance - right_encoder_prev_distance_, gyro_angle);
-        left_encoder_prev_distance_ = left_distance;
-        right_encoder_prev_distance_ = right_distance;
+       // currentPose = generateOdometryFromSensors(left_distance - left_encoder_prev_distance_, right_distance - right_encoder_prev_distance_, gyro_angle);
+       // left_encoder_prev_distance_ = left_distance;
+       // right_encoder_prev_distance_ = right_distance;
     }
     
     public RigidTransform2d generateOdometryFromSensors(double left_encoder_delta_distance, double right_encoder_delta_distance, Rotation2d current_gyro_angle) {
@@ -853,26 +866,22 @@ public class Drive extends Subsystem implements ControlLoopable
 			try {
 				SmartDashboard.putNumber("Gyro Value", getGyroAngleDeg());
 				SmartDashboard.putNumber("Update Period (ms)", lastControlLoopUpdatePeriod * 1000.0);
-				SmartDashboard.putNumber("Right Pos Ticks", 0);//rightDrive1.getSelectedSensorPosition(0));   FIX TODAY
-				SmartDashboard.putNumber("Left Pos Ticks", 0);//leftDrive1.getSelectedSensorPosition(0));
-				SmartDashboard.putNumber("Right Pos Inches", -encoderRight.getPosition());//rightDrive1.getPositionWorld());
-				SmartDashboard.putNumber("Left Pos Inches", encoderLeft.getPosition());//leftDrive1.getPositionWorld());
-				SmartDashboard.putNumber("Right Vel Ft-Sec", 0);//rightDrive1.getVelocityWorld() / 12);
-				SmartDashboard.putNumber("Left Vel Ft-Sec", 0);//leftDrive1.getVelocityWorld() / 12);
-				//SmartDashboard.putNumber("Left 1 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID));
-				//SmartDashboard.putNumber("Left 2 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID));
-//				SmartDashboard.putNumber("Left 3 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID));
-				//SmartDashboard.putNumber("Right 1 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID));
-				//SmartDashboard.putNumber("Right 2 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR2_CAN_ID));
-//				SmartDashboard.putNumber("Right 3 Amps", Robot.pdp.getCurrent(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID));
-				//SmartDashboard.putBoolean("Hopper Sensor Red", isHopperSensorRedOn());
-				//SmartDashboard.putBoolean("Hopper Sensor Blue", isHopperSensorBlueOn());
+				
+				
+				SmartDashboard.putNumber("Right Pos Ticks", right_distance.getPosition());//rightDrive1.getSelectedSensorPosition(0));   FIX TODAY
+				SmartDashboard.putNumber("Left Pos Ticks", left_distance.getPosition());//leftDrive1.getSelectedSensorPosition(0));
+
+				
+				//SmartDashboard.putNumber("Right Pos Inches", -encoderRight.getPosition());//rightDrive1.getPositionWorld());
+				//SmartDashboard.putNumber("Left Pos Inches", encoderLeft.getPosition());//leftDrive1.getPositionWorld());
+				//SmartDashboard.putNumber("Right Vel Ft-Sec", 0);//rightDrive1.getVelocityWorld() / 12);
+				//SmartDashboard.putNumber("Left Vel Ft-Sec", 0);//leftDrive1.getVelocityWorld() / 12);
 				SmartDashboard.putBoolean("Drive Hold", controlMode == DriveControlMode.HOLD);
 				//SmartDashboard.putNumber("Yaw Angle Pigeon Deg", getGyroPigeonAngleDeg());
 				SmartDashboard.putNumber("Yaw Angle Deg", Math.abs(getGyroAngleDeg() % 360));
-				MotionProfilePoint mpPoint = mpTurnController.getCurrentPoint(); 
-				double delta = mpPoint != null ? getGyroAngleDeg() - mpTurnController.getCurrentPoint().position : 0;
-				SmartDashboard.putNumber("Gyro Delta", delta);
+				//MotionProfilePoint mpPoint = mpTurnController.getCurrentPoint(); 
+				//double delta = mpPoint != null ? getGyroAngleDeg() - mpTurnController.getCurrentPoint().position : 0;
+				//SmartDashboard.putNumber("Gyro Delta", delta);
 				//SmartDashboard.putBoolean("Gyro Calibrating", isCalibrating);
 				SmartDashboard.putBoolean("Gyro Calibrating", gyroNavX.isCalibrating());
 				SmartDashboard.putNumber("Gyro Offset", gyroOffsetDeg);
@@ -882,19 +891,19 @@ public class Drive extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Steer Input", m_steerInput);
 				SmartDashboard.putNumber("Move Input", m_moveInput);
 				SmartDashboard.putString("MODE", "TEST");
-				if (encoderLeft.getPosition() != 0 && encoderRight.getPosition() != 0){
-					SmartDashboard.putNumber("Distance Inches", (encoderLeft.getPosition()-encoderRight.getPosition())/2);//rightDrive1.getPositionWorld());
-				}
+				//if (left_distance.getPosition() != 0 && right_distance.getPosition() != 0){
+				//	SmartDashboard.putNumber("Distance Inches", (left_distance.getPosition()-right_distance.getPosition())/2);//rightDrive1.getPositionWorld());
+				//}
 			}
 			catch (Exception e) {
-				System.err.println("Drivetrain update status error");
+				System.err.println("Drivetrain update status error" +e.getMessage());
 			}
 		}
 		else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putNumber("Yaw Angle Deg", Math.abs(getGyroAngleDeg() % 360));
 			SmartDashboard.putString("MODE", "SICKO");
-			if (encoderLeft.getPosition() != 0 && encoderRight.getPosition() != 0){
-				SmartDashboard.putNumber("Distance Inches", (encoderLeft.getPosition()-encoderRight.getPosition())/2);//rightDrive1.getPositionWorld());
+			if (left_distance.getPosition() != 0 && left_distance.getPosition() != 0){
+				SmartDashboard.putNumber("Distance Inches", (left_distance.getPosition()-right_distance.getPosition())/2);//rightDrive1.getPositionWorld());
 			}
 			SmartDashboard.putNumber("Update Period (ms)", lastControlLoopUpdatePeriod * 1000.0);
 		}
