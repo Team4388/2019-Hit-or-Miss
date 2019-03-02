@@ -868,8 +868,8 @@ public class Drive extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Update Period (ms)", lastControlLoopUpdatePeriod * 1000.0);
 				
 				
-				SmartDashboard.putNumber("Right Pos Ticks", right_distance.getPosition());//rightDrive1.getSelectedSensorPosition(0));   FIX TODAY
-				SmartDashboard.putNumber("Left Pos Ticks", left_distance.getPosition());//leftDrive1.getSelectedSensorPosition(0));
+				//SmartDashboard.putNumber("Right Pos Ticks", right_distance.getPosition());//rightDrive1.getSelectedSensorPosition(0));   FIX TODAY
+				//SmartDashboard.putNumber("Left Pos Ticks", left_distance.getPosition());//leftDrive1.getSelectedSensorPosition(0));
 
 				
 				//SmartDashboard.putNumber("Right Pos Inches", -encoderRight.getPosition());//rightDrive1.getPositionWorld());
