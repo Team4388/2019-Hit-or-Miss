@@ -108,6 +108,9 @@ public class Drive extends Subsystem implements ControlLoopable
 	private CANEncoder left_distance;
 	private CANEncoder right_distance;
 
+	private CANPIDController leftDrive1_Controller;
+	private CANPIDController rightDrive1_Controller;
+
 	
 
 
@@ -286,9 +289,12 @@ public class Drive extends Subsystem implements ControlLoopable
 
 			//System.err.println("After motor settings.");
 			
-			CANPIDController leftDrive1_Controller = new CANPIDController(leftDrive1);
-			CANPIDController rightDrive1_Controller = new CANPIDController(rightDrive1);
+			leftDrive1_Controller = new CANPIDController(leftDrive1);
+			rightDrive1_Controller = new CANPIDController(rightDrive1);
 							
+			left_distance = leftDrive1.getEncoder();
+			right_distance = rightDrive1.getEncoder();
+
 			motorControllers.add(leftDrive1_Controller);
 			motorControllers.add(rightDrive1_Controller);
 
@@ -483,8 +489,8 @@ public class Drive extends Subsystem implements ControlLoopable
     
     public void updatePose() {
 		//m_encoder = m_motor.getEncoder();
-        left_distance = leftDrive1.getEncoder();
-        right_distance = rightDrive1.getEncoder();
+        /*left_distance = leftDrive1.getEncoder();
+        right_distance = rightDrive1.getEncoder(); Moved to Drive constructor*/
         Rotation2d gyro_angle = Rotation2d.fromDegrees(-getGyroAngleDeg());
         lastPose = currentPose;
        // currentPose = generateOdometryFromSensors(left_distance - left_encoder_prev_distance_, right_distance - right_encoder_prev_distance_, gyro_angle);
@@ -868,9 +874,8 @@ public class Drive extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Update Period (ms)", lastControlLoopUpdatePeriod * 1000.0);
 				
 				
-				//SmartDashboard.putNumber("Right Pos Ticks", right_distance.getPosition());//rightDrive1.getSelectedSensorPosition(0));   FIX TODAY
-				//SmartDashboard.putNumber("Left Pos Ticks", left_distance.getPosition());//leftDrive1.getSelectedSensorPosition(0));
-
+				SmartDashboard.putNumber("Right Pos Ticks", right_distance.getPosition());//rightDrive1.getSelectedSensorPosition(0));   FIX TODAY
+				SmartDashboard.putNumber("Left Pos Ticks", left_distance.getPosition());//leftDrive1.getSelectedSensorPosition(0));
 				
 				//SmartDashboard.putNumber("Right Pos Inches", -encoderRight.getPosition());//rightDrive1.getPositionWorld());
 				//SmartDashboard.putNumber("Left Pos Inches", encoderLeft.getPosition());//leftDrive1.getPositionWorld());

@@ -291,7 +291,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
-		setSpeedJoystick((joyStickSpeed*.30)+.12);
+		setSpeedJoystick((joyStickSpeed*.30)+.1);
 	}
 	/*
 	public void setShiftState(ElevatorSpeedShiftState state) {
