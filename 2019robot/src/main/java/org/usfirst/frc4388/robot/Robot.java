@@ -2,6 +2,7 @@
 package org.usfirst.frc4388.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 //import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -23,7 +24,7 @@ import org.usfirst.frc4388.robot.subsystems.Drive;
 
 import org.usfirst.frc4388.robot.subsystems.Drive.DriveControlMode;;
 
-public class Robot extends IterativeRobot 
+public class Robot extends TimedRobot
 {
 
 	public static OI oi;
@@ -39,7 +40,7 @@ public class Robot extends IterativeRobot
 
 
     public static final Climber climber = new Climber();
-    public static final Pnumatics pnumatics = new Pnumatics();
+    public static final Pneumatics pnumatics = new Pneumatics();
 	public static final long periodMS = 10;
 	public static final ControlLooper controlLoop = new ControlLooper("Main control loop", periodMS);
 
