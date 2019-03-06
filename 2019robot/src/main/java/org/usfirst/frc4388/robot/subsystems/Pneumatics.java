@@ -6,7 +6,7 @@ import org.usfirst.frc4388.robot.RobotMap;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Pnumatics extends Subsystem {
+public class Pneumatics extends Subsystem {
     
 		
 	private DoubleSolenoid speedShift;
@@ -15,7 +15,7 @@ public class Pnumatics extends Subsystem {
 	private DoubleSolenoid wrist;
 
 	
-	public Pnumatics() {
+	public Pneumatics() {
 		try {
 			speedShift = new DoubleSolenoid(1,0,1);					
 			hatchIntake = new DoubleSolenoid(1,2,3); 
@@ -23,7 +23,7 @@ public class Pnumatics extends Subsystem {
 			wrist = new DoubleSolenoid(1,6,7);
 		} 
 		catch (Exception e) {
-			System.err.println("An error occurred in the Pnumatics constructor");
+			System.err.println("An error occurred in the Pneumatics constructor");
 		}
 	}
 	

@@ -39,7 +39,7 @@ public class Robot extends IterativeRobot
 
 
     public static final Climber climber = new Climber();
-    public static final Pnumatics pnumatics = new Pnumatics();
+    public static final Pneumatics pnumatics = new Pneumatics();
 	public static final long periodMS = 10;
 	public static final ControlLooper controlLoop = new ControlLooper("Main control loop", periodMS);
 
