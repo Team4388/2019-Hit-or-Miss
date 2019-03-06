@@ -91,7 +91,6 @@ public class Arm extends Subsystem implements ControlLoopable
 	// Pneumatics
 	private Solenoid speedShift;
 
-	private ArmControlMode controlMode = ArmControlMode.JOYSTICK_MANUAL;
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;	
 	private boolean isFinished;
@@ -253,23 +252,23 @@ public class Arm extends Subsystem implements ControlLoopable
 		lastControlLoopUpdateTimestamp = currentTimestamp;
 		
 		// Do the update
-		if (controlMode == ArmControlMode.JOYSTICK_MANUAL) {
+		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
 			controlManualWithJoystick();
 		}
 		else if (!isFinished) {
-			if (controlMode == ArmControlMode.MOTION_PROFILE) {
+			if (armControlMode == ArmControlMode.MOTION_PROFILE) {
 				isFinished = mpController.controlLoopUpdate(getPositionInches()); 
 			}
-			if (controlMode == ArmControlMode.JOYSTICK_PID){
+			if (armControlMode == ArmControlMode.JOYSTICK_PID){
 				controlPidWithJoystick();
 				System.err.println("test of pid");
 	
 			}
 			
-			/*else if (controlMode == ArmControlMode.MP_PATH_VELOCITY) {
+			/*else if (armControlMode == ArmControlMode.MP_PATH_VELOCITY) {
 				isFinished = mpPathVelocityController.controlLoopUpdate(getGyroAngleDeg()); 
 			}
-			else if (controlMode == ArmControlMode.ADAPTIVE_PURSUIT) {
+			else if (armControlMode == ArmControlMode.ADAPTIVE_PURSUIT) {
 				updatePose();
 				isFinished = adaptivePursuitController.controlLoopUpdate(currentPose); 
 			}*/
