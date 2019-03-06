@@ -33,7 +33,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static enum ArmControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL };
 
 	// One revolution of the 30T Drive 1.880" PD pulley = Pi * PD inches = 36/24 revs due to pulleys * 34/24 revs due to gears * 36/12 revs due mag encoder gear on ball shifter * 4096 ticks 
-	public static final double ENCODER_TICKS_TO_INCHES = ((360/4096)/(3))-60;  
+	public static final double ENCODER_TICKS_TO_INCHES = (1);  
 	
 
 	private double periodMs;
@@ -52,7 +52,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double ZERO_POSITION_INCHES = -0.25;
 	public static final double NEAR_ZERO_POSITION_INCHES = 0.0;
 	public static final double MIN_POSITION_INCHES = 0.0;
-	public static final double MAX_POSITION_INCHES = 83.4;
+	public static final double MAX_POSITION_INCHES = 4096;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
 	public static final double SWITCH_POSITION_INCHES = 24.0;
@@ -108,7 +108,7 @@ public class Arm extends Subsystem implements ControlLoopable
 			
 			motor1.setInverted(true);
 			motor2.setInverted(true);
-										
+									
 //	        if (motor1.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder) != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
 //	            Driver.reportError("Could not detect elevator motor 1 encoder encoder!", false);
 //	        }
@@ -163,6 +163,7 @@ public class Arm extends Subsystem implements ControlLoopable
  		targetPositionInchesPID = limitPosition(targetPositionInches);
 		double startPositionInches = motor1.getPositionWorld();
 		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
+		System.err.println("it should get here");
 	}
 	
 	public void setPositionMP(double targetPositionInches) {
@@ -259,6 +260,11 @@ public class Arm extends Subsystem implements ControlLoopable
 			if (controlMode == ArmControlMode.MOTION_PROFILE) {
 				isFinished = mpController.controlLoopUpdate(getPositionInches()); 
 			}
+			if (controlMode == ArmControlMode.JOYSTICK_PID){
+				controlPidWithJoystick();
+				System.err.println("test of pid");
+	
+			}
 			
 			/*else if (controlMode == ArmControlMode.MP_PATH_VELOCITY) {
 				isFinished = mpPathVelocityController.controlLoopUpdate(getGyroAngleDeg()); 
@@ -291,7 +297,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
-		setSpeedJoystick((joyStickSpeed*.30)+.1);
+		setSpeedJoystick((joyStickSpeed*.30)/*+.1*/);
 	}
 	/*
 	public void setShiftState(ElevatorSpeedShiftState state) {
@@ -336,7 +342,9 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 	
 	public void updateStatus(Robot.OperationMode operationMode) {
+		//System.err.println("the encoder is right after this");
 			try {
+				
 				SmartDashboard.putNumber("Elevator Position Inches", motor1.getPositionWorld());
 				SmartDashboard.putNumber("Elevator Motor 1 Amps", motor1.getOutputCurrent());
 				SmartDashboard.putNumber("Elevator Motor 2 Amps", motor2.getOutputCurrent());
@@ -348,6 +356,7 @@ public class Arm extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Elevator Target PID Position", targetPositionInchesPID);
 			}
 			catch (Exception e) {
+				System.err.println("Drivetrain update status error" +e.getMessage());
 			}
 		
 	}	

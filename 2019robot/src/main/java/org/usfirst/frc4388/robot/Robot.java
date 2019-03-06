@@ -145,6 +145,7 @@ public class Robot extends IterativeRobot
     }
     
     public void updateStatus() {
+		arm.updateStatus(operationMode);
     	drive.updateStatus(operationMode);
 
    }

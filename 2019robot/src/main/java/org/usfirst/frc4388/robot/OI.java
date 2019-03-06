@@ -85,11 +85,15 @@ public class OI
 	        //Operator Xbox
 			/*
 	        JoystickButton openIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
-	        openIntake.whenPressed(new IntakePosition(true));
+			openIntake.whenPressed(new IntakePosition(true));
+			s
 
 	        JoystickButton CloseIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			CloseIntake.whenPressed(new IntakePosition(false));
 			*/
+
+			SmartDashboard.putData("run arm test", new ArmTest());
+
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
 			safteySwitch.whenPressed(new setClimberSafety(true));
 			safteySwitch.whenReleased(new setClimberSafety(false));
