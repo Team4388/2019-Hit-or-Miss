@@ -3,7 +3,9 @@ package org.usfirst.frc4388.robot.commands;
 import org.usfirst.frc4388.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
-
+/**
+ * @deprecated use HatchAndBallSet insted for all setting of hatch and ball intakes
+ */
 public class HatchFlip extends Command
 {
 	public boolean PickingUp;

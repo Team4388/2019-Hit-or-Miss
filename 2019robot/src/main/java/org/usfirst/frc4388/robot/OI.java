@@ -57,15 +57,15 @@ public class OI
 
 
 			JoystickButton liftBothIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
-			liftBothIntake.whenPressed(new HatchAndBallUp());
+			liftBothIntake.whenPressed(new HatchAndBallSet(false, false));
 
 			JoystickButton liftHatchIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
-			liftHatchIntake.whenPressed(new LiftHatchDropBall());
+			liftHatchIntake.whenPressed(new HatchAndBallSet(false, true));
 
 
 			JoystickButton liftBallIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 			//liftBallIntake.whenPressed(new HatchFlip(false));
-			liftBallIntake.whenPressed(new LiftBallDropHatch());
+			liftBallIntake.whenPressed(new HatchAndBallSet(true, false));
 
 
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);

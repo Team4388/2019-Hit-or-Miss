@@ -8,7 +8,9 @@
 package org.usfirst.frc4388.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-
+/**
+ * @deprecated use HatchAndBallSet insted for all setting of hatch and ball intakes
+ */
 public class HatchAndBallUp extends CommandGroup {
   /**
    * Add your docs here.
