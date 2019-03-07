@@ -87,7 +87,9 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double KF_UP = 0.06;
 	public static final double KF_DOWN = 0.01;
 	public static final double P_Value = 0.6;
-	public static final double I_Value = .0005;
+	public static final double I_Value = 0.0005;
+	public static final double D_Value = 0.0;
+	private PIDParams armPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
 	public static final double PID_ERROR_INCHES = 1.0;
 	LimitSwitchSource limitSwitchSource;
 	// Pneumatics
@@ -156,8 +158,8 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 		
 	public void setPositionPID(double targetPositionInches) {
-		
-		mpController.setPIDSlot(PID_SLOT);
+		motor1.set(ControlMode.Position, targetPositionInches);
+		mpController.setPIDSlot(PID_SLOT);	//TODO: verify that motor's selectProfileSlot() should be called AFTER its control mode is set
 		updatePositionPID(targetPositionInches);
 		setArmControlMode(ArmControlMode.JOYSTICK_PID);	
 		setFinished(false);
@@ -166,11 +168,11 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void updatePositionPID(double targetPositionInches) {
  		targetPositionInchesPID = limitPosition(targetPositionInches);
 		double startPositionInches = motor1.getPositionWorld();
-		//mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
-		motor1.set(ControlMode.Position, targetPositionInches);
-		motor1.config_kP(0, P_Value, TalonSRXEncoder.TIMEOUT_MS);
-		motor1.config_kI(0, I_Value, TalonSRXEncoder.TIMEOUT_MS);
-		motor1.config_kF(0, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN, TalonSRXEncoder.TIMEOUT_MS);
+		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
+		//motor1.set(ControlMode.Position, targetPositionInches);
+		//motor1.config_kP(0, P_Value, TalonSRXEncoder.TIMEOUT_MS);
+		//motor1.config_kI(0, I_Value, TalonSRXEncoder.TIMEOUT_MS);
+		//motor1.config_kF(0, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN, TalonSRXEncoder.TIMEOUT_MS);
 		System.err.println(motor1.getControlMode());
 		//System.err.print(motor1.getClosedLoopError());
 	}
@@ -197,9 +199,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void setPeriodMs(long periodMs) {
 		mpController = new MPTalonPIDController(periodMs, motorControllers);
 		mpController.setPID(mpPIDParams, MP_SLOT);
-		mpController.setPID(pidPIDParamsHiGear, PID_SLOT);
-		mpController.setPIDSlot(PID_SLOT);
-		mpController.setPID(pidPIDParamsHiGear, PID_SLOT);
+		mpController.setPID(armPIDParams, PID_SLOT);
 		mpController.setPIDSlot(PID_SLOT);
 		this.periodMs = periodMs;
 	}
