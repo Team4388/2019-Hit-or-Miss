@@ -102,7 +102,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	public Wrist() {
 		try {
 			wristmotor1 = TalonSRXFactory.createTalonEncoder(RobotMap.WRIST_MOTOR_ID, (ENCODER_TICKS_TO_INCHES), false, FeedbackDevice.QuadEncoder);
-			System.err.println("the tallon shold be made in wrist");
+			System.err.println("the talon should be made in wrist");
 			
 			wristmotor1.setInverted(true);
 										

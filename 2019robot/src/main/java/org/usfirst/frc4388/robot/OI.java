@@ -92,6 +92,7 @@ public class OI
 			CloseIntake.whenPressed(new IntakePosition(false));
 			*/
 
+			SmartDashboard.putData("switch to manuel", new SetManual());
 			SmartDashboard.putData("run arm test", new ArmTest());
 
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
