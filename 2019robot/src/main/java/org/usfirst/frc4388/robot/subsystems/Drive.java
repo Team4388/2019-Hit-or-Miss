@@ -910,8 +910,5 @@ public class Drive extends Subsystem implements ControlLoopable
 			}
 			SmartDashboard.putNumber("Update Period (ms)", lastControlLoopUpdatePeriod * 1000.0);
 		}
-	}
-	public void turnToAngle(double targetAngle, double maxError, double maxPrevError, MPSoftwareTurnType turnType) {
-		setRelativeTurnPID(targetAngle - getGyroAngleDeg(), maxError, maxPrevError, turnType);
 	}	
 }
