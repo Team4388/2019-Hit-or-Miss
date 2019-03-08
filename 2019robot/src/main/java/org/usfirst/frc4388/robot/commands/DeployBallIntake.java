@@ -6,16 +6,16 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DeployBallIntake extends Command
 {
-	public boolean IsUp;
+	public boolean deployed;
 	
-	public DeployBallIntake(boolean IsUp) {
-		this.IsUp=IsUp;
+	public DeployBallIntake(boolean deployed) {
+		this.deployed = deployed;
 		requires(Robot.pnumatics);
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.pnumatics.setBallIntake(IsUp);
+		Robot.pnumatics.setBallIntake(deployed);
 	}
 
 	@Override
