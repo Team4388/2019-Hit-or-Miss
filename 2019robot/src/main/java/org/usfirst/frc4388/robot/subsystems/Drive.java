@@ -61,7 +61,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Drive extends Subsystem implements ControlLoopable
 {
-	public static enum DriveControlMode { JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, CLIMB, MP_PATH, MP_PATH_VELOCITY, MOTION_MAGIC, ADAPTIVE_PURSUIT, MOVE_POSITION_MAX_SCALE, MOVE_POSITION_LOW_SCALE, MOVE_POSITION_SWITCH, MOVE_POSITION_LOWEST, STOP_MOTORS, RAW};
+	public static enum DriveControlMode { JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, CLIMB, MP_PATH, MP_PATH_VELOCITY, MOTION_MAGIC, ADAPTIVE_PURSUIT, MOVE_POSITION_MAX_SCALE, MOVE_POSITION_LOW_SCALE, MOVE_POSITION_SWITCH, MOVE_POSITION_LOWEST, STOP_MOTORS, RAW, JOYSTICK_STRAIGHT};
 	public static enum SpeedShiftState { HI, LO };
 	public static enum ClimberState { DEPLOYED, RETRACTED };
 
@@ -680,12 +680,23 @@ public class Drive extends Subsystem implements ControlLoopable
 					m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
 			m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
 					m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
+			if(m_steerInput == 0 && !gyroNavX.isRotating()){
+				controlMode = DriveControlMode.JOYSTICK_STRAIGHT;
+				setGyroLock();
+			}
 		}
 		else if (controlMode == DriveControlMode.CLIMB) {
 			m_moveOutput = climbSpeed;
 		}
+		else if (controlMode == DriveControlMode.JOYSTICK_STRAIGHT) {
+			double maxYawError = 5; ///TODO: Put this somehwere else
 			double yawError = gyroLockAngleDeg - getGyroAngleDeg();
+			m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
+					m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
 			m_steerOutput = kPGyro * yawError;
+			if(m_steerInput != 0 || yawError > maxYawError){
+				controlMode = DriveControlMode.JOYSTICK;
+			}
 		}
 
 		m_drive.arcadeDrive(m_moveOutput, m_steerOutput*.75);
