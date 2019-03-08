@@ -56,17 +56,15 @@ public class OI
 	        Contract.whenPressed(new WristPlacement(false));
 
 
-			JoystickButton liftBothIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
-			liftBothIntake.whenPressed(new HatchAndBallSet(false, false));
+			JoystickButton deployBothIntakes = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
+			deployBothIntakes.whenPressed(new HatchAndBallSet(false, false));
 
-			JoystickButton liftHatchIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
-			liftHatchIntake.whenPressed(new HatchAndBallSet(false, true));
+			JoystickButton deployBallIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
+			deployBallIntake.whenPressed(new HatchAndBallSet(false, true));
 
-
-			JoystickButton liftBallIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
-			//liftBallIntake.whenPressed(new HatchFlip(false));
-			liftBallIntake.whenPressed(new HatchAndBallSet(true, false));
-
+			JoystickButton deployHatchIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
+			deployHatchIntake.whenPressed(new HatchAndBallSet(true, false));
+			
 
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
