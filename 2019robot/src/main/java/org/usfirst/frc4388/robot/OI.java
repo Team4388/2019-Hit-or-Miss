@@ -92,6 +92,12 @@ public class OI
 			CloseIntake.whenPressed(new IntakePosition(false));
 			*/
 
+			JoystickButton TurnDriveTrain90 = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_JOYSTICK_BUTTON);
+			TurnDriveTrain90.whenPressed(new DriveRelativeTurnPID(90, MPSoftwareTurnType.TANK));
+
+			JoystickButton TurnTo0NavX = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
+			TurnTo0NavX.whenPressed(new DriveRelativeTurnPID(0, MPSoftwareTurnType.TANK));
+
 			SmartDashboard.putData("switch to manuel", new SetManual());
 			SmartDashboard.putData("run arm test", new ArmTest());
 
