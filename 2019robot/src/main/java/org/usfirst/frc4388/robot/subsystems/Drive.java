@@ -201,7 +201,6 @@ public class Drive extends Subsystem implements ControlLoopable
 	//private PigeonImu gyroPigeon;
 	//private double[] yprPigeon = new double[3];
     private AHRS gyroNavX;
-	private boolean useGyroLock;
 	private double gyroLockAngleDeg;
 	private double kPGyro = 0.07;
 	//private double kPGyro = 0.0625;
@@ -618,14 +617,8 @@ public class Drive extends Subsystem implements ControlLoopable
 		}
 	}
 	
-	public void setGyroLock(boolean useGyroLock, boolean snapToAbsolute0or180) {
-		if (snapToAbsolute0or180) {
-			gyroLockAngleDeg = BHRMathUtils.adjustAccumAngleToClosest180(getGyroAngleDeg());
-		}
-		else {
-			gyroLockAngleDeg = getGyroAngleDeg();
-		}
-		this.useGyroLock = useGyroLock;
+	public void setGyroLock() {
+		gyroLockAngleDeg = getGyroAngleDeg();
 	}
 
 	public void driveWithJoystick() {
@@ -685,27 +678,14 @@ public class Drive extends Subsystem implements ControlLoopable
 		if (controlMode == DriveControlMode.JOYSTICK) {
 			m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
 					m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
+			m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
+					m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
 		}
 		else if (controlMode == DriveControlMode.CLIMB) {
 			m_moveOutput = climbSpeed;
 		}
-		
-		if (useGyroLock) {											// If currently in gyro lock mode,
-			if ((m_moveInput == 0.0) || (m_steerInput != 0.0)) {	// but stopped driving or started turning,
-				setGyroLock(false, false);							// turn off gyro lock mode
-			}
-		} else {													// If not yet in gyro lock mode,
-			if ((m_moveInput != 0.0) && (m_steerInput == 0.0)) {	// but just started driving without turning,
-				setGyroLock(true, false);							// gyro lock to current heading
-			}
-		}
-		
-		if (useGyroLock) {
 			double yawError = gyroLockAngleDeg - getGyroAngleDeg();
 			m_steerOutput = kPGyro * yawError;
-		} else {
-			m_steerOutput = adjustForSensitivity(m_steerScale, m_steerTrim,
-					m_steerInput, m_steerNonLinear, STEER_NON_LINEARITY);
 		}
 
 		m_drive.arcadeDrive(m_moveOutput, m_steerOutput*.75);
