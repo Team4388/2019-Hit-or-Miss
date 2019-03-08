@@ -16,7 +16,7 @@ public class HatchAndBallUp extends CommandGroup {
    * Add your docs here.
    */
   public HatchAndBallUp() {
-    addSequential(new HatchFlip(true));
+    addSequential(new DeployHatchIntake(true));
     addParallel(new DeployBallIntake(false));
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

@@ -3,21 +3,19 @@ package org.usfirst.frc4388.robot.commands;
 import org.usfirst.frc4388.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
-/**
- * @deprecated use HatchAndBallSet insted for all setting of hatch and ball intakes
- */
-public class HatchFlip extends Command
+
+public class DeployHatchIntake extends Command
 {
-	public boolean PickingUp;
+	public boolean deployed;
 	
-	public HatchFlip(boolean PickingUP) {
-		this.PickingUp=PickingUP;
+	public DeployHatchIntake(boolean deployed) {
+		this.deployed = !deployed;
 		requires(Robot.pnumatics);
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.pnumatics.setHatchIntakeState(PickingUp);
+		Robot.pnumatics.setHatchIntakeState(deployed);
 	}
 
 	@Override

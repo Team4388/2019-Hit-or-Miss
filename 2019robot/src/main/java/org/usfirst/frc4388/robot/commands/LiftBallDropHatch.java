@@ -16,7 +16,7 @@ public class LiftBallDropHatch extends CommandGroup {
    * Add your docs here.
    */
   public LiftBallDropHatch() {
-    addSequential(new HatchFlip(false));
+    addSequential(new DeployHatchIntake(false));
     addParallel(new DeployBallIntake(false));
     // Add Commands here:
     // e.g. addSequential(new Command1());
