@@ -452,6 +452,13 @@ public class Drive extends Subsystem implements ControlLoopable
 		pidTurnController.setPIDTurnTarget(relativeTurnAngleDeg + getGyroAngleDeg(), maxError, maxPrevError, turnType);
 		setControlMode(DriveControlMode.PID_TURN);
 	}
+
+	public void setAbsoluteTurnPID(double absoluteTurnAngleDeg, double maxError, double maxPrevError, MPSoftwareTurnType turnType) {
+		this.targetPIDAngle = absoluteTurnAngleDeg;
+		pidTurnController.setPIDTurnTarget(absoluteTurnAngleDeg, maxError, maxPrevError, turnType);
+		setControlMode(DriveControlMode.PID_TURN);
+	}
+	
 /*
 	public void setPathMP(PathGenerator path) {
 		mpPathController.setPID(mpPathPIDParams);
