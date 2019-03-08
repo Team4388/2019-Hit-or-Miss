@@ -69,6 +69,7 @@ public class Drive extends Subsystem implements ControlLoopable
 	public static final double ENCODER_TICKS_TO_INCHES = Constants.kDriveEncoderTicksPerInch;
 	
 	public static final double CLIMB_SPEED = 0.45;
+	static final double MAX_GYRO_LOCK_YAW_ERROR = 5;
 	
 	public static final double VOLTAGE_RAMP_RATE = 150;  // Volts per second
 	public static final double OPEN_LOOP_RAMP_SECONDS = 12.0 / VOLTAGE_RAMP_RATE;	// Seconds from neutral to full
@@ -689,12 +690,11 @@ public class Drive extends Subsystem implements ControlLoopable
 			m_moveOutput = climbSpeed;
 		}
 		else if (controlMode == DriveControlMode.JOYSTICK_STRAIGHT) {
-			double maxYawError = 5; ///TODO: Put this somehwere else
 			double yawError = gyroLockAngleDeg - getGyroAngleDeg();
 			m_moveOutput = adjustForSensitivity(m_moveScale, m_moveTrim,
 					m_moveInput, m_moveNonLinear, MOVE_NON_LINEARITY);
 			m_steerOutput = kPGyro * yawError;
-			if(m_steerInput != 0 || yawError > maxYawError){
+			if(m_steerInput != 0 || yawError > MAX_GYRO_LOCK_YAW_ERROR){
 				controlMode = DriveControlMode.JOYSTICK;
 			}
 		}
