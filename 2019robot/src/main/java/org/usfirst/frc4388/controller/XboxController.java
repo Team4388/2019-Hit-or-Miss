@@ -149,20 +149,20 @@ public class XboxController implements IHandController
 
 	public boolean getDPadLeft(){
       return (stick.getRawAxis(LEFT_RIGHT_DPAD_AXIS) < LEFT_DPAD_TOLERANCE);
-  }
+  	}
 
-  public boolean getDPadRight(){
+  	public boolean getDPadRight(){
       return (stick.getRawAxis(LEFT_RIGHT_DPAD_AXIS) > RIGHT_DPAD_TOLERANCE);
-  }
+  	}
 
-  public boolean getDPadTop(){
+  	public boolean getDPadTop(){
       return (stick.getRawAxis(TOP_BOTTOM_DPAD_AXIS) < TOP_DPAD_TOLERANCE);
-  }
+  	}
 
-  /*public boolean getDPadBottom(){
+  	public boolean getDPadBottom(){
       return (stick.getRawAxis(TOP_BOTTOM_DPAD_AXIS) > BOTTOM_DPAD_TOLERANCE);
-  }
-*/
+  	}
+
 	public boolean getLeftTrigger(){
 		return (getLeftTriggerAxis() > LEFT_TRIGGER_TOLERANCE);
 	}
