@@ -57,8 +57,8 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double MAX_POSITION_INCHES = 3900;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
-	public static final double HATCH_LOW_POSITION_WORLD = 1000;
-	public static final double HATCH_MID_POSITION_WORLD = 2500;
+	public static final double HATCH_LOW_POSITION_WORLD = 135;
+	public static final double HATCH_MID_POSITION_WORLD = 2400;
 	public static final double HATCH_HIGH_POSITION_WORLD = 3800;
 	public static final double CARGO_LOW_POSITION_WORLD = 1500;
 	public static final double CARGO_MID_POSITION_WORLD = 2900;
