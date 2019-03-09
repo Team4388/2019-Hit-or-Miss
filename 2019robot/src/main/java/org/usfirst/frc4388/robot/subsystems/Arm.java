@@ -21,6 +21,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -93,6 +94,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	private PIDParams armPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
 	public static final double PID_ERROR_INCHES = 5;
 	LimitSwitchSource limitSwitchSource;
+	
 	// Pneumatics
 	private Solenoid speedShift;
 
@@ -273,6 +275,10 @@ public class Arm extends Subsystem implements ControlLoopable
 		}
 		lastControlLoopUpdateTimestamp = currentTimestamp;
 		
+		if (motor1.getSensorCollection().isRevLimitSwitchClosed()){
+			motor1.setPosition(0);
+		}
+
 		// Do the update
 		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
 			controlManualWithJoystick();
