@@ -142,7 +142,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void resetZeroPosition(double position) {
 		mpController.resetZeroPosition(position);
 	}	
-	public void resetencoder(){
+	public void resetEncoder(){
 		motor1.setPosition(0);
 	}
 	
@@ -175,7 +175,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void updatePositionPID(double targetPositionInches) {
 		targetPositionInchesPID = limitPosition(targetPositionInches);
 		if (limitPosition(motor1.getPositionWorld()) == MIN_POSITION_INCHES){
-			resetencoder();
+			resetEncoder();
 		}
 		double startPositionInches = motor1.getPositionWorld();
 		//mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
@@ -276,7 +276,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		lastControlLoopUpdateTimestamp = currentTimestamp;
 		
 		if (motor1.getSensorCollection().isRevLimitSwitchClosed()){
-			motor1.setPosition(0);
+			resetEncoder();
 		}
 
 		// Do the update

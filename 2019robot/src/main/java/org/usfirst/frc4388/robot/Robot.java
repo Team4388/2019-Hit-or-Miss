@@ -99,7 +99,7 @@ public class Robot extends TimedRobot
     	drive.resetEncoders();
     	drive.resetGyro();
 		drive.setIsRed(getAlliance().equals(Alliance.Red));
-		arm.resetencoder();
+		arm.resetEncoder();
         
 	}
  
