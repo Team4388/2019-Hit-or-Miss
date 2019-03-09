@@ -52,7 +52,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double ZERO_POSITION_INCHES = -0.25;
 	public static final double NEAR_ZERO_POSITION_INCHES = 0.0;
 	public static final double MIN_POSITION_INCHES = 0.0;
-	public static final double MAX_POSITION_INCHES = 4096;
+	public static final double MAX_POSITION_INCHES = 3900;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
 	public static final double SWITCH_POSITION_INCHES = 24.0;
@@ -87,11 +87,11 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double KF_UP = 0.01;
 	public static final double KF_DOWN = 0.0;
 	public static final double P_Value = 2;
-	public static final double I_Value = 0.00300;
+	public static final double I_Value = 0.00030;
 	public static final double D_Value = 200;
 	public static final double RampRate = 0.0;
 	private PIDParams armPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
-	public static final double PID_ERROR_INCHES = 5.0;
+	public static final double PID_ERROR_INCHES = 5;
 	LimitSwitchSource limitSwitchSource;
 	// Pneumatics
 	private Solenoid speedShift;
@@ -175,7 +175,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		double startPositionInches = motor1.getPositionWorld();
 		//mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
 		motor1.set(ControlMode.Position, targetPositionInches);
-		motor1.configClosedloopRamp(.02);
+		motor1.configClosedloopRamp(0);
 		//motor1.configPeakCurrentLimit(5);
 		motor1.configContinuousCurrentLimit(2);
 		motor1.config_kP(0, P_Value, TalonSRXEncoder.TIMEOUT_MS);
