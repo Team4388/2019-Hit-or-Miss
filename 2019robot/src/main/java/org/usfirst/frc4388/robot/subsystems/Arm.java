@@ -171,7 +171,10 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 	
 	public void updatePositionPID(double targetPositionInches) {
- 		targetPositionInchesPID = limitPosition(targetPositionInches);
+		targetPositionInchesPID = limitPosition(targetPositionInches);
+		if (limitPosition(motor1.getPositionWorld()) == MIN_POSITION_INCHES){
+			resetencoder();
+		}
 		double startPositionInches = motor1.getPositionWorld();
 		//mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
 		motor1.set(ControlMode.Position, targetPositionInches);
@@ -309,8 +312,6 @@ public class Arm extends Subsystem implements ControlLoopable
 		double deltaPosition = joystickPosition * joystickInchesPerMs;
 		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
 		updatePositionPID(targetPositionInchesPID);
-		
-		
 	}
 
 	private void ControlWithJoystickhold(){
