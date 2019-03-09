@@ -31,7 +31,7 @@ public class DriveAbsoluteTurnPID extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.drive.setRelativeTurnPID(absoluteTurnAngleDeg, 0.3, 0.1, turnType);
+    Robot.drive.setAbsoluteTurnPID(absoluteTurnAngleDeg, 0.3, 0.1, turnType);
   }
 
   // Called repeatedly when this Command is scheduled to run
