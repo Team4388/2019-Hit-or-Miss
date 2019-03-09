@@ -31,6 +31,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	private static Arm instance;
 
 	public static enum ArmControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL };
+	public static enum ArmPositionMode { CARGO, HATCH };
 
 	// One revolution of the 30T Drive 1.880" PD pulley = Pi * PD inches = 36/24 revs due to pulleys * 34/24 revs due to gears * 36/12 revs due mag encoder gear on ball shifter * 4096 ticks 
 	public static final double ENCODER_TICKS_TO_INCHES = (1);  
@@ -55,7 +56,16 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double MAX_POSITION_INCHES = 4096;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
-	public static final double SWITCH_POSITION_INCHES = 24.0;
+	public static final double HATCH_LOW_POSITION_WORLD = 0;
+	public static final double HATCH_MID_POSITION_WORLD = 0;
+	public static final double HATCH_HIGH_POSITION_WORLD = 0;
+	public static final double CARGO_LOW_POSITION_WORLD = 0;
+	public static final double CARGO_MID_POSITION_WORLD = 0;
+	public static final double CARGO_HIGH_POSITION_WORLD = 0;
+	public static final double BALL_PICKUP_POSITION_WORLD = 0;
+	public static final double HATCH_PICKUP_POSITION_WORLD = 0;
+ 
+	/*public static final double SWITCH_POSITION_INCHES = 24.0;
 	public static final double SWITCH_POSITION_HIGH_INCHES = 36.0; //Switch Position for First Cube APR
 	public static final double SCALE_LOW_POSITION_INCHES = 56.0;
 	public static final double SCALE_FIRST_CUBE_POSITION_INCHES = 78.0; //72.0
@@ -63,7 +73,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double SCALE_HIGH_POSITION_INCHES = MAX_POSITION_INCHES;
 	public static final double CLIMB_BAR_POSITION_INCHES = 70.0;
 	public static final double CLIMB_HIGH_POSITION_INCHES = 10.0;
-	public static final double CLIMB_ASSIST_POSITION_INCHES = 50.0;
+	public static final double CLIMB_ASSIST_POSITION_INCHES = 50.0;*/
 
 	// Motion profile max velocities and accel times
 	public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60; 
@@ -96,10 +106,18 @@ public class Arm extends Subsystem implements ControlLoopable
 	// Pneumatics
 	private Solenoid speedShift;
 
+	//DPAD
+	public static final double DPAD_UP = 0;
+	public static final double DPAD_RIGHT = 90;
+	public static final double DPAD_DOWN = 180;
+	public static final double DPAD_LEFT = 270;
+	public static final double DPAD_RELEASED = -1;
+
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;	
 	private boolean isFinished;
 	private ArmControlMode armControlMode = ArmControlMode.JOYSTICK_MANUAL;
+	public ArmPositionMode armPositionMode = ArmPositionMode.HATCH;
 	private double targetPositionInchesPID = 0;
 	private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
@@ -150,6 +168,14 @@ public class Arm extends Subsystem implements ControlLoopable
 	
 	private synchronized ArmControlMode getArmControlMode() {
 		return this.armControlMode;
+	}
+
+	public synchronized void setArmPositionMode(ArmPositionMode controlMode) {
+		this.armPositionMode = controlMode;
+	}
+	
+	private synchronized ArmPositionMode getArmPositionMode() {
+		return this.armPositionMode;
 	}
 
 	public void setSpeed(double speed) {
@@ -281,10 +307,11 @@ public class Arm extends Subsystem implements ControlLoopable
 			}
 			if (armControlMode == ArmControlMode.JOYSTICK_PID){
 				//System.err.println(motor1.getControlMode());
-				if (Robot.oi.getOperatorController().getDpadAngle() == -1){
+				int dPadAngle = Robot.oi.getOperatorController().getDpadAngle();
+				if (dPadAngle == DPAD_RELEASED){
 					controlPidWithJoystick();
 				} else {
-					
+					controlPidWithDPad(dPadAngle);
 				}
 			}
 			
@@ -298,11 +325,29 @@ public class Arm extends Subsystem implements ControlLoopable
 		}
 	}
 
-
-
-
-
-
+	private void controlPidWithDPad(int dPadAngle){
+		if (armPositionMode == ArmPositionMode.HATCH){
+			if (dPadAngle == DPAD_UP){
+				setPositionPID(HATCH_HIGH_POSITION_WORLD);
+			} else if (dPadAngle == DPAD_RIGHT){
+				setPositionPID(HATCH_MID_POSITION_WORLD);
+			} else if (dPadAngle == DPAD_DOWN){
+				setPositionPID(HATCH_LOW_POSITION_WORLD);
+			} else if (dPadAngle == DPAD_LEFT){
+				//setPositionPID(HATCH_PICKUP_POSITION_WORLD);
+			}
+		} else if (armPositionMode == ArmPositionMode.CARGO){
+			if (dPadAngle == DPAD_UP){
+				setPositionPID(CARGO_HIGH_POSITION_WORLD);
+			} else if (dPadAngle == DPAD_RIGHT){
+				setPositionPID(CARGO_MID_POSITION_WORLD);
+			} else if (dPadAngle == DPAD_DOWN){
+				setPositionPID(CARGO_LOW_POSITION_WORLD);
+			} else if (dPadAngle == DPAD_LEFT){
+				//setPositionPID(CARGO_PICKUP_POSITION_WORLD);
+			}
+		}
+	}
 	
 	private void controlPidWithJoystick() {
 		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
@@ -369,7 +414,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		//System.err.println("the encoder is right after this");
 			try {
 				
-				SmartDashboard.putNumber("Arm Position Ticks", motor1.getPositionWorld());
+				SmartDashboard.putNumber("Arm Position", motor1.getPositionWorld());
 				SmartDashboard.putNumber("Arm Motor 1 Amps", motor1.getOutputCurrent());
 				SmartDashboard.putNumber("Arm Motor 2 Amps", motor2.getOutputCurrent());
 				SmartDashboard.putNumber("Arm Average Amps", getAverageMotorCurrent());

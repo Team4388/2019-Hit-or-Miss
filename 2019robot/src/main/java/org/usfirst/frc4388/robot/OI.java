@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.*;
 import org.usfirst.frc4388.robot.subsystems.*;
+import org.usfirst.frc4388.robot.subsystems.Arm.ArmPositionMode;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
@@ -69,6 +70,10 @@ public class OI
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
 			safteySwitch.whenPressed(new setClimberSafety(true));
 			safteySwitch.whenReleased(new setClimberSafety(false));
+
+			JoystickButton setArmPosMode = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
+			safteySwitch.whenPressed(new SetArmPositionMode(ArmPositionMode.CARGO));
+			safteySwitch.whenReleased(new SetArmPositionMode(ArmPositionMode.HATCH));
 
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
