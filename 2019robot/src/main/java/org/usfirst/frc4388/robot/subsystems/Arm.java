@@ -44,8 +44,8 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double TEST_SPEED_UP = 0.3;
 	public static final double TEST_SPEED_DOWN = -0.3;
 	public static final double AUTO_ZERO_SPEED = -0.3;
-	public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
-	public static final double JOYSTICK_INCHES_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI/3.68 * 0.8;
+	public static final double JOYSTICK_INCHES_PER_MS_HI = 20;
+	public static final double JOYSTICK_INCHES_PER_MS_LO = 20;
 	
 	// Defined positions
 	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
@@ -84,13 +84,14 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);  
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);  
-	public static final double KF_UP = 0.06;
-	public static final double KF_DOWN = 0.01;
-	public static final double P_Value = 0.6;
-	public static final double I_Value = 0.0005;
-	public static final double D_Value = 0.0;
+	public static final double KF_UP = 0.01;
+	public static final double KF_DOWN = 0.0;
+	public static final double P_Value = 2;
+	public static final double I_Value = 0.00300;
+	public static final double D_Value = 200;
+	public static final double RampRate = 0.0;
 	private PIDParams armPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
-	public static final double PID_ERROR_INCHES = 1.0;
+	public static final double PID_ERROR_INCHES = 5.0;
 	LimitSwitchSource limitSwitchSource;
 	// Pneumatics
 	private Solenoid speedShift;
@@ -117,11 +118,12 @@ public class Arm extends Subsystem implements ControlLoopable
 //	        if (motor1.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder) != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
 //	            Driver.reportError("Could not detect elevator motor 1 encoder encoder!", false);
 //	        }
+			
 			motor1.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			motor1.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			motor1.setNeutralMode(NeutralMode.Brake);
     		motor2.setNeutralMode(NeutralMode.Brake);
-			
+			motor1.enableCurrentLimit(true);
 			motorControllers.add(motor1);
 			SmartDashboard.putNumber("arm P value", 0);
 			
@@ -138,6 +140,9 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void resetZeroPosition(double position) {
 		mpController.resetZeroPosition(position);
 	}	
+	public void resetencoder(){
+		motor1.setPosition(0);
+	}
 	
 	private synchronized void setArmControlMode(ArmControlMode controlMode) {
 		this.armControlMode = controlMode;
@@ -168,12 +173,16 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void updatePositionPID(double targetPositionInches) {
  		targetPositionInchesPID = limitPosition(targetPositionInches);
 		double startPositionInches = motor1.getPositionWorld();
-		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
-		//motor1.set(ControlMode.Position, targetPositionInches);
-		//motor1.config_kP(0, P_Value, TalonSRXEncoder.TIMEOUT_MS);
-		//motor1.config_kI(0, I_Value, TalonSRXEncoder.TIMEOUT_MS);
-		//motor1.config_kF(0, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN, TalonSRXEncoder.TIMEOUT_MS);
-		System.err.println(motor1.getControlMode());
+		//mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
+		motor1.set(ControlMode.Position, targetPositionInches);
+		motor1.configClosedloopRamp(.02);
+		//motor1.configPeakCurrentLimit(5);
+		motor1.configContinuousCurrentLimit(2);
+		motor1.config_kP(0, P_Value, TalonSRXEncoder.TIMEOUT_MS);
+		motor1.config_kI(0, I_Value, TalonSRXEncoder.TIMEOUT_MS);
+		motor1.config_kD(0, D_Value, TalonSRXEncoder.TIMEOUT_MS);
+		motor1.config_kF(0, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN, TalonSRXEncoder.TIMEOUT_MS);
+		//System.err.println(motor1.getControlMode());
 		//System.err.print(motor1.getClosedLoopError());
 	}
 	

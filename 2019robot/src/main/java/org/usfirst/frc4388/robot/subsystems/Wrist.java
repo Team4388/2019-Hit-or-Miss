@@ -83,9 +83,14 @@ public class Wrist extends Subsystem implements ControlLoopable
 
 	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);  
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);  
-	public static final double KF_UP = 0.005;
-	public static final double KF_DOWN = 0.0;
-	public static final double PID_ERROR_INCHES = 1.0;
+	
+	public static final double WristKF_UP = 0.01;
+	public static final double WristKF_DOWN = 0.0;
+	public static final double WristP_Value = 2;
+	public static final double WristI_Value = 0.00300;
+	public static final double WristD_Value = 200;
+	public static final double WristRampRate = 0.0;
+	public static final double PID_ERROR_INCHES = 10;
 	LimitSwitchSource limitSwitchSource;
 	// Pneumatics
 	private Solenoid speedShift;
@@ -156,9 +161,18 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}
 	
 	public void updatePositionPID(double targetPositionInches) {
- 		targetPositionInchesPID = limitPosition(targetPositionInches);
+		targetPositionInchesPID = limitPosition(targetPositionInches);
 		double startPositionInches = wristmotor1.getPositionWorld();
-		mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
+		//mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
+		wristmotor1.set(ControlMode.Position, targetPositionInches);
+		wristmotor1.configClosedloopRamp(WristRampRate);
+		//motor1.configPeakCurrentLimit(5);
+		wristmotor1.configClosedloopRamp(1);
+		wristmotor1.configContinuousCurrentLimit(2);
+		wristmotor1.config_kP(0, WristP_Value, TalonSRXEncoder.TIMEOUT_MS);
+		wristmotor1.config_kI(0, WristI_Value, TalonSRXEncoder.TIMEOUT_MS);
+		wristmotor1.config_kD(0, WristD_Value, TalonSRXEncoder.TIMEOUT_MS);
+		wristmotor1.config_kF(0, targetPositionInchesPID > startPositionInches ? WristKF_UP : WristKF_DOWN, TalonSRXEncoder.TIMEOUT_MS);
 	}
 	
 	public void setPositionMP(double targetPositionInches) {

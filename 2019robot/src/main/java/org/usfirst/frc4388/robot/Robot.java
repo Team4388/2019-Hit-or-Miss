@@ -98,7 +98,8 @@ public class Robot extends TimedRobot
     	drive.endGyroCalibration();
     	drive.resetEncoders();
     	drive.resetGyro();
-    	drive.setIsRed(getAlliance().equals(Alliance.Red));
+		drive.setIsRed(getAlliance().equals(Alliance.Red));
+		arm.resetencoder();
         
 	}
  
@@ -147,7 +148,8 @@ public class Robot extends TimedRobot
     
     public void updateStatus() {
 		arm.updateStatus(operationMode);
-    	drive.updateStatus(operationMode);
+		drive.updateStatus(operationMode);
+		wrist.updateStatus(operationMode);
 
    }
 
