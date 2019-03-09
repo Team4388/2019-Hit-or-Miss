@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.*;
 import org.usfirst.frc4388.robot.subsystems.*;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
-import org.usfirst.frc4388.robot.subsystems.Drive;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -94,6 +93,7 @@ public class OI
 
 			SmartDashboard.putData("switch to manuel", new SetManual());
 			SmartDashboard.putData("run arm test", new ArmTest());
+			SmartDashboard.putData("wrist test", new wristTest());
 
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
 			safteySwitch.whenPressed(new setClimberSafety(true));

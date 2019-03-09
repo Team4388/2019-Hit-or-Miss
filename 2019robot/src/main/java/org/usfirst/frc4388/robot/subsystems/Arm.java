@@ -125,7 +125,7 @@ public class Arm extends Subsystem implements ControlLoopable
     		motor2.setNeutralMode(NeutralMode.Brake);
 			motor1.enableCurrentLimit(true);
 			motorControllers.add(motor1);
-			SmartDashboard.putNumber("arm P value", 0);
+			
 			
 		}
 		catch (Exception e) {
@@ -281,7 +281,7 @@ public class Arm extends Subsystem implements ControlLoopable
 				
 			}
 			if (armControlMode == ArmControlMode.JOYSTICK_PID){
-				System.err.println(motor1.getControlMode());
+				//System.err.println(motor1.getControlMode());
 				controlPidWithJoystick();
 				
 	
@@ -368,7 +368,6 @@ public class Arm extends Subsystem implements ControlLoopable
 		//System.err.println("the encoder is right after this");
 			try {
 				
-				p = SmartDashboard.getNumber("arm P value", 0);
 				SmartDashboard.putNumber("Arm Position Ticks", motor1.getPositionWorld());
 				SmartDashboard.putNumber("Arm Motor 1 Amps", motor1.getOutputCurrent());
 				SmartDashboard.putNumber("Arm Motor 2 Amps", motor2.getOutputCurrent());

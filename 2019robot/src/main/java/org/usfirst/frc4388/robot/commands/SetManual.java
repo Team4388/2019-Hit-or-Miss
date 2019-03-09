@@ -8,6 +8,8 @@
 package org.usfirst.frc4388.robot.commands;
 
 import org.usfirst.frc4388.robot.subsystems.Arm.ArmControlMode;
+import org.usfirst.frc4388.robot.subsystems.Wrist.WristControlMode;
+import org.usfirst.frc4388.robot.subsystems.Wrist.WristControlMode;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -17,6 +19,7 @@ public class SetManual extends CommandGroup {
    */
   public SetManual() {
     addSequential(new ArmSetMode(ArmControlMode.JOYSTICK_MANUAL));
+    addParallel(new WristSetMode(WristControlMode.JOYSTICK_MANUAL));
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.
