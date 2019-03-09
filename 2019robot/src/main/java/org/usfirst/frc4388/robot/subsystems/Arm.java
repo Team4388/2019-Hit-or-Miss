@@ -301,7 +301,9 @@ public class Arm extends Subsystem implements ControlLoopable
 		lastControlLoopUpdateTimestamp = currentTimestamp;
 		
 		if (reverseLimitSwitch.get()){
-			motor1.setPosition(0);
+			motor1.setPosition((int) MIN_POSITION_INCHES);
+		} else if (forwardLimitSwitch.get()){
+			motor1.setPosition((int) MAX_POSITION_INCHES);
 		}
 
 		// Do the update
@@ -336,23 +338,23 @@ public class Arm extends Subsystem implements ControlLoopable
 	private void controlPidWithDPad(int dPadAngle){
 		if (armPositionMode == ArmPositionMode.HATCH){
 			if (dPadAngle == DPAD_UP){
-				setPositionPID(HATCH_HIGH_POSITION_WORLD);
+				updatePositionPID(HATCH_HIGH_POSITION_WORLD);
 			} else if (dPadAngle == DPAD_RIGHT){
-				setPositionPID(HATCH_MID_POSITION_WORLD);
+				updatePositionPID(HATCH_MID_POSITION_WORLD);
 			} else if (dPadAngle == DPAD_DOWN){
-				setPositionPID(HATCH_LOW_POSITION_WORLD);
+				updatePositionPID(HATCH_LOW_POSITION_WORLD);
 			} else if (dPadAngle == DPAD_LEFT){
-				//setPositionPID(HATCH_PICKUP_POSITION_WORLD);
+				//updatePositionPID(HATCH_PICKUP_POSITION_WORLD);
 			}
 		} else if (armPositionMode == ArmPositionMode.CARGO){
 			if (dPadAngle == DPAD_UP){
-				setPositionPID(CARGO_HIGH_POSITION_WORLD);
+				updatePositionPID(CARGO_HIGH_POSITION_WORLD);
 			} else if (dPadAngle == DPAD_RIGHT){
-				setPositionPID(CARGO_MID_POSITION_WORLD);
+				updatePositionPID(CARGO_MID_POSITION_WORLD);
 			} else if (dPadAngle == DPAD_DOWN){
-				setPositionPID(CARGO_LOW_POSITION_WORLD);
+				updatePositionPID(CARGO_LOW_POSITION_WORLD);
 			} else if (dPadAngle == DPAD_LEFT){
-				//setPositionPID(CARGO_PICKUP_POSITION_WORLD);
+				//updatePositionPID(CARGO_PICKUP_POSITION_WORLD);
 			}
 		}
 	}
