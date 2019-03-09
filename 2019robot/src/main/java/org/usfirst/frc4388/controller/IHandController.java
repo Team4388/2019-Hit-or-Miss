@@ -13,4 +13,6 @@ public interface IHandController {
 	public double getLeftTriggerAxis();
 
 	public double getRightTriggerAxis();
+
+	public int getDpadAngle();
 }

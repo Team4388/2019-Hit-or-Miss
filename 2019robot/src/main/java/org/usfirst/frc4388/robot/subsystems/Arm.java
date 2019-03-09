@@ -273,7 +273,6 @@ public class Arm extends Subsystem implements ControlLoopable
 		// Do the update
 		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
 			controlManualWithJoystick();
-			
 		}
 		else if (!isFinished) {
 			if (armControlMode == ArmControlMode.MOTION_PROFILE) {
@@ -282,9 +281,11 @@ public class Arm extends Subsystem implements ControlLoopable
 			}
 			if (armControlMode == ArmControlMode.JOYSTICK_PID){
 				//System.err.println(motor1.getControlMode());
-				controlPidWithJoystick();
-				
-	
+				if (Robot.oi.getOperatorController().getDpadAngle() == -1){
+					controlPidWithJoystick();
+				} else {
+					
+				}
 			}
 			
 			/*else if (armControlMode == ArmControlMode.MP_PATH_VELOCITY) {

@@ -66,6 +66,9 @@ public class OI
 			//liftBallIntake.whenPressed(new HatchFlip(false));
 			liftBallIntake.whenPressed(new LiftBallDropHatch());
 
+			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
+			safteySwitch.whenPressed(new setClimberSafety(true));
+			safteySwitch.whenReleased(new setClimberSafety(false));
 
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
@@ -94,10 +97,6 @@ public class OI
 			SmartDashboard.putData("switch to manuel", new SetManual());
 			SmartDashboard.putData("run arm test", new ArmTest());
 			SmartDashboard.putData("wrist test", new wristTest());
-
-			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
-			safteySwitch.whenPressed(new setClimberSafety(true));
-			safteySwitch.whenReleased(new setClimberSafety(false));
 
 	        //SmartDashboard.putData("PRE GAME!!!!", new PreGame());
 		  } catch (Exception e) {
