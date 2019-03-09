@@ -94,8 +94,6 @@ public class Arm extends Subsystem implements ControlLoopable
 	private PIDParams armPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
 	public static final double PID_ERROR_INCHES = 5.0;
 	LimitSwitchSource limitSwitchSource;
-	DigitalInput forwardLimitSwitch = new DigitalInput(1);
-	DigitalInput reverseLimitSwitch = new DigitalInput(2);
 	
 	// Pneumatics
 	private Solenoid speedShift;
@@ -274,7 +272,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		}
 		lastControlLoopUpdateTimestamp = currentTimestamp;
 		
-		if (reverseLimitSwitch.get()){
+		if (motor1.getSensorCollection().isRevLimitSwitchClosed()){
 			motor1.setPosition(0);
 		}
 
