@@ -81,4 +81,7 @@ public class TalonSRXEncoder extends WPI_TalonSRX
     public double getVelocityWorld() {
     	return convertEncoderTicksToWorld(this.getSelectedSensorVelocity(PID_IDX) / 0.1);
     }
+
+	public void configNominalOutputVoltage(float f, float g) {
+	}
 }
