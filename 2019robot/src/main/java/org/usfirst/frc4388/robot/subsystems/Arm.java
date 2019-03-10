@@ -21,6 +21,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -99,6 +100,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	private PIDParams armPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
 	public static final double PID_ERROR_INCHES = 5;
 	LimitSwitchSource limitSwitchSource;
+	
 	// Pneumatics
 	private Solenoid speedShift;
 
@@ -148,7 +150,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void resetZeroPosition(double position) {
 		mpController.resetZeroPosition(position);
 	}	
-	public void resetencoder(){
+	public void resetEncoder(){
 		motor1.setPosition(0);
 	}
 	
@@ -228,7 +230,10 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 	
 	public void updatePositionPID(double targetPositionInches) {
- 		targetPositionInchesPID = limitPosition(targetPositionInches);
+		targetPositionInchesPID = limitPosition(targetPositionInches);
+		if (limitPosition(motor1.getPositionWorld()) == MIN_POSITION_INCHES){
+			resetEncoder();
+		}
 		double startPositionInches = motor1.getPositionWorld();
 		//mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN); 
 		motor1.set(ControlMode.Position, targetPositionInches);
@@ -282,6 +287,10 @@ public class Arm extends Subsystem implements ControlLoopable
 		}
 		lastControlLoopUpdateTimestamp = currentTimestamp;
 		
+		if (motor1.getSensorCollection().isRevLimitSwitchClosed()){
+			resetEncoder();
+		}
+
 		// Do the update
 		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
 			controlManualWithJoystick();
@@ -321,8 +330,6 @@ public class Arm extends Subsystem implements ControlLoopable
 		double deltaPosition = joystickPosition * joystickInchesPerMs;
 		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
 		updatePositionPID(targetPositionInchesPID);
-		
-		
 	}
 	private void controlMMWithJoystick() {
 		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
