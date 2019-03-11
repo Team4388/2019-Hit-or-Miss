@@ -73,9 +73,10 @@ public class OI
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
 
-			JoystickButton ratchetFlip = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.Y_BUTTON);
-			ratchetFlip.whenPressed(new ratchetFlip(0.5));
-			ratchetFlip.whenReleased(new ratchetFlip(0));
+			/** DEPRICATED, TRIGGERS ON THE DRIVER JOYSTICK COVER FOR THIS BUTTON */
+			//JoystickButton ratchetFlip = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.Y_BUTTON);
+			//ratchetFlip.whenPressed(new ratchetFlip(0.5));
+			//ratchetFlip.whenReleased(new ratchetFlip(0));
 
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 	        shiftUp.whenPressed(new DriveSpeedShift(true));

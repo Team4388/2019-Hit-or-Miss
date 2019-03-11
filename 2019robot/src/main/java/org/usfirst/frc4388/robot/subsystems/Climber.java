@@ -116,6 +116,7 @@ public class Climber extends Subsystem{
 		}
 		else {
 			climberBack.set(rightTriggerInput);
+			climberFront.set(0);
 		}
 	}
 
