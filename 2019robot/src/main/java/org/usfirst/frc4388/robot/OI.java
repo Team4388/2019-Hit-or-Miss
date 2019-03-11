@@ -98,7 +98,7 @@ public class OI
 			JoystickButton TurnTo0NavX = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
 			TurnTo0NavX.whenPressed(new DriveAbsoluteTurnPID(0, MPSoftwareTurnType.TANK));
 
-			SmartDashboard.putData("switch to manuel", new SetManual());
+			SmartDashboard.putData("switch to manual", new SetManual());
 			SmartDashboard.putData("run arm test", new ArmTest());
 
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
