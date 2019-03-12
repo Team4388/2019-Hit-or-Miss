@@ -32,15 +32,11 @@ public class Robot extends TimedRobot
 	public static final Drive drive = new Drive();
 	public static final Arm arm = new Arm();
 	public static final Wrist wrist = new Wrist();
-
-
- 
 	public static final BallIntake ballIntake = new BallIntake();
-    
-
-
     public static final Climber climber = new Climber();
-    public static final Pneumatics pnumatics = new Pneumatics();
+	public static final Pneumatics pnumatics = new Pneumatics();
+	public static final LED led = new LED();
+
 	public static final long periodMS = 10;
 	public static final ControlLooper controlLoop = new ControlLooper("Main control loop", periodMS);
 
