@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
   public static final int LED_SPARK_ID = 0;
   public static float currentLED;
-  public Spark LEDController = new Spark(LED_SPARK_ID);
+  public static Spark LEDController = new Spark(LED_SPARK_ID);
 
   public LED(){
     setPattern(LEDPatterns.RED);
