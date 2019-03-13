@@ -879,7 +879,7 @@ public class Drive extends Subsystem implements ControlLoopable
 				//SmartDashboard.putNumber("Left Pos Inches", encoderLeft.getPosition());//leftDrive1.getPositionWorld());
 				//SmartDashboard.putNumber("Right Vel Ft-Sec", 0);//rightDrive1.getVelocityWorld() / 12);
 				//SmartDashboard.putNumber("Left Vel Ft-Sec", 0);//leftDrive1.getVelocityWorld() / 12);
-				SmartDashboard.putBoolean("Drive Hold", controlMode == DriveControlMode.HOLD);
+				//SmartDashboard.putBoolean("Drive Hold", controlMode == DriveControlMode.HOLD);
 				//SmartDashboard.putNumber("Yaw Angle Pigeon Deg", getGyroPigeonAngleDeg());
 				SmartDashboard.putNumber("Yaw Angle Deg", Math.abs(getGyroAngleDeg() % 360));
 				//MotionProfilePoint mpPoint = mpTurnController.getCurrentPoint(); 
@@ -887,12 +887,12 @@ public class Drive extends Subsystem implements ControlLoopable
 				//SmartDashboard.putNumber("Gyro Delta", delta);
 				//SmartDashboard.putBoolean("Gyro Calibrating", isCalibrating);
 				SmartDashboard.putBoolean("Gyro Calibrating", gyroNavX.isCalibrating());
-				SmartDashboard.putNumber("Gyro Offset", gyroOffsetDeg);
-				SmartDashboard.putNumber("Delta PID Angle", targetPIDAngle - getGyroAngleDeg());
+			//	SmartDashboard.putNumber("Gyro Offset", gyroOffsetDeg);
+				//SmartDashboard.putNumber("Delta PID Angle", targetPIDAngle - getGyroAngleDeg());
 				SmartDashboard.putNumber("Steer Output", m_steerOutput);
 				SmartDashboard.putNumber("Move Output", m_moveOutput);
-				SmartDashboard.putNumber("Steer Input", m_steerInput);
-				SmartDashboard.putNumber("Move Input", m_moveInput);
+				//SmartDashboard.putNumber("Steer Input", m_steerInput);
+				//SmartDashboard.putNumber("Move Input", m_moveInput);
 				SmartDashboard.putString("MODE", "TEST");
 				//if (left_distance.getPosition() != 0 && right_distance.getPosition() != 0){
 				//	SmartDashboard.putNumber("Distance Inches", (left_distance.getPosition()-right_distance.getPosition())/2);//rightDrive1.getPositionWorld());

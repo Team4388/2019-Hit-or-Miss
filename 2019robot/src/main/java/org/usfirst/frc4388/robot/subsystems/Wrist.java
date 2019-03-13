@@ -85,12 +85,12 @@ public class Wrist extends Subsystem implements ControlLoopable
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);  
 	public static final double KF_UP = 0.01;
 	public static final double KF_DOWN = 0.0;
-	public static final double P_Value = .5;
-	public static final double I_Value = 0.00300;
-	public static final double D_Value = 200;
+	public static final double P_Value = 2.3;
+	public static final double I_Value = 0.00004;
+	public static final double D_Value = 96;
 	public static final double RampRate = 0.0;
 	private PIDParams wristPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
-	public static final double PID_ERROR_INCHES = 5.0;
+	public static final double PID_ERROR_INCHES = 150;
 	LimitSwitchSource limitSwitchSource;
 	// Pneumatics
 	private Solenoid speedShift;
@@ -139,6 +139,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	public void resetencoder(){
 		wristMotor1.setPosition(0);
 	}
+	
 	
 	private synchronized void setWristControlMode(WristControlMode controlMode) {
 		this.wristControlMode = controlMode;
@@ -316,7 +317,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getRightYAxis();
-		setSpeedJoystick(joyStickSpeed);
+		setSpeedJoystick(joyStickSpeed*.5);
 	}
 	/*
 	public void setShiftState(ElevatorSpeedShiftState state) {

@@ -9,13 +9,12 @@ package org.usfirst.frc4388.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class ArmTest extends CommandGroup {
+public class ArmTest2 extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public ArmTest() {
-    addSequential(new ArmSetPositionMM(1200));
-    // Add Commands here:
+  public ArmTest2() {
+    addSequential(new ArmSetPositionMM(600));
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.

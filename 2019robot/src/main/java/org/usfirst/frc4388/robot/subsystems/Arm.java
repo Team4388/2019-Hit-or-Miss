@@ -12,6 +12,7 @@ import org.usfirst.frc4388.utility.TalonSRXEncoder;
 import org.usfirst.frc4388.utility.TalonSRXFactory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
@@ -81,18 +82,21 @@ public class Arm extends Subsystem implements ControlLoopable
 	private MPTalonPIDController mpController;
 
 	public static int PID_SLOT = 0;
-	public static int MP_SLOT = 1;
+	public static int MM_SLOT = 1;
+	public static int MP_SLOT = 2;
 
 	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);  
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);  
-	public static final double KF_UP = 0;//0.01;
+	public static final double KF_UP = 1;//0.01;
 	public static final double KF_DOWN = 0;// 0.0;
-	public static final double P_Value = 0;// 2;
-	public static final double I_Value = 0;// 0.00030;
+	public static final double P_Value = 0.5;// 2;
+	public static final double I_Value = 0.0001;// 0.00030;
 	public static final double D_Value = 0;// 200;
+	public static final double F_Value = 0.75;	// 1023 / 1360 max speed (ticks/100ms)
+	public static final double maxGravityComp = 0.08;
 	public static final double RampRate = 0;// 0.0;
-	public static final int A_value = 25;
-	public static final int CV_value = 25;
+	public static final int A_value = 100;
+	public static final int CV_value = 340;
 
 
 
@@ -128,6 +132,17 @@ public class Arm extends Subsystem implements ControlLoopable
 //	            Driver.reportError("Could not detect elevator motor 1 encoder encoder!", false);
 //	        }
 			
+			motor1.configNominalOutputForward(0, TalonSRXEncoder.TIMEOUT_MS);
+			motor1.configNominalOutputReverse(0, TalonSRXEncoder.TIMEOUT_MS);
+			motor1.configPeakOutputForward(1, TalonSRXEncoder.TIMEOUT_MS);
+			motor1.configPeakOutputReverse(-1, TalonSRXEncoder.TIMEOUT_MS);
+
+			motor1.selectProfileSlot(MM_SLOT, 0);
+			motor1.config_kF(MM_SLOT, F_Value, TalonSRXEncoder.TIMEOUT_MS);
+			motor1.config_kP(MM_SLOT, P_Value, TalonSRXEncoder.TIMEOUT_MS);
+			motor1.config_kI(MM_SLOT, I_Value, TalonSRXEncoder.TIMEOUT_MS);
+			motor1.config_kD(MM_SLOT, D_Value, TalonSRXEncoder.TIMEOUT_MS);
+
 			motor1.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			motor1.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			motor1.setNeutralMode(NeutralMode.Brake);
@@ -174,50 +189,33 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void setPositionMM(double targetPositionInches){
 		motor1.set(ControlMode.MotionMagic, targetPositionInches);
 		System.err.println(motor1.getControlMode());
+		motor1.selectProfileSlot(MM_SLOT, 0);
 		setArmControlMode(ArmControlMode.MOTION_MAGIC);
 		updatePositionMM(targetPositionInches);
 		setFinished(false);
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
-		System.err.println("should get here");
+
 
 
 	}
+
+	public double calcGravityCompensationAtCurrentPosition() {
+		int ticks = motor1.getSelectedSensorPosition();
+		double degreesFromDown = (ticks+920)*(360.0/(4096*3));
+		double compensation = maxGravityComp * Math.sin(degreesFromDown*Math.PI/180);
+		System.err.println("comp(" + degreesFromDown + "^) = " + compensation);
+		return compensation;
+	}
 	public void updatePositionMM(double targetPositionInches){
 		targetPositionInchesMM = limitPosition(targetPositionInches);
-		double startPositionInches = motor1.getPositionWorld();
-		motor1.set(ControlMode.MotionMagic, targetPositionInches);
-		motor1.configNominalOutputForward(0, TalonSRXEncoder.TIMEOUT_MS);
-		motor1.configNominalOutputReverse(0, TalonSRXEncoder.TIMEOUT_MS);
-		motor1.configPeakOutputForward(1, TalonSRXEncoder.TIMEOUT_MS);
-		motor1.configPeakOutputReverse(-1, TalonSRXEncoder.TIMEOUT_MS);
-
-
-		motor1.selectProfileSlot(1, 0);
-		motor1.config_kF(1, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN, TalonSRXEncoder.TIMEOUT_MS);
-		motor1.config_kP(1, P_Value, TalonSRXEncoder.TIMEOUT_MS);
-		motor1.config_kI(1, I_Value, TalonSRXEncoder.TIMEOUT_MS);
-		motor1.config_kD(1, D_Value, TalonSRXEncoder.TIMEOUT_MS);
-
-
+		//double startPositionInches = motor1.getPositionWorld();
+		double compensation = calcGravityCompensationAtCurrentPosition();
+		//System.err.println("compensation = " + compensation);
+		// motor1.set(ControlMode.MotionMagic, targetPositionInches);
+		motor1.set(ControlMode.MotionMagic, targetPositionInches, DemandType.ArbitraryFeedForward, compensation);
+		//System.err.println(motor1.getControlMode());
 		motor1.configMotionCruiseVelocity(CV_value, TalonSRXEncoder.TIMEOUT_MS);
 		motor1.configMotionAcceleration(A_value, TalonSRXEncoder.TIMEOUT_MS);
-
+			
 
 	}
 		
@@ -306,7 +304,7 @@ public class Arm extends Subsystem implements ControlLoopable
 			}
 			if (armControlMode == ArmControlMode.MOTION_MAGIC){
 				controlMMWithJoystick();
-				System.err.println(motor1.getControlMode());
+				//System.err.println(motor1.getControlMode());
 			}
 			
 			/*else if (armControlMode == ArmControlMode.MP_PATH_VELOCITY) {
@@ -348,7 +346,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
-		setSpeedJoystick((joyStickSpeed*.30)+.1);
+		setSpeedJoystick((joyStickSpeed*.3)+.08);
 	}
 	/*
 	public void setShiftState(ElevatorSpeedShiftState state) {
@@ -399,10 +397,12 @@ public class Arm extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Arm Position Ticks", motor1.getPositionWorld());
 				//SmartDashboard.putNumber("Arm Motor 1 Amps", motor1.getOutputCurrent());
 				//SmartDashboard.putNumber("Arm Motor 2 Amps", motor2.getOutputCurrent());
+				SmartDashboard.putNumber("sensor vel", motor1.getSelectedSensorVelocity());
 				SmartDashboard.putNumber("Arm Average Amps", getAverageMotorCurrent());
 				SmartDashboard.putNumber("arm pid error", motor1.getClosedLoopError());
 				SmartDashboard.putNumber("arm motor output", motor1.getMotorOutputPercent());
 				SmartDashboard.putNumber("Arm Target MM Position", targetPositionInchesMM);
+				//SmartDashboard.putNumber("arm output", motor1.getMotorOutputPercent());
 //				SmartDashboard.putNumber("Elevator Motor 1 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID));
 //				SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
 //				SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
