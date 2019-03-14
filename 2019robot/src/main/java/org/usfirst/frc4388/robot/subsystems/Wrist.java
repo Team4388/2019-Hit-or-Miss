@@ -85,9 +85,9 @@ public class Wrist extends Subsystem implements ControlLoopable
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);  
 	public static final double KF_UP = 0.01;
 	public static final double KF_DOWN = 0.0;
-	public static final double P_Value = 2.3;
-	public static final double I_Value = 0.00004;
-	public static final double D_Value = 96;
+	public static final double P_Value = 3;
+	public static final double I_Value = 0.001;
+	public static final double D_Value = 200;
 	public static final double RampRate = 0.0;
 	private PIDParams wristPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
 	public static final double PID_ERROR_INCHES = 150;

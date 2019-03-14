@@ -90,13 +90,13 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double KF_UP = 1;//0.01;
 	public static final double KF_DOWN = 0;// 0.0;
 	public static final double P_Value = 0.5;// 2;
-	public static final double I_Value = 0.0001;// 0.00030;
-	public static final double D_Value = 0;// 200;
+	public static final double I_Value = 0.0005;// 0.00030;
+	public static final double D_Value = 100;// 200;
 	public static final double F_Value = 0.75;	// 1023 / 1360 max speed (ticks/100ms)
 	public static final double maxGravityComp = 0.08;
 	public static final double RampRate = 0;// 0.0;
-	public static final int A_value = 100;
-	public static final int CV_value = 340;
+	public static final int A_value = 450;
+	public static final int CV_value = 740;
 
 
 

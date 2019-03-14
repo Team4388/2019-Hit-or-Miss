@@ -11,7 +11,7 @@ public class ArmSetPositionMM extends Command {
 	
 	private double targetPositionInches;
 	private boolean isAtTarget;
-	private static final double MIN_DELTA_TARGET = 3;
+	private static final double MIN_DELTA_TARGET = 20;
 
     public ArmSetPositionMM(double targetPositionInches) {
     	this.targetPositionInches = targetPositionInches;
