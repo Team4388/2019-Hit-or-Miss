@@ -71,7 +71,7 @@ public class OI
 			safteySwitch.whenPressed(new setClimberSafety(true));
 			safteySwitch.whenPressed(new setLEDPattern(LEDPatterns.SOLID_YELLOW));
 			safteySwitch.whenReleased(new setClimberSafety(false));
-			safteySwitch.whenPressed(new setLEDPattern(LEDPatterns.C1_HEARTBEAT_SLOW));
+			safteySwitch.whenPressed(new setLEDPattern(LEDPatterns.C1_HEARTBEAT_FAST));
 
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);

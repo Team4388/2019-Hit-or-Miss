@@ -24,7 +24,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
   public static Spark LEDController = new Spark(LED_SPARK_ID);
 
   public LED(){
-    setPattern(LEDPatterns.C1_HEARTBEAT_SLOW);
+    setPattern(LEDPatterns.C1_HEARTBEAT_FAST);
+    LEDController.set(currentLED);
   }
 
   public void periodic() {
