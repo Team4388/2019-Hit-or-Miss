@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Add your docs here.
+ * Controls the 5v LED Strip
  */
  public class LED extends Subsystem {
 
