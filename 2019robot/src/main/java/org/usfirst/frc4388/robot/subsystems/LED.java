@@ -9,6 +9,7 @@ package org.usfirst.frc4388.robot.subsystems;
 
 import java.util.HashMap;
 
+import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.constants.LEDPatterns;
 
 import edu.wpi.first.wpilibj.Spark;
@@ -25,7 +26,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
   public LED(){
     setPattern(LEDPatterns.C1_HEARTBEAT_FAST);
-    LEDController.set(currentLED);
   }
 
   public void periodic() {

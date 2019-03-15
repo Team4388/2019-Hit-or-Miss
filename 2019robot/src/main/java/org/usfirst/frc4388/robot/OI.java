@@ -96,8 +96,12 @@ public class OI
 	        JoystickButton CloseIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			CloseIntake.whenPressed(new IntakePosition(false));
 			*/
-			JoystickButton lowheight = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
-			lowheight.whenPressed(new GrabFromLoadingSatation());
+
+			JoystickButton stow = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
+			stow.whenPressed(new ArmStow());
+
+			JoystickButton lowHeight = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
+			lowHeight.whenPressed(new GrabFromLoadingSatation());
 
 			SmartDashboard.putData("switch to manuel", new SetManual());
 			SmartDashboard.putData("run arm test", new ArmTest());
