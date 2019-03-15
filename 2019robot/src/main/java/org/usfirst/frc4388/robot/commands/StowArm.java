@@ -9,16 +9,16 @@ package org.usfirst.frc4388.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class ArmStow extends CommandGroup {
+public class StowArm extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public ArmStow() {
+  public StowArm() {
     addSequential(new WristSetPositionPID(0), 1);
     addParallel(new HatchFlip(false));
     addParallel(new WristPlacement(true));
     addSequential(new ArmSetPositionMM(10));
-    
+    // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.

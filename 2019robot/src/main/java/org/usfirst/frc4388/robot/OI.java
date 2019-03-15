@@ -7,7 +7,7 @@ import buttons.XBoxTriggerButton;
 import org.usfirst.frc4388.controller.IHandController;
 import org.usfirst.frc4388.controller.XboxController;
 import org.usfirst.frc4388.robot.commands.*;
-import org.usfirst.frc4388.robot.constants.LEDPatterns;
+
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -50,11 +50,10 @@ public class OI
 
 			JoystickButton Expand = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.Y_BUTTON);
 			Expand.whenPressed(new WristPlacement(true));
-			Expand.whenPressed(new setLEDPattern(LEDPatterns.SOLID_RED));
 
 			JoystickButton Contract = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
-			Contract.whenPressed(new WristPlacement(false));
-			Contract.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
+	        Contract.whenPressed(new WristPlacement(false));
+
 
 			JoystickButton liftBothIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
 			liftBothIntake.whenPressed(new HatchAndBallUp());
@@ -69,9 +68,7 @@ public class OI
 
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
 			safteySwitch.whenPressed(new setClimberSafety(true));
-			safteySwitch.whenPressed(new setLEDPattern(LEDPatterns.SOLID_YELLOW));
 			safteySwitch.whenReleased(new setClimberSafety(false));
-			safteySwitch.whenReleased(new setLEDPattern(LEDPatterns.C1_HEARTBEAT_FAST));
 
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
@@ -83,10 +80,11 @@ public class OI
 
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 	        shiftUp.whenPressed(new DriveSpeedShift(true));
+	        //shiftUp.whenPressed(new LEDIndicators(true));
 
 	        JoystickButton shiftDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
-			shiftDown.whenPressed(new DriveSpeedShift(false));
-
+	        shiftDown.whenPressed(new DriveSpeedShift(false));
+	       // shiftDown.whenPressed(new LEDIndicators(false));
 	        //Operator Xbox
 			/*
 	        JoystickButton openIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
@@ -96,12 +94,8 @@ public class OI
 	        JoystickButton CloseIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			CloseIntake.whenPressed(new IntakePosition(false));
 			*/
-
-			JoystickButton stow = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
-			stow.whenPressed(new ArmStow());
-
-			JoystickButton lowHeight = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_JOYSTICK_BUTTON);
-			lowHeight.whenPressed(new GrabFromLoadingSatation());
+			JoystickButton lowheight = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
+			lowheight.whenPressed(new GrabFromLoadingSatation());
 
 			SmartDashboard.putData("switch to manuel", new SetManual());
 			SmartDashboard.putData("run arm test", new ArmTest());

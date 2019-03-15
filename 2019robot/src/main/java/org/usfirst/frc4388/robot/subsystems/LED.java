@@ -9,12 +9,10 @@ package org.usfirst.frc4388.robot.subsystems;
 
 import java.util.HashMap;
 
-import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.constants.LEDPatterns;
 
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Add your docs here.
@@ -26,17 +24,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public static Spark LEDController = new Spark(LED_SPARK_ID);
 
   public LED(){
-    setPattern(LEDPatterns.C1_HEARTBEAT_FAST);
+    setPattern(LEDPatterns.RED);
   }
 
   public void periodic() {
     LEDController.set(currentLED);
-    SmartDashboard.putNumber("LED", currentLED);
   }
 
   public void setPattern(LEDPatterns pattern){
     currentLED = pattern.getValue();
-    LEDController.set(currentLED);
   }
 
   @Override
