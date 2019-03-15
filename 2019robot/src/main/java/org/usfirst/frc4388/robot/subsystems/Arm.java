@@ -337,23 +337,31 @@ public class Arm extends Subsystem implements ControlLoopable
 	private void controlPidWithDPad(int dPadAngle){
 		if (armPositionMode == ArmPositionMode.HATCH){
 			if (dPadAngle == DPAD_UP){
-				updatePositionPID(HATCH_HIGH_POSITION_WORLD);
+				//updatePositionPID(HATCH_HIGH_POSITION_WORLD);
+				SmartDashboard.putString("DPAD", "HUP");
 			} else if (dPadAngle == DPAD_RIGHT){
-				updatePositionPID(HATCH_MID_POSITION_WORLD);
+				//updatePositionPID(HATCH_MID_POSITION_WORLD);
+				SmartDashboard.putString("DPAD", "HRIGHT");
 			} else if (dPadAngle == DPAD_DOWN){
-				updatePositionPID(HATCH_LOW_POSITION_WORLD);
+				//updatePositionPID(HATCH_LOW_POSITION_WORLD);
+				SmartDashboard.putString("DPAD", "HDOWN");
 			} else if (dPadAngle == DPAD_LEFT){
 				//updatePositionPID(HATCH_PICKUP_POSITION_WORLD);
+				SmartDashboard.putString("DPAD", "HLEFT");
 			}
 		} else if (armPositionMode == ArmPositionMode.CARGO){
 			if (dPadAngle == DPAD_UP){
-				updatePositionPID(CARGO_HIGH_POSITION_WORLD);
+				//updatePositionPID(CARGO_HIGH_POSITION_WORLD);
+				SmartDashboard.putString("DPAD", "CUP");
 			} else if (dPadAngle == DPAD_RIGHT){
-				updatePositionPID(CARGO_MID_POSITION_WORLD);
+				//updatePositionPID(CARGO_MID_POSITION_WORLD);
+				SmartDashboard.putString("DPAD", "CRIGHT");
 			} else if (dPadAngle == DPAD_DOWN){
-				updatePositionPID(CARGO_LOW_POSITION_WORLD);
+				//updatePositionPID(CARGO_LOW_POSITION_WORLD);
+				SmartDashboard.putString("DPAD", "CDOWN");
 			} else if (dPadAngle == DPAD_LEFT){
 				//updatePositionPID(CARGO_PICKUP_POSITION_WORLD);
+				SmartDashboard.putString("DPAD", "CLEFT");
 			}
 		}
 	}

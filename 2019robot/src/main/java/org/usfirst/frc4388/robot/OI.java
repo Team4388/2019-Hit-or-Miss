@@ -72,8 +72,8 @@ public class OI
 			safteySwitch.whenReleased(new setClimberSafety(false));
 
 			JoystickButton setArmPosMode = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
-			safteySwitch.whenPressed(new SetArmPositionMode(ArmPositionMode.CARGO));
-			safteySwitch.whenReleased(new SetArmPositionMode(ArmPositionMode.HATCH));
+			setArmPosMode.whenPressed(new SetArmPositionMode(ArmPositionMode.CARGO));
+			setArmPosMode.whenReleased(new SetArmPositionMode(ArmPositionMode.HATCH));
 
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
