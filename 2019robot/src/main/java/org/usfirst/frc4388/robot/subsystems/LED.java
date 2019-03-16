@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public static Spark LEDController = new Spark(LED_SPARK_ID);
 
   public LED(){
-    setPattern(LEDPatterns.C1_HEARTBEAT_FAST);
+    setPattern(LEDPatterns.FOREST_WAVES);
     LEDController.set(currentLED);
   }
 
