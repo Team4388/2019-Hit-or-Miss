@@ -103,6 +103,7 @@ public class OI
 
 			JoystickButton stow = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
 			stow.whenPressed(new StowArm());
+			stow.whenPressed(new setLEDPattern(LEDPatterns.SOLID_RED));
 
 			SmartDashboard.putData("switch to manuel", new SetManual());
 //			SmartDashboard.putData("run turn test", new TestTurn());
