@@ -69,10 +69,10 @@ public class DriveTurnBasic extends Command
 			} else {
 				Robot.drive.rawDriveLeftRight(output, output);		// left forward, right backward
 			}
-//			for (CANTalonEncoder motorController : motorControllers) {
-//				//motorController.set(output);
-//				motorController.set(ControlMode.PercentOutput, output);
-//			}
+			//for (CANTalonEncoder motorController : motorControllers) {
+				//motorController.set(output);
+			//	motorController.set(ControlMode.PercentOutput, output);
+			//}
 		}
 		else if (m_turnType == MPSoftwareTurnType.LEFT_SIDE_ONLY) {
 			Robot.drive.rawDriveLeftRight(2.0 * output, 0.0);		// left forward double speed

@@ -61,7 +61,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Drive extends Subsystem implements ControlLoopable
 {
-	public static enum DriveControlMode { JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, CLIMB, MP_PATH, MP_PATH_VELOCITY, MOTION_MAGIC, ADAPTIVE_PURSUIT, MOVE_POSITION_MAX_SCALE, MOVE_POSITION_LOW_SCALE, MOVE_POSITION_SWITCH, MOVE_POSITION_LOWEST, STOP_MOTORS, RAW};
+	public static enum DriveControlMode { JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, CLIMB, MP_PATH, MP_PATH_VELOCITY, MOTION_MAGIC, ADAPTIVE_PURSUIT, STOP_MOTORS, RAW};
 	public static enum SpeedShiftState { HI, LO };
 	public static enum ClimberState { DEPLOYED, RETRACTED };
 
