@@ -113,7 +113,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	private boolean isFinished;
 	private ArmControlMode armControlMode = ArmControlMode.MOTION_MAGIC;
 	private double targetPositionInchesPID = 0;
-	private double targetPositionInchesMM = 0;
+	public static double targetPositionInchesMM = 0;
 	private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
 	private double p = 0;
@@ -334,6 +334,8 @@ public class Arm extends Subsystem implements ControlLoopable
 		double deltaPosition = joystickPosition * joystickInchesPerMs;
 		targetPositionInchesMM = targetPositionInchesMM + deltaPosition;
 		updatePositionMM(targetPositionInchesMM);
+		Wrist.targetPositionInchesPID = targetPositionInchesPID - (deltaPosition/3);
+		Robot.wrist.updatePositionPID(Wrist.targetPositionInchesPID);
 		
 		
 	}
