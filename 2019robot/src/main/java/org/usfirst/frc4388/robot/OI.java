@@ -60,10 +60,11 @@ public class OI
 
 			JoystickButton liftHatchIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			liftHatchIntake.whenPressed(new LiftHatchDropBall());
-
+			//liftHatchIntake.toggleWhenActive(new DeployBallIntake());
 
 			JoystickButton liftBallIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
-			//liftBallIntake.whenPressed(new HatchFlip(false));
+			//liftBallIntake.toggleWhenActive(new HatchFlip(false));
+			//liftBallIntake.t
 			liftBallIntake.whenPressed(new LiftBallDropHatch());
 
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
@@ -94,8 +95,11 @@ public class OI
 	        JoystickButton CloseIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			CloseIntake.whenPressed(new IntakePosition(false));
 			*/
-			JoystickButton lowheight = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
-			lowheight.whenPressed(new GrabFromLoadingSatation());
+			JoystickButton lowHeight = new JoystickButton(m_operatorXbox.getJoyStick(),XboxController.LEFT_JOYSTICK_BUTTON);
+			lowHeight.whenPressed(new GrabFromLoadingSatation());
+
+			JoystickButton stow = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
+			stow.whenPressed(new StowArm());
 
 			SmartDashboard.putData("switch to manuel", new SetManual());
 			SmartDashboard.putData("run arm test", new ArmTest());
