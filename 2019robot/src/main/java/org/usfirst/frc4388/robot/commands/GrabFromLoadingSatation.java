@@ -15,7 +15,7 @@ public class GrabFromLoadingSatation extends CommandGroup {
    * Add your docs here.
    */
   public GrabFromLoadingSatation() {
-    addSequential(new ArmSetPositionMM(600), 1);
+    addSequential(new ArmSetPositionMM(550), 1);
     //addParallel(new WaitCommand(1));
     addSequential(new WristSetPositionPID(450));
     // e.g. addSequential(new Command1());

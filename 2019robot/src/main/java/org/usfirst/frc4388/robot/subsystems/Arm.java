@@ -46,14 +46,14 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double TEST_SPEED_UP = 0.3;
 	public static final double TEST_SPEED_DOWN = -0.3;
 	public static final double AUTO_ZERO_SPEED = -0.3;
-	public static final double JOYSTICK_INCHES_PER_MS_HI = 20;
-	public static final double JOYSTICK_INCHES_PER_MS_LO = 20;
+	public static final double JOYSTICK_INCHES_PER_MS_HI = 35;
+	public static final double JOYSTICK_INCHES_PER_MS_LO = 35;
 	
 	// Defined positions
 	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
 	public static final double ZERO_POSITION_INCHES = -0.25;
 	public static final double NEAR_ZERO_POSITION_INCHES = 0.0;
-	public static final double MIN_POSITION_INCHES = 0.0;
+	public static final double MIN_POSITION_INCHES = -10;
 	public static final double MAX_POSITION_INCHES = 3900;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
@@ -69,7 +69,7 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	// Motion profile max velocities and accel times
 	public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60; 
-	public static final double MP_T1 = 400;  // Fast = 300
+	public static final double MP_T1 = 300;  // Fast = 300
 	public static final double MP_T2 = 150;  // Fast = 150
 	
 	// Motor controllers
@@ -90,7 +90,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double KF_UP = 1;//0.01;
 	public static final double KF_DOWN = 0;// 0.0;
 	public static final double P_Value = 0.5;// 2;
-	public static final double I_Value = 0.0005;// 0.00030;
+	public static final double I_Value = 0.0008;// 0.00030;
 	public static final double D_Value = 100;// 200;
 	public static final double F_Value = 0.75;	// 1023 / 1360 max speed (ticks/100ms)
 	public static final double maxGravityComp = 0.08;

@@ -7,18 +7,20 @@
 
 package org.usfirst.frc4388.robot.commands;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 
-
-public class StowArm extends CommandGroup {
+public class ArmToHeight1 extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public StowArm() {
+  public ArmToHeight1() {
     addSequential(new HatchFlip(false));
     addParallel(new WristPlacement(true));
-    addParallel(new WristSetPositionPID(200), 2);
-    addSequential(new ArmSetPositionMM(-10), 4);
+    addParallel(new ArmSetPositionMM(1300), 4);
+    addSequential(new WaitCommand(1));
+    addSequential(new WristSetPositionPID(2300), 2);
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
