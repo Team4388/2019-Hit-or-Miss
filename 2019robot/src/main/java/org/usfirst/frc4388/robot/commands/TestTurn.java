@@ -7,17 +7,16 @@
 
 package org.usfirst.frc4388.robot.commands;
 
+import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class StowArm extends CommandGroup {
+public class TestTurn extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public StowArm() {
-    addSequential(new HatchFlip(false));
-    addParallel(new WristPlacement(true));
-    addParallel(new WristSetPositionPID(250), 2);
-    addSequential(new ArmSetPositionMM(10), 4);
+  public TestTurn() {
+    addSequential(new DriveTurnBasic (true, 90, 100, MPSoftwareTurnType.TANK));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

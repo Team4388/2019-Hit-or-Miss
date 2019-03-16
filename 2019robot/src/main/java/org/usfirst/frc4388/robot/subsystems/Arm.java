@@ -111,7 +111,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;	
 	private boolean isFinished;
-	private ArmControlMode armControlMode = ArmControlMode.JOYSTICK_MANUAL;
+	private ArmControlMode armControlMode = ArmControlMode.MOTION_MAGIC;
 	private double targetPositionInchesPID = 0;
 	private double targetPositionInchesMM = 0;
 	private boolean firstMpPoint;

@@ -105,7 +105,7 @@ public class OI
 			stow.whenPressed(new StowArm());
 
 			SmartDashboard.putData("switch to manuel", new SetManual());
-			SmartDashboard.putData("run arm test", new ArmTest());
+//			SmartDashboard.putData("run turn test", new TestTurn());
 			SmartDashboard.putData("grab from station", new GrabFromLoadingSatation());
 			SmartDashboard.putData("wrist test", new wristTest());
 

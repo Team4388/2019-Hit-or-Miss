@@ -98,7 +98,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;	
 	private boolean isFinished;
-	private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
+	private WristControlMode wristControlMode = WristControlMode.JOYSTICK_PID;
 	private double targetPositionInchesPID = 0;
 	private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
