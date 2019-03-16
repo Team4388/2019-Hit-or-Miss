@@ -50,11 +50,11 @@ public class OI
 
 			JoystickButton Expand = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.Y_BUTTON);
 			Expand.whenPressed(new WristPlacement(true));
-			Expand.whenPressed(new setLEDPattern(LEDPatterns.SOLID_RED));
+			Expand.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
 
 			JoystickButton Contract = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
 			Contract.whenPressed(new WristPlacement(false));
-			Contract.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
+			Contract.whenPressed(new setLEDPattern(LEDPatterns.SOLID_RED));
 
 			JoystickButton liftBothIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
 			liftBothIntake.whenPressed(new HatchAndBallUp());
@@ -72,7 +72,7 @@ public class OI
 			safteySwitch.whenPressed(new setClimberSafety(true));
 			safteySwitch.whenPressed(new setLEDPattern(LEDPatterns.SOLID_YELLOW));
 			safteySwitch.whenReleased(new setClimberSafety(false));
-			safteySwitch.whenReleased(new setLEDPattern(LEDPatterns.C1_HEARTBEAT_FAST));
+			safteySwitch.whenReleased(new setLEDPattern(LEDPatterns.FOREST_WAVES));
 
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
