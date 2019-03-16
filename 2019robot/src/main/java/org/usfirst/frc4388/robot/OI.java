@@ -7,7 +7,7 @@ import buttons.XBoxTriggerButton;
 import org.usfirst.frc4388.controller.IHandController;
 import org.usfirst.frc4388.controller.XboxController;
 import org.usfirst.frc4388.robot.commands.*;
-
+import org.usfirst.frc4388.robot.constants.LEDPatterns;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -50,10 +50,11 @@ public class OI
 
 			JoystickButton Expand = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.Y_BUTTON);
 			Expand.whenPressed(new WristPlacement(true));
+			Expand.whenPressed(new setLEDPattern(LEDPatterns.SOLID_RED));
 
 			JoystickButton Contract = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.A_BUTTON);
-	        Contract.whenPressed(new WristPlacement(false));
-
+			Contract.whenPressed(new WristPlacement(false));
+			Contract.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
 
 			JoystickButton liftBothIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
 			liftBothIntake.whenPressed(new HatchAndBallUp());
@@ -69,7 +70,9 @@ public class OI
 
 			JoystickButton safteySwitch = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.START_BUTTON);
 			safteySwitch.whenPressed(new setClimberSafety(true));
+			safteySwitch.whenPressed(new setLEDPattern(LEDPatterns.SOLID_YELLOW));
 			safteySwitch.whenReleased(new setClimberSafety(false));
+			safteySwitch.whenReleased(new setLEDPattern(LEDPatterns.C1_HEARTBEAT_FAST));
 
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);

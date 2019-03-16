@@ -13,9 +13,10 @@ import org.usfirst.frc4388.robot.constants.LEDPatterns;
 
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Add your docs here.
+ * Controls the 5v LED Strip
  */
  public class LED extends Subsystem {
 
@@ -24,15 +25,18 @@ import edu.wpi.first.wpilibj.command.Subsystem;
   public static Spark LEDController = new Spark(LED_SPARK_ID);
 
   public LED(){
-    setPattern(LEDPatterns.RED);
+    setPattern(LEDPatterns.C1_HEARTBEAT_FAST);
+    LEDController.set(currentLED);
   }
 
   public void periodic() {
     LEDController.set(currentLED);
+    SmartDashboard.putNumber("LED", currentLED);
   }
 
   public void setPattern(LEDPatterns pattern){
     currentLED = pattern.getValue();
+    LEDController.set(currentLED);
   }
 
   @Override
