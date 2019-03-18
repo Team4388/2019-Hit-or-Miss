@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import org.usfirst.frc4388.robot.Constants;
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.RobotMap;
+import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
+import org.usfirst.frc4388.robot.commands.SetPositionArmWrist;
+import org.usfirst.frc4388.robot.commands.StowArm;
 import org.usfirst.frc4388.utility.ControlLoopable;
 import org.usfirst.frc4388.utility.Loop;
 import org.usfirst.frc4388.utility.MPTalonPIDController;
@@ -33,6 +36,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	private static Arm instance;
 
 	public static enum ArmControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL, MOTION_MAGIC};
+	public static enum PlaceMode { HATCH, CARGO };
 
 	// One revolution of the 30T Drive 1.880" PD pulley = Pi * PD inches = 36/24 revs due to pulleys * 34/24 revs due to gears * 36/12 revs due mag encoder gear on ball shifter * 4096 ticks 
 	public static final double ENCODER_TICKS_TO_INCHES = (1);  
@@ -53,8 +57,8 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
 	public static final double ZERO_POSITION_INCHES = -0.25;
 	public static final double NEAR_ZERO_POSITION_INCHES = 0.0;
-	public static final double MIN_POSITION_INCHES = -10;
-	public static final double MAX_POSITION_INCHES = 3900;
+	public static final double MIN_POSITION_INCHES = -25;
+	public static final double MAX_POSITION_INCHES = 4400;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
 	public static final double SWITCH_POSITION_INCHES = 24.0;
@@ -75,7 +79,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	// Motor controllers
 	private ArrayList<TalonSRXEncoder> motorControllers = new ArrayList<TalonSRXEncoder>();	
 
-	private TalonSRXEncoder motor1;
+	public TalonSRXEncoder motor1;
 	private TalonSRX motor2;
 	
 	// PID controller and params
@@ -112,8 +116,9 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;	
 	private boolean isFinished;
 	private ArmControlMode armControlMode = ArmControlMode.MOTION_MAGIC;
-	private double targetPositionInchesPID = 0;
-	private double targetPositionInchesMM = 0;
+	public PlaceMode placeMode = PlaceMode.HATCH;
+	public double targetPositionInchesPID = 0;
+	public double targetPositionInchesMM = 0;
 	private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
 	private double p = 0;
@@ -165,8 +170,11 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void resetZeroPosition(double position) {
 		mpController.resetZeroPosition(position);
 	}	
+	
 	public void resetEncoder(){
 		motor1.setPosition(0);
+		targetPositionInchesMM = 0;
+		targetPositionInchesPID = 0;
 	}
 	
 	private synchronized void setArmControlMode(ArmControlMode controlMode) {
@@ -193,9 +201,6 @@ public class Arm extends Subsystem implements ControlLoopable
 		setArmControlMode(ArmControlMode.MOTION_MAGIC);
 		updatePositionMM(targetPositionInches);
 		setFinished(false);
-
-
-
 	}
 
 	public double calcGravityCompensationAtCurrentPosition() {
@@ -255,10 +260,10 @@ public class Arm extends Subsystem implements ControlLoopable
  	}
 	
 	private double limitPosition(double targetPosition) {
-		if (targetPosition < MIN_POSITION_INCHES) {
+		/*if (targetPosition < MIN_POSITION_INCHES) {
 			return MIN_POSITION_INCHES;
-		}
-		else if (targetPosition > MAX_POSITION_INCHES) {
+		}*/
+		if (targetPosition > MAX_POSITION_INCHES) {
 			return MAX_POSITION_INCHES;
 		}
 		
@@ -273,9 +278,38 @@ public class Arm extends Subsystem implements ControlLoopable
 		this.periodMs = periodMs;
 	}
 
+	private int lastDPadAngle = -1;
+	public void dPadButtons(){
+		int dPadAngle = Robot.oi.getOperatorController().getDpadAngle();
+		if (placeMode == PlaceMode.HATCH){
+			if (dPadAngle == 0 && lastDPadAngle == -1){
+				new SetPositionArmWrist(3605, 1144).start();
+			}
+			if (dPadAngle == 90 && lastDPadAngle == -1){
+				new SetPositionArmWrist(2000, 750).start();
+			}
+			if (dPadAngle == 180 && lastDPadAngle == -1){
+				new SetPositionArmWrist(590, 450).start();
+			}
+		}
+		if (placeMode == PlaceMode.CARGO) {
+			if (dPadAngle == 0 && lastDPadAngle == -1){
+				new SetPositionArmWrist(4298, 3243).start();
+			}
+			if (dPadAngle == 90 && lastDPadAngle == -1){
+				new SetPositionArmWrist(2830, 2830).start();
+			}
+			if (dPadAngle == 180 && lastDPadAngle == -1){
+				new SetPositionArmWrist(1388, 2500).start();
+			}
+		}
 
-
-
+		if (dPadAngle == 270 && lastDPadAngle == -1){
+			new StowArm().start();
+		}
+		SmartDashboard.putNumber("DPad Angle", dPadAngle);
+		lastDPadAngle = dPadAngle;
+	}
 
 	public synchronized void controlLoopUpdate() {
 		// Measure *actual* update period
@@ -284,6 +318,8 @@ public class Arm extends Subsystem implements ControlLoopable
 			lastControlLoopUpdatePeriod = currentTimestamp - lastControlLoopUpdateTimestamp;
 		}
 		lastControlLoopUpdateTimestamp = currentTimestamp;
+
+		dPadButtons();
 		
 		if (motor1.getSensorCollection().isRevLimitSwitchClosed()){
 			resetEncoder();

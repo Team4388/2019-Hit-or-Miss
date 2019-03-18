@@ -7,19 +7,18 @@
 
 package org.usfirst.frc4388.robot.commands;
 
+import org.usfirst.frc4388.robot.subsystems.Arm.ArmControlMode;
+import org.usfirst.frc4388.robot.subsystems.Wrist.WristControlMode;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-
-public class StowArm extends CommandGroup {
+public class SetMMAndPID extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public StowArm() {
-    addSequential(new HatchFlip(false));
-    addParallel(new WristPlacement(true));
-    addParallel(new WristSetPositionPID(110), 2);
-    addSequential(new ArmSetPositionMM(420), 4);
-    addSequential(new ArmSetPositionMM(5));
+  public SetMMAndPID() {
+    addSequential(new ArmSetMode(ArmControlMode.MOTION_MAGIC));
+    addParallel(new WristSetMode(WristControlMode.JOYSTICK_PID));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());

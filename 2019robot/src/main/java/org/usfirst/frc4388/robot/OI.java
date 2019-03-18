@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.*;
 import org.usfirst.frc4388.robot.subsystems.*;
+import org.usfirst.frc4388.robot.subsystems.Arm.PlaceMode;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
@@ -74,8 +75,18 @@ public class OI
 			safteySwitch.whenReleased(new setClimberSafety(false));
 			safteySwitch.whenReleased(new setLEDPattern(LEDPatterns.FOREST_WAVES));
 
+			JoystickButton manual = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
+			manual.whenPressed(new SetManual());
+			manual.whenReleased(new SetMMAndPID());
+
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
+
+			JoystickButton resetArmEncoder = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.B_BUTTON);
+			resetArmEncoder.whenPressed(new ResetArmEncoder());
+
+			JoystickButton resetWristEncoder = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.Y_BUTTON);
+			resetWristEncoder.whenPressed(new ResetWristEncoder());
 
 			/** DEPRICATED, TRIGGERS ON THE DRIVER JOYSTICK COVER FOR THIS BUTTON */
 			//JoystickButton ratchetFlip = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.Y_BUTTON);
@@ -103,13 +114,15 @@ public class OI
 
 
 			JoystickButton lowHeight = new JoystickButton(m_operatorXbox.getJoyStick(),XboxController.LEFT_JOYSTICK_BUTTON);
-			lowHeight.whenPressed(new GrabFromLoadingSatation());
+			lowHeight.whenPressed(new SetPositionArmWrist(550, 450));
 
-			JoystickButton stow = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
-			stow.whenPressed(new StowArm());
-			stow.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
+			JoystickButton cargoPlaceMode = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
+			cargoPlaceMode.whenPressed(new SwitchArmPlaceMode(PlaceMode.CARGO));
+			cargoPlaceMode.whenReleased(new SwitchArmPlaceMode(PlaceMode.HATCH));
+			//stow.whenPressed(new StowArm());
+			//stow.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
 
-			SmartDashboard.putData("switch to manuel", new SetManual());
+			//SmartDashboard.putData("switch to manuel", new SetManual());
 //			SmartDashboard.putData("run turn test", new TestTurn());
 			SmartDashboard.putData("grab from station", new GrabFromLoadingSatation());
 			SmartDashboard.putData("wrist test", new wristTest());

@@ -73,7 +73,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	// Motor controllers
 	private ArrayList<TalonSRXEncoder> motorControllers = new ArrayList<TalonSRXEncoder>();	
 
-	private TalonSRXEncoder wristMotor1;
+	public TalonSRXEncoder wristMotor1;
 	
 	// PID controller and params
 	private MPTalonPIDController mpController;
@@ -99,7 +99,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;	
 	private boolean isFinished;
 	private WristControlMode wristControlMode = WristControlMode.JOYSTICK_PID;
-	private double targetPositionInchesPID = 0;
+	public double targetPositionInchesPID = 0;
 	private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
 	private double p = 0;
@@ -138,6 +138,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}	
 	public void resetencoder(){
 		wristMotor1.setPosition(0);
+		targetPositionInchesPID = 0;
 	}
 	
 	
@@ -192,12 +193,13 @@ public class Wrist extends Subsystem implements ControlLoopable
  	}
 	
 	private double limitPosition(double targetPosition) {
-		if (targetPosition < MIN_POSITION_INCHES) {
+		
+		/*if (targetPosition < MIN_POSITION_INCHES) {
 			return MIN_POSITION_INCHES;
 		}
 		else if (targetPosition > MAX_POSITION_INCHES) {
 			return MAX_POSITION_INCHES;
-		}
+		}*/
 		
 		return targetPosition;
 	}
