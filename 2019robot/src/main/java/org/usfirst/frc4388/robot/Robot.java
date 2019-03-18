@@ -118,6 +118,8 @@ public class Robot extends TimedRobot
 		//System.err.println("TeleopInit after resetEncoders");
 		drive.endGyroCalibration();
 		System.err.println("TeleopInit after endGyroCalibrations");
+		arm.targetPositionInchesMM = arm.motor1.getPositionWorld();
+		wrist.targetPositionInchesPID = wrist.wristMotor1.getPositionWorld();
 
         updateStatus();
     }
