@@ -5,8 +5,14 @@ import org.usfirst.frc4388.robot.Constants;
 import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.RobotMap;
 import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
-import org.usfirst.frc4388.robot.commands.SetPositionArmWrist;
-import org.usfirst.frc4388.robot.commands.StowArm;
+import org.usfirst.frc4388.robot.commands.presets.CargoHigh;
+import org.usfirst.frc4388.robot.commands.presets.CargoLow;
+import org.usfirst.frc4388.robot.commands.presets.CargoMid;
+import org.usfirst.frc4388.robot.commands.presets.HatchHigh;
+import org.usfirst.frc4388.robot.commands.presets.HatchLow;
+import org.usfirst.frc4388.robot.commands.presets.HatchMid;
+import org.usfirst.frc4388.robot.commands.presets.SetPositionArmWrist;
+import org.usfirst.frc4388.robot.commands.presets.StowArm;
 import org.usfirst.frc4388.utility.ControlLoopable;
 import org.usfirst.frc4388.utility.Loop;
 import org.usfirst.frc4388.utility.MPTalonPIDController;
@@ -283,24 +289,24 @@ public class Arm extends Subsystem implements ControlLoopable
 		int dPadAngle = Robot.oi.getOperatorController().getDpadAngle();
 		if (placeMode == PlaceMode.HATCH){
 			if (dPadAngle == 0 && lastDPadAngle == -1){
-				new SetPositionArmWrist(3605, 1144).start();
+				new HatchHigh().start();
 			}
 			if (dPadAngle == 90 && lastDPadAngle == -1){
-				new SetPositionArmWrist(2000, 750).start();
+				new HatchMid().start();
 			}
 			if (dPadAngle == 180 && lastDPadAngle == -1){
-				new SetPositionArmWrist(590, 450).start();
+				new HatchLow().start();
 			}
 		}
 		if (placeMode == PlaceMode.CARGO) {
 			if (dPadAngle == 0 && lastDPadAngle == -1){
-				new SetPositionArmWrist(4298, 3243).start();
+				new CargoHigh().start();
 			}
 			if (dPadAngle == 90 && lastDPadAngle == -1){
-				new SetPositionArmWrist(2830, 2830).start();
+				new CargoMid().start();
 			}
 			if (dPadAngle == 180 && lastDPadAngle == -1){
-				new SetPositionArmWrist(1388, 2500).start();
+				new CargoLow().start();
 			}
 		}
 

@@ -5,18 +5,21 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc4388.robot.commands;
+package org.usfirst.frc4388.robot.commands.presets;
+
+import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
+import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class SetPositionArmWrist extends CommandGroup {
+public class CargoHigh extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public SetPositionArmWrist(double arm, double wrist) {
+  public CargoHigh() {
     
-    addParallel(new WristSetPositionPID(wrist));
-    addSequential(new ArmSetPositionMM(arm));
+    addParallel(new WristSetPositionPID(3243));
+    addSequential(new ArmSetPositionMM(4298));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

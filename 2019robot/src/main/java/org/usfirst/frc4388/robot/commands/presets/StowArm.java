@@ -5,7 +5,12 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc4388.robot.commands;
+package org.usfirst.frc4388.robot.commands.presets;
+
+import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
+import org.usfirst.frc4388.robot.commands.HatchFlip;
+import org.usfirst.frc4388.robot.commands.WristPlacement;
+import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
