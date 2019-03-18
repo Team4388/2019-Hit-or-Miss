@@ -9,16 +9,15 @@ package org.usfirst.frc4388.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-
-public class StowArm extends CommandGroup {
+public class SetPositionArmWrist extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public StowArm() {
-    addSequential(new HatchFlip(false));
-    addParallel(new WristPlacement(true));
-    addParallel(new WristSetPositionPID(110), 2);
-    addSequential(new ArmSetPositionMM(10));
+  public SetPositionArmWrist(double arm, double wrist) {
+    
+    addParallel(new WristSetPositionPID(wrist));
+    addSequential(new ArmSetPositionMM(arm));
+
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
