@@ -18,8 +18,7 @@ public class StowArm extends CommandGroup {
     addSequential(new HatchFlip(false));
     addParallel(new WristPlacement(true));
     addParallel(new WristSetPositionPID(110), 2);
-    addSequential(new ArmSetPositionMM(420), 4);
-    addSequential(new ArmSetPositionMM(5));
+    addSequential(new ArmSetPositionMM(10));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
