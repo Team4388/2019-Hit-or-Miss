@@ -370,8 +370,8 @@ public class Arm extends Subsystem implements ControlLoopable
 		double deltaPosition = joystickPosition * joystickInchesPerMs;
 		targetPositionInchesMM = targetPositionInchesMM + deltaPosition;
 		updatePositionMM(targetPositionInchesMM);
-		Wrist.targetPositionInchesPID = targetPositionInchesPID - (deltaPosition/3);
-		Robot.wrist.updatePositionPID(Wrist.targetPositionInchesPID);
+		Robot.wrist.targetPositionInchesPID = targetPositionInchesPID - (deltaPosition/3);
+		Robot.wrist.updatePositionPID(Robot.wrist.targetPositionInchesPID);
 
 
 	}
