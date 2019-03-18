@@ -194,12 +194,12 @@ public class Wrist extends Subsystem implements ControlLoopable
 
 	private double limitPosition(double targetPosition) {
 
-		/*if (targetPosition < MIN_POSITION_INCHES) {
+		if (targetPosition < MIN_POSITION_INCHES) {
 			return MIN_POSITION_INCHES;
 		}
 		else if (targetPosition > MAX_POSITION_INCHES) {
 			return MAX_POSITION_INCHES;
-		}*/
+		}
 
 		return targetPosition;
 	}

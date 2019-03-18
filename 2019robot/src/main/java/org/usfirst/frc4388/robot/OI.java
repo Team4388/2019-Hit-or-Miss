@@ -122,7 +122,7 @@ public class OI
 			//stow.whenPressed(new StowArm());
 			//stow.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
 
-			//SmartDashboard.putData("switch to manuel", new SetManual());
+			SmartDashboard.putData("switch to manuel", new SetManual());
 //			SmartDashboard.putData("run turn test", new TestTurn());
 			SmartDashboard.putData("grab from station", new GrabFromLoadingSatation());
 			SmartDashboard.putData("wrist test", new wristTest());
