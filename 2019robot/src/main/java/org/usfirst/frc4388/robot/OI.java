@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.*;
 import org.usfirst.frc4388.robot.subsystems.*;
+import org.usfirst.frc4388.robot.subsystems.Arm.ArmControlMode;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
@@ -79,7 +80,7 @@ public class OI
 
 			/** DEPRICATED, TRIGGERS ON THE DRIVER JOYSTICK COVER FOR THIS BUTTON */
 			//JoystickButton ratchetFlip = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.Y_BUTTON);
-			//ratchetFlip.whenPressed(new ratchetFlip(0.5));
+			//ratchetFlip.toggleWhenPressed(new ratchetFlip(0.5));
 			//ratchetFlip.whenReleased(new ratchetFlip(0));
 
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
@@ -89,7 +90,10 @@ public class OI
 	        JoystickButton shiftDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 	        shiftDown.whenPressed(new DriveSpeedShift(false));
 	       // shiftDown.whenPressed(new LEDIndicators(false));
-	        //Operator Xbox
+			//Operator Xbox
+			JoystickButton help = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.X_BUTTON);
+			help.whenPressed(new ArmSetMode(ArmControlMode.JOYSTICK_MANUAL));
+			help.whenReleased(new ArmSetMode(ArmControlMode.MOTION_MAGIC));
 			/*
 	        JoystickButton openIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.LEFT_BUMPER_BUTTON);
 			openIntake.whenPressed(new IntakePosition(true));
@@ -113,6 +117,7 @@ public class OI
 //			SmartDashboard.putData("run turn test", new TestTurn());
 			SmartDashboard.putData("grab from station", new GrabFromLoadingSatation());
 			SmartDashboard.putData("wrist test", new wristTest());
+			
 
 	        //SmartDashboard.putData("PRE GAME!!!!", new PreGame());
 		  } catch (Exception e) {

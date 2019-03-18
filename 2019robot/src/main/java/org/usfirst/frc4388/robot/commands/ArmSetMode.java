@@ -24,7 +24,10 @@ public class ArmSetMode extends Command {
     	}
     	else if (controlMode == ArmControlMode.JOYSTICK_MANUAL) {
     		Robot.arm.setSpeedJoystick(0);
-    	}
+        }
+        else if (controlMode == ArmControlMode.MOTION_MAGIC){
+            Robot.arm.setPositionMM(Robot.arm.getPositionInches());
+        }
     	else {
     		Robot.arm.setSpeed(0.0);
     	}

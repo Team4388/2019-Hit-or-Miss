@@ -52,7 +52,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	public static final double ZERO_POSITION_INCHES = -0.25;
 	public static final double NEAR_ZERO_POSITION_INCHES = 0.0;
 	public static final double MIN_POSITION_INCHES = 0.0;
-	public static final double MAX_POSITION_INCHES = 4096;
+	public static final double MAX_POSITION_INCHES = 3350;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
 	public static final double SWITCH_POSITION_INCHES = 24.0;
@@ -278,7 +278,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 				
 			}
 			if (wristControlMode == WristControlMode.JOYSTICK_PID){
-				System.err.println(wristMotor1.getControlMode());
+				//System.err.println(wristMotor1.getControlMode());
 				controlPidWithJoystick();
 				
 	

@@ -16,6 +16,7 @@ public class HatchFlip extends Command
 	@Override
 	protected void initialize() {
 		Robot.pnumatics.setHatchIntakeState(PickingUp);
+
 	}
 
 	@Override

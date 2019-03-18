@@ -173,7 +173,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		this.armControlMode = controlMode;
 	}
 	
-	private synchronized ArmControlMode getArmControlMode() {
+	public synchronized ArmControlMode getArmControlMode() {
 		return this.armControlMode;
 	}
 
@@ -188,7 +188,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 	public void setPositionMM(double targetPositionInches){
 		motor1.set(ControlMode.MotionMagic, targetPositionInches);
-		System.err.println(motor1.getControlMode());
+		//System.err.println(motor1.getControlMode());
 		motor1.selectProfileSlot(MM_SLOT, 0);
 		setArmControlMode(ArmControlMode.MOTION_MAGIC);
 		updatePositionMM(targetPositionInches);
@@ -202,7 +202,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		int ticks = motor1.getSelectedSensorPosition();
 		double degreesFromDown = (ticks+920)*(360.0/(4096*3));
 		double compensation = maxGravityComp * Math.sin(degreesFromDown*Math.PI/180);
-		System.err.println("comp(" + degreesFromDown + "^) = " + compensation);
+		//System.err.println("comp(" + degreesFromDown + "^) = " + compensation);
 		return compensation;
 	}
 	public void updatePositionMM(double targetPositionInches){
@@ -292,6 +292,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		// Do the update
 		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
 			controlManualWithJoystick();
+			System.err.println(motor1.getControlMode());
 		}
 		else if (!isFinished) {
 			if (armControlMode == ArmControlMode.MOTION_PROFILE) {
@@ -304,7 +305,7 @@ public class Arm extends Subsystem implements ControlLoopable
 			}
 			if (armControlMode == ArmControlMode.MOTION_MAGIC){
 				controlMMWithJoystick();
-				//System.err.println(motor1.getControlMode());
+				System.err.println(motor1.getControlMode());
 			}
 			
 			/*else if (armControlMode == ArmControlMode.MP_PATH_VELOCITY) {
