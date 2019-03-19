@@ -7,7 +7,9 @@
 
 package org.usfirst.frc4388.robot.commands.presets;
 
+import org.usfirst.frc4388.robot.Robot;
 import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
+import org.usfirst.frc4388.robot.commands.HatchFlip;
 import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -17,9 +19,11 @@ public class HatchMid extends CommandGroup {
    * Add your docs here.
    */
   public HatchMid() {
-    
+    boolean HatchFlipStatus = Robot.pnumatics.hatchIntakeState;
+    addSequential(new HatchFlip(false));
     addParallel(new WristSetPositionPID(750));
     addSequential(new ArmSetPositionMM(2000));
+    addSequential(new HatchFlip(HatchFlipStatus));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

@@ -14,6 +14,10 @@ public class Pneumatics extends Subsystem {
 	private DoubleSolenoid ballIntake;
 	private DoubleSolenoid wrist;
 
+	public boolean hatchIntakeState = false;
+	public boolean ballIntakeState = false;
+	public boolean speedShiftState = false;
+	public boolean wristState = false;
 	
 	public Pneumatics() {
 		try {
@@ -34,6 +38,7 @@ public class Pneumatics extends Subsystem {
 		if (state==false) {
 			speedShift.set(DoubleSolenoid.Value.kReverse);
 		}
+		speedShiftState = state;
 	}
 	public void setHatchIntakeState(boolean state) {
 		if (state==true) {
@@ -42,6 +47,7 @@ public class Pneumatics extends Subsystem {
 		if (state==false) {
 			hatchIntake.set(DoubleSolenoid.Value.kReverse);
 		}
+		hatchIntakeState = state;
 	}
 	public void setBallIntake(boolean state) {
 		if (state==true) {
@@ -50,6 +56,7 @@ public class Pneumatics extends Subsystem {
 		if (state==false) {
 			ballIntake.set(DoubleSolenoid.Value.kReverse);
 		}
+		ballIntakeState = state;
 	}
 	public void setWrist(boolean state) {
 		if (state==true) {
@@ -58,6 +65,7 @@ public class Pneumatics extends Subsystem {
 		if (state==false) {
 			wrist.set(DoubleSolenoid.Value.kReverse);
 		}
+		wristState = state;
 	}
 
 	public void initDefaultCommand() {
