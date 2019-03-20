@@ -15,6 +15,7 @@ public class Pneumatics extends Subsystem {
 	private DoubleSolenoid ballIntake;
 	private DoubleSolenoid wrist;
 
+	public boolean wristState = false;
 	
 	public Pneumatics() {
 		try {
@@ -59,11 +60,12 @@ public class Pneumatics extends Subsystem {
 		if (state==false) {
 			wrist.set(DoubleSolenoid.Value.kReverse);
 		}
+		wristState = state;
 	}
 
 	public void updateStatus(Robot.OperationMode operationMode) {
 		try {
-			SmartDashboard.putBoolean("Wrist", false);
+			SmartDashboard.putBoolean("Wrist", wristState);
 		} catch(Exception e) {
 
 		}
