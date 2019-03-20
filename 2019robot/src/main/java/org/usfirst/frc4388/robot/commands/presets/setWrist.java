@@ -7,22 +7,19 @@
 
 package org.usfirst.frc4388.robot.commands.presets;
 
-import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
 import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 
-public class CargoMid extends CommandGroup {
+public class setWrist extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public CargoMid() {
-
-    addParallel(new setWrist(2430));
-    addSequential(new ArmSetPositionMM(2630));
-
+  public setWrist(double wrist) {
+    addSequential(new WaitCommand(1));
+    addSequential(new WristSetPositionPID(wrist));
     // Add Commands here:
-    // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.
 

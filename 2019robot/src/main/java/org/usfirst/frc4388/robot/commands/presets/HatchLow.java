@@ -18,8 +18,8 @@ public class HatchLow extends CommandGroup {
    */
   public HatchLow() {
     
-    addParallel(new WristSetPositionPID(450));
-    addSequential(new ArmSetPositionMM(590));
+    addParallel(new setWrist(350));
+    addSequential(new ArmSetPositionMM(550));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

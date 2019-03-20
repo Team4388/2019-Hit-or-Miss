@@ -8,6 +8,7 @@
 package org.usfirst.frc4388.robot.commands.presets;
 
 import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
+import org.usfirst.frc4388.robot.commands.HatchFlip;
 import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -17,8 +18,9 @@ public class HatchHigh extends CommandGroup {
    * Add your docs here.
    */
   public HatchHigh() {
-    
-    addParallel(new WristSetPositionPID(1144));
+    addSequential(new HatchFlip(false));
+    addParallel(new setWrist(1144));
+    addParallel(new DelayHatch());
     addSequential(new ArmSetPositionMM(3605));
 
     // Add Commands here:

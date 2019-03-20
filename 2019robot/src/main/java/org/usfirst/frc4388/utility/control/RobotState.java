@@ -124,10 +124,10 @@ public class RobotState {
     public void updateStatus(OperationMode operationMode) {
     	if (operationMode == OperationMode.TEST) {
 	        RigidTransform2d odometry = getLatestFieldToVehicle().getValue();
-	        SmartDashboard.putNumber("robot_pose_x", odometry.getTranslation().x());
-	        SmartDashboard.putNumber("robot_pose_y", odometry.getTranslation().y());
-	        SmartDashboard.putNumber("robot_pose_theta", odometry.getRotation().getDegrees());
-	        SmartDashboard.putNumber("robot velocity", vehicle_velocity_measured_.dx);
+	        //SmartDashboard.putNumber("robot_pose_x", odometry.getTranslation().x());
+	        //SmartDashboard.putNumber("robot_pose_y", odometry.getTranslation().y());
+	        //SmartDashboard.putNumber("robot_pose_theta", odometry.getRotation().getDegrees());
+	       // SmartDashboard.putNumber("robot velocity", vehicle_velocity_measured_.dx);
     	}
     }
 }

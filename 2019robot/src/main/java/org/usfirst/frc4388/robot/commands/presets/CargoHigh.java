@@ -8,6 +8,7 @@
 package org.usfirst.frc4388.robot.commands.presets;
 
 import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
+import org.usfirst.frc4388.robot.commands.HatchFlip;
 import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -17,9 +18,10 @@ public class CargoHigh extends CommandGroup {
    * Add your docs here.
    */
   public CargoHigh() {
-    
-    addParallel(new WristSetPositionPID(3243));
-    addSequential(new ArmSetPositionMM(4298));
+    addSequential(new HatchFlip(false));
+    addParallel(new setWrist(2781));
+    addParallel(new DelayHatch());
+    addSequential(new ArmSetPositionMM(3812));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

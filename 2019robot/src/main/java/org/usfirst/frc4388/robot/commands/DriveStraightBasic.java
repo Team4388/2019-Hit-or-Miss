@@ -80,9 +80,9 @@ public class DriveStraightBasic extends Command {
     	}
     	if (!finished) {
     		m_speed = velocityToMoveSpeed(velocity, m_goingBackwards);
-    		SmartDashboard.putNumber("DSB Dist", position);
+    		//SmartDashboard.putNumber("DSB Dist", position);
     	} else {
-    		SmartDashboard.putNumber("DSB finDist", position);
+    		//SmartDashboard.putNumber("DSB finDist", position);
     	}
 		return finished;
     }
@@ -90,7 +90,7 @@ public class DriveStraightBasic extends Command {
     // Called once after isFinished returns true
     protected void end() {
 		double currentTimestamp = Timer.getFPGATimestamp();
-    	SmartDashboard.putNumber("DSB Runtime", currentTimestamp - m_commandInitTimestamp);
+    	//SmartDashboard.putNumber("DSB Runtime", currentTimestamp - m_commandInitTimestamp);
     	Robot.drive.rawMoveSteer(0.0, 0.0);
 		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
     }

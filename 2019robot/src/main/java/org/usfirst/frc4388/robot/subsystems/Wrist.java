@@ -12,6 +12,7 @@ import org.usfirst.frc4388.utility.TalonSRXEncoder;
 import org.usfirst.frc4388.utility.TalonSRXFactory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
@@ -30,7 +31,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 {
 	private static Wrist instance;
 
-	public static enum WristControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL };
+	public static enum WristControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL, MOTION_MAGIC };
 
 	// One revolution of the 30T Drive 1.880" PD pulley = Pi * PD inches = 36/24 revs due to pulleys * 34/24 revs due to gears * 36/12 revs due mag encoder gear on ball shifter * 4096 ticks
 	public static final double ENCODER_TICKS_TO_INCHES = (1);
@@ -79,16 +80,21 @@ public class Wrist extends Subsystem implements ControlLoopable
 	private MPTalonPIDController mpController;
 
 	public static int PID_SLOT = 0;
-	public static int MP_SLOT = 1;
+	public static int MM_SLOT = 1;
+	public static int MP_SLOT = 2;
 
 	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);
 	public static final double KF_UP = 0.01;
 	public static final double KF_DOWN = 0.0;
-	public static final double P_Value = 1;
-	public static final double I_Value = 0.0001;
-	public static final double D_Value = 100;
+	public static final double P_Value = 4;
+	public static final double I_Value = 0.0000;
+	public static final double D_Value = 000;
+	public static final double F_Value = 1;
+	public static final int CV_value = 100;
+	public static final int A_value = 100;
 	public static final double RampRate = 0.0;
+	public static final double maxGravityComp = 0;
 	private PIDParams wristPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
 	public static final double PID_ERROR_INCHES = 150;
 	LimitSwitchSource limitSwitchSource;
@@ -98,8 +104,9 @@ public class Wrist extends Subsystem implements ControlLoopable
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
 	private boolean isFinished;
-	private WristControlMode wristControlMode = WristControlMode.JOYSTICK_PID;
+	private WristControlMode wristControlMode = WristControlMode.MOTION_MAGIC;
 	public double targetPositionInchesPID = 0;
+	public double targetPositionInchesMM = 0;
 	private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
 	private double p = 0;
@@ -120,9 +127,18 @@ public class Wrist extends Subsystem implements ControlLoopable
 			wristMotor1.setNeutralMode(NeutralMode.Brake);
 			wristMotor1.enableCurrentLimit(true);
 			//wristMotor1.setSensorPhase(true);
+			
+			wristMotor1.configNominalOutputForward(0, TalonSRXEncoder.TIMEOUT_MS);
+			wristMotor1.configNominalOutputReverse(0, TalonSRXEncoder.TIMEOUT_MS);
+			wristMotor1.configPeakOutputForward(1, TalonSRXEncoder.TIMEOUT_MS);
+			wristMotor1.configPeakOutputReverse(-1, TalonSRXEncoder.TIMEOUT_MS);
+
+			wristMotor1.selectProfileSlot(MM_SLOT, 0);
+			wristMotor1.config_kF(MM_SLOT, F_Value, TalonSRXEncoder.TIMEOUT_MS);
+			wristMotor1.config_kP(MM_SLOT, P_Value, TalonSRXEncoder.TIMEOUT_MS);
+			wristMotor1.config_kI(MM_SLOT, I_Value, TalonSRXEncoder.TIMEOUT_MS);
+			wristMotor1.config_kD(MM_SLOT, D_Value, TalonSRXEncoder.TIMEOUT_MS);
 			motorControllers.add(wristMotor1);
-
-
 		}
 		catch (Exception e) {
 			System.err.println("An error occurred in the Wrist constructor");
@@ -159,6 +175,37 @@ public class Wrist extends Subsystem implements ControlLoopable
 		wristMotor1.set(ControlMode.PercentOutput, speed);
 		setWristControlMode(WristControlMode.JOYSTICK_MANUAL);
 	}
+
+	public void setPositionMM(double targetPositionInches){
+		wristMotor1.set(ControlMode.MotionMagic, targetPositionInches);
+		//System.err.println(wristMotor1.getControlMode());
+		wristMotor1.selectProfileSlot(MM_SLOT, 0);
+		setWristControlMode(WristControlMode.MOTION_MAGIC);
+		updatePositionMM(targetPositionInches);
+		setFinished(false);
+	}
+
+	public double calcGravityCompensationAtCurrentPosition() {
+		int ticks = wristMotor1.getSelectedSensorPosition();
+		double degreesFromDown = (ticks+920)*(360.0/(4096*3));
+		double compensation = maxGravityComp * Math.sin(degreesFromDown*Math.PI/180);
+		//System.err.println("comp(" + degreesFromDown + "^) = " + compensation);
+		return compensation;
+	}
+	public void updatePositionMM(double targetPositionInches){
+		targetPositionInchesMM = limitPosition(targetPositionInches);
+		System.err.println("we are here");
+		//double startPositionInches = motor1.getPositionWorld();
+		//System.err.println("compensation = " + compensation);
+		wristMotor1.set(ControlMode.MotionMagic, targetPositionInches);
+		//wristMotor1.set(ControlMode.MotionMagic, targetPositionInchesMM, DemandType.ArbitraryFeedForward, 0);
+		//System.err.println(motor1.getControlMode());
+		wristMotor1.configMotionCruiseVelocity(CV_value, TalonSRXEncoder.TIMEOUT_MS);
+		wristMotor1.configMotionAcceleration(A_value, TalonSRXEncoder.TIMEOUT_MS);
+
+
+	}
+
 
 	public void setPositionPID(double targetPositionInches) {
 		wristMotor1.set(ControlMode.Position, targetPositionInches);
@@ -279,6 +326,10 @@ public class Wrist extends Subsystem implements ControlLoopable
 				isFinished = mpController.controlLoopUpdate(getPositionInches());
 
 			}
+			if (wristControlMode == WristControlMode.MOTION_MAGIC){
+				controlMMWithJoystick();
+				//System.err.println(wristMotor1.getControlMode());
+			}
 			if (wristControlMode == WristControlMode.JOYSTICK_PID){
 				//System.err.println(wristMotor1.getControlMode());
 				controlPidWithJoystick();
@@ -298,7 +349,14 @@ public class Wrist extends Subsystem implements ControlLoopable
 
 
 
-
+	private void controlMMWithJoystick() {
+		double joystickPosition = -Robot.oi.getOperatorController().getRightYAxis();
+		double deltaPosition = joystickPosition * joystickInchesPerMs;
+		targetPositionInchesMM = targetPositionInchesMM + deltaPosition;
+		updatePositionMM(targetPositionInchesMM);
+		//Robot.wrist.targetPositionInchesPID = targetPositionInchesPID - (deltaPosition/3);
+		
+	}
 
 
 
@@ -319,7 +377,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getRightYAxis();
-		setSpeedJoystick(joyStickSpeed*.5);
+		setSpeedJoystick(joyStickSpeed);
 	}
 	/*
 	public void setShiftState(ElevatorSpeedShiftState state) {
@@ -365,15 +423,16 @@ public class Wrist extends Subsystem implements ControlLoopable
 		//System.err.println("the encoder is right after this");
 			try {
 
-				SmartDashboard.putNumber("Wrist Position Ticks", wristMotor1.getPositionWorld());
-				SmartDashboard.putNumber("Wrist Motor 1 Amps", wristMotor1.getOutputCurrent());
-				SmartDashboard.putNumber("wrist pid error", wristMotor1.getClosedLoopError());
+				SmartDashboard.putNumber("Wrist Ticks", wristMotor1.getPositionWorld());
+				SmartDashboard.putNumber("Wrist Amps", wristMotor1.getOutputCurrent());
+				SmartDashboard.putNumber("wrist error", wristMotor1.getClosedLoopError());
 				SmartDashboard.putNumber("wrist motor output", wristMotor1.getMotorOutputPercent());
-
+				SmartDashboard.putNumber("wrist velocity", wristMotor1.getSelectedSensorVelocity());
+				SmartDashboard.putNumber("Wrist Target MM", targetPositionInchesMM);
 //				SmartDashboard.putNumber("Elevator Motor 1 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID));
 //				SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
 //				SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
-				SmartDashboard.putNumber("Wrist Target PID Position", targetPositionInchesPID);
+				SmartDashboard.putNumber("Wrist Target PID", targetPositionInchesPID);
 			}
 			catch (Exception e) {
 				System.err.println("Drivetrain update status error" +e.getMessage());

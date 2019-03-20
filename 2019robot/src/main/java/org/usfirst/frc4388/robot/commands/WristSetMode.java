@@ -24,7 +24,11 @@ public class WristSetMode extends Command {
     	}
     	else if (controlMode == WristControlMode.JOYSTICK_MANUAL) {
     		Robot.wrist.setSpeedJoystick(0);
-    	}
+        }
+        else if (controlMode == WristControlMode.MOTION_MAGIC){
+            Robot.wrist.setPositionMM(Robot.wrist.getPositionInches());
+        }
+
     	else {
     		Robot.wrist.setSpeed(0.0);
     	}

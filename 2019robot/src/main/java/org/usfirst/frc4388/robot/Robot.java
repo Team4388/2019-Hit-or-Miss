@@ -49,8 +49,8 @@ public class Robot extends TimedRobot
     	//Printing game data to riolog
     	String gameData = DriverStation.getInstance().getGameSpecificMessage();
     	System.out.println(gameData);
-    	CameraServer.getInstance().startAutomaticCapture();
-    	CameraServer.getInstance().putVideo("res", 300, 220);
+    	//CameraServer.getInstance().startAutomaticCapture();
+    	//CameraServer.getInstance().putVideo("res", 300, 220);
     	
       try {
 		oi = OI.getInstance();
@@ -89,38 +89,30 @@ public class Robot extends TimedRobot
 
     public void autonomousInit() {    	
     	updateChoosers();
-    	
     	controlLoop.start();
-    	drive.endGyroCalibration();
-    	drive.resetEncoders();
-    	drive.resetGyro();
-		drive.setIsRed(getAlliance().equals(Alliance.Red));
-		arm.resetEncoder();
-        
+		drive.endGyroCalibration();
+		arm.targetPositionInchesMM = arm.motor1.getPositionWorld();
+		wrist.targetPositionInchesMM = wrist.wristMotor1.getPositionWorld();
+    	//drive.resetEncoders();
+    	//drive.resetGyro();
+		//drive.setIsRed(getAlliance().equals(Alliance.Red));
+		//arm.resetEncoder();
+        updateStatus();
 	}
- 
-
-    
+     
     public void autonomousPeriodic() {
-        Scheduler.getInstance().run();
+    	Scheduler.getInstance().run();
 		updateStatus();
     }
 
     public void teleopInit() {
-		System.err.println("Beginning of teleopInit.");
-
-        drive.setToBrakeOnNeutral(false);	
+//        drive.setToBrakeOnNeutral(false);	
 		updateChoosers();
-		System.err.println("TeleopInit after UpdateChoosers");
 		controlLoop.start();
-		System.err.println("TeleopInit after controlLoop");
 		//drive.resetEncoders();
-		//System.err.println("TeleopInit after resetEncoders");
 		drive.endGyroCalibration();
-		System.err.println("TeleopInit after endGyroCalibrations");
 		arm.targetPositionInchesMM = arm.motor1.getPositionWorld();
 		wrist.targetPositionInchesPID = wrist.wristMotor1.getPositionWorld();
-
         updateStatus();
     }
 

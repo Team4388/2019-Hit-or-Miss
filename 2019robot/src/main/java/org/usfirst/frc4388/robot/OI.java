@@ -7,7 +7,7 @@ import buttons.XBoxTriggerButton;
 import org.usfirst.frc4388.controller.IHandController;
 import org.usfirst.frc4388.controller.XboxController;
 import org.usfirst.frc4388.robot.commands.*;
-import org.usfirst.frc4388.robot.commands.presets.SetPositionArmWrist;
+import org.usfirst.frc4388.robot.commands.presets.StowArm;
 import org.usfirst.frc4388.robot.constants.LEDPatterns;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.*;
 import org.usfirst.frc4388.robot.subsystems.*;
 import org.usfirst.frc4388.robot.subsystems.Arm.ArmControlMode;
+import org.usfirst.frc4388.robot.subsystems.Arm.PlaceMode;
 import org.usfirst.frc4388.robot.subsystems.Wrist.WristControlMode;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import org.usfirst.frc4388.utility.MPSoftwarePIDController.MPSoftwareTurnType;
@@ -68,6 +69,10 @@ public class OI
 
 			JoystickButton liftBothIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.X_BUTTON);
 			liftBothIntake.whenPressed(new HatchAndBallUp());
+			
+			JoystickButton cargoPlaceMode = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
+			cargoPlaceMode.whenPressed(new SwitchArmPlaceMode(PlaceMode.CARGO));
+			cargoPlaceMode.whenReleased(new SwitchArmPlaceMode(PlaceMode.HATCH));
 
 			JoystickButton liftHatchIntake = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 			liftHatchIntake.whenPressed(new LiftHatchDropBall());
@@ -87,9 +92,9 @@ public class OI
 			JoystickButton lowHeight = new JoystickButton(m_operatorXbox.getJoyStick(),XboxController.LEFT_JOYSTICK_BUTTON);
 			lowHeight.whenPressed(new GrabFromLoadingSatation());
 
-			JoystickButton stow = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
-			stow.whenPressed(new StowArm());
-			stow.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
+			//JoystickButton stow = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
+			//stow.whenPressed(new StowArm());
+			//stow.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,8 +127,10 @@ public class OI
 
 
 			SmartDashboard.putData("switch to manuel", new SetManual());
-			SmartDashboard.putData("grab from station", new GrabFromLoadingSatation());
-			SmartDashboard.putData("wrist test", new wristTest());
+			SmartDashboard.putData("WristTest", new wristTest());
+			SmartDashboard.putData("arm test", new ArmTest());
+			//SmartDashboard.putData("arm test2", new ArmTest2());
+
 			
 
 		  } catch (Exception e) {

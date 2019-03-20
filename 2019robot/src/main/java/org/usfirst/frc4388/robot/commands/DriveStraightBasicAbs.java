@@ -92,9 +92,9 @@ public class DriveStraightBasicAbs extends Command {
     	}
     	if (!finished) {
     		m_speed = velocityToMoveSpeed(velocity, m_goingBackwards);
-    		SmartDashboard.putNumber("DSB Dist", position);
+    		//SmartDashboard.putNumber("DSB Dist", position);
     	} else {
-    		SmartDashboard.putNumber("DSB finDist", position);
+    		//SmartDashboard.putNumber("DSB finDist", position);
     	}
 		return finished;
     }

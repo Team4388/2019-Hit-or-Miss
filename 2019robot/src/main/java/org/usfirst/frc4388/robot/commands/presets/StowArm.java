@@ -11,6 +11,8 @@ import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
 import org.usfirst.frc4388.robot.commands.HatchFlip;
 import org.usfirst.frc4388.robot.commands.WristPlacement;
 import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
+import org.usfirst.frc4388.robot.commands.setLEDPattern;
+import org.usfirst.frc4388.robot.constants.LEDPatterns;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -22,6 +24,7 @@ public class StowArm extends CommandGroup {
   public StowArm() {
     addSequential(new HatchFlip(false));
     addParallel(new WristPlacement(true));
+    addParallel(new setLEDPattern(LEDPatterns.SOLID_GREEN));
     addParallel(new WristSetPositionPID(110), 2);
     addSequential(new ArmSetPositionMM(10));
     // Add Commands here:

@@ -64,18 +64,9 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double ZERO_POSITION_INCHES = -0.25;
 	public static final double NEAR_ZERO_POSITION_INCHES = 0.0;
 	public static final double MIN_POSITION_INCHES = -25;
-	public static final double MAX_POSITION_INCHES = 4400;
+	public static final double MAX_POSITION_INCHES = 4200;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
 
-	public static final double SWITCH_POSITION_INCHES = 24.0;
-	public static final double SWITCH_POSITION_HIGH_INCHES = 36.0; //Switch Position for First Cube APR
-	public static final double SCALE_LOW_POSITION_INCHES = 56.0;
-	public static final double SCALE_FIRST_CUBE_POSITION_INCHES = 78.0; //72.0
-	public static final double SCALE_SECOND_CUBE_POSITION_INCHES = 77.0;
-	public static final double SCALE_HIGH_POSITION_INCHES = MAX_POSITION_INCHES;
-	public static final double CLIMB_BAR_POSITION_INCHES = 70.0;
-	public static final double CLIMB_HIGH_POSITION_INCHES = 10.0;
-	public static final double CLIMB_ASSIST_POSITION_INCHES = 50.0;
 
 	// Motion profile max velocities and accel times
 	public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60;
@@ -99,20 +90,20 @@ public class Arm extends Subsystem implements ControlLoopable
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);
 	public static final double KF_UP = 1;//0.01;
 	public static final double KF_DOWN = 0;// 0.0;
-	public static final double P_Value = 0.5;// 2;
-	public static final double I_Value = 0.0008;// 0.00030;
-	public static final double D_Value = 100;// 200;
+	public static final double P_Value = 4;// 2;
+	public static final double I_Value = 0.0001;// 0.00030;
+	public static final double D_Value = 200;// 200;
 	public static final double F_Value = 0.75;	// 1023 / 1360 max speed (ticks/100ms)
-	public static final double maxGravityComp = 0.08;
+	public static final double maxGravityComp = 0.01;
 	public static final double RampRate = 0;// 0.0;
-	public static final int A_value = 450;
-	public static final int CV_value = 740;
+	public static final int A_value = 400;
+	public static final int CV_value = 500;
 
 
 
 
 	private PIDParams armPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
-	public static final double PID_ERROR_INCHES = 5;
+	public static final double PID_ERROR_INCHES = 50;
 	LimitSwitchSource limitSwitchSource;
 
 	// Pneumatics
@@ -149,7 +140,7 @@ public class Arm extends Subsystem implements ControlLoopable
 			motor1.configPeakOutputReverse(-1, TalonSRXEncoder.TIMEOUT_MS);
 
 			motor1.selectProfileSlot(MM_SLOT, 0);
-			motor1.config_kF(MM_SLOT, F_Value, TalonSRXEncoder.TIMEOUT_MS);
+			//motor1.config_kF(MM_SLOT, F_Value, TalonSRXEncoder.TIMEOUT_MS);
 			motor1.config_kP(MM_SLOT, P_Value, TalonSRXEncoder.TIMEOUT_MS);
 			motor1.config_kI(MM_SLOT, I_Value, TalonSRXEncoder.TIMEOUT_MS);
 			motor1.config_kD(MM_SLOT, D_Value, TalonSRXEncoder.TIMEOUT_MS);
@@ -179,8 +170,8 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	public void resetEncoder(){
 		motor1.setPosition(0);
-		targetPositionInchesMM = 0;
-		targetPositionInchesPID = 0;
+		//targetPositionInchesMM = 0;
+		//targetPositionInchesPID = 0;
 	}
 
 	private synchronized void setArmControlMode(ArmControlMode controlMode) {
@@ -266,9 +257,9 @@ public class Arm extends Subsystem implements ControlLoopable
  	}
 
 	private double limitPosition(double targetPosition) {
-		/*if (targetPosition < MIN_POSITION_INCHES) {
+		if (targetPosition < MIN_POSITION_INCHES) {
 			return MIN_POSITION_INCHES;
-		}*/
+		}
 		if (targetPosition > MAX_POSITION_INCHES) {
 			return MAX_POSITION_INCHES;
 		}
@@ -334,7 +325,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		// Do the update
 		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
 			controlManualWithJoystick();
-			System.err.println(motor1.getControlMode());
+			//System.err.println(motor1.getControlMode());
 		}
 		else if (!isFinished) {
 			if (armControlMode == ArmControlMode.MOTION_PROFILE) {
@@ -343,11 +334,11 @@ public class Arm extends Subsystem implements ControlLoopable
 			}
 			if (armControlMode == ArmControlMode.JOYSTICK_PID){
 					controlPidWithJoystick();
-					System.err.println(motor1.getControlMode());
+					//System.err.println(motor1.getControlMode());
 			}
 			if (armControlMode == ArmControlMode.MOTION_MAGIC){
 				controlMMWithJoystick();
-				System.err.println(motor1.getControlMode());
+				//System.err.println(motor1.getControlMode());
 			}
 
 			/*else if (armControlMode == ArmControlMode.MP_PATH_VELOCITY) {
@@ -378,7 +369,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		targetPositionInchesMM = targetPositionInchesMM + deltaPosition;
 		updatePositionMM(targetPositionInchesMM);
 		//Robot.wrist.targetPositionInchesPID = targetPositionInchesPID - (deltaPosition/3);
-		Robot.wrist.updatePositionPID(Robot.wrist.targetPositionInchesPID);
+		//Robot.wrist.updatePositionPID(Robot.wrist.targetPositionInchesPID);
 
 
 	}
@@ -391,7 +382,7 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
-		setSpeedJoystick((joyStickSpeed*.3)+.08);
+		setSpeedJoystick(joyStickSpeed);
 	}
 	/*
 	public void setShiftState(ElevatorSpeedShiftState state) {
@@ -439,19 +430,19 @@ public class Arm extends Subsystem implements ControlLoopable
 		//System.err.println("the encoder is right after this");
 			try {
 
-				SmartDashboard.putNumber("Arm Position Ticks", motor1.getPositionWorld());
+				SmartDashboard.putNumber("Arm Ticks", motor1.getPositionWorld());
 				//SmartDashboard.putNumber("Arm Motor 1 Amps", motor1.getOutputCurrent());
 				//SmartDashboard.putNumber("Arm Motor 2 Amps", motor2.getOutputCurrent());
-				SmartDashboard.putNumber("sensor vel", motor1.getSelectedSensorVelocity());
-				SmartDashboard.putNumber("Arm Average Amps", getAverageMotorCurrent());
-				SmartDashboard.putNumber("arm pid error", motor1.getClosedLoopError());
-				SmartDashboard.putNumber("arm motor output", motor1.getMotorOutputPercent());
-				SmartDashboard.putNumber("Arm Target MM Position", targetPositionInchesMM);
+				//SmartDashboard.putNumber("sensor vel", motor1.getSelectedSensorVelocity());
+				//SmartDashboard.putNumber("Arm Average Amps", getAverageMotorCurrent());
+				SmartDashboard.putNumber("Arm Error", motor1.getClosedLoopError());
+				SmartDashboard.putNumber("Arm Amps", getAverageMotorCurrent());
+				SmartDashboard.putNumber("Arm Target MM", targetPositionInchesMM);
 				//SmartDashboard.putNumber("arm output", motor1.getMotorOutputPercent());
-//				SmartDashboard.putNumber("Elevator Motor 1 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID));
-//				SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
-//				SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
-				SmartDashboard.putNumber("Arm Target PID Position", targetPositionInchesPID);
+				//SmartDashboard.putNumber("Elevator Motor 1 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID));
+				//SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
+				//SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
+				//SmartDashboard.putNumber("Arm Target PID Position", targetPositionInchesPID);
 			}
 			catch (Exception e) {
 				System.err.println("Arm update status error" +e.getMessage());

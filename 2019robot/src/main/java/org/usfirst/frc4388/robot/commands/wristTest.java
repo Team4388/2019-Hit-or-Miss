@@ -14,7 +14,7 @@ public class wristTest extends CommandGroup {
    * Add your docs here.
    */
   public wristTest() {
-    addSequential(new WristSetPositionPID(500));
+    addSequential(new WristSetPositionMM(1000));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
