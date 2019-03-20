@@ -87,7 +87,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);
 	public static final double KF_UP = 0.01;
 	public static final double KF_DOWN = 0.0;
-	public static final double P_Value = 4;
+	public static final double P_Value = 1;
 	public static final double I_Value = 0.0000;
 	public static final double D_Value = 000;
 	public static final double F_Value = 1;
@@ -104,7 +104,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
 	private boolean isFinished;
-	private WristControlMode wristControlMode = WristControlMode.MOTION_MAGIC;
+	private WristControlMode wristControlMode = WristControlMode.JOYSTICK_PID;
 	public double targetPositionInchesPID = 0;
 	public double targetPositionInchesMM = 0;
 	private boolean firstMpPoint;
@@ -194,7 +194,6 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}
 	public void updatePositionMM(double targetPositionInches){
 		targetPositionInchesMM = limitPosition(targetPositionInches);
-		System.err.println("we are here");
 		//double startPositionInches = motor1.getPositionWorld();
 		//System.err.println("compensation = " + compensation);
 		wristMotor1.set(ControlMode.MotionMagic, targetPositionInches);
