@@ -22,8 +22,7 @@ public class WristSetPositionMM extends Command {
     protected void initialize() {
       
     	if (Math.abs(targetPositionInches - Robot.wrist.getPositionInches()) < MIN_DELTA_TARGET) {
-        isAtTarget = true;
-        System.out.println("Wrist is at target");
+    		isAtTarget = true;
     	}
     	else {
         	isAtTarget = false;

@@ -18,7 +18,7 @@ public class CargoLow extends CommandGroup {
    */
   public CargoLow() {
     
-    addParallel(new setWrist(2300));
+    addParallel(new setWrist(2200));
     addSequential(new ArmSetPositionMM(1300));
 
     // Add Commands here:

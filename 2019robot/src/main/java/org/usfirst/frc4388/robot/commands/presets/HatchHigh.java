@@ -19,9 +19,9 @@ public class HatchHigh extends CommandGroup {
    */
   public HatchHigh() {
     addSequential(new HatchFlip(false));
-    addParallel(new setWrist(1144));
+    addParallel(new setWrist(852));
     addParallel(new DelayHatch());
-    addSequential(new ArmSetPositionMM(3605));
+    addSequential(new ArmSetPositionMM(3451));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

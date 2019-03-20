@@ -18,8 +18,8 @@ public class CargoMid extends CommandGroup {
    */
   public CargoMid() {
 
-    addParallel(new setWrist(2430));
-    addSequential(new ArmSetPositionMM(2630));
+    addParallel(new setWrist(2330));
+    addSequential(new ArmSetPositionMM(2580));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

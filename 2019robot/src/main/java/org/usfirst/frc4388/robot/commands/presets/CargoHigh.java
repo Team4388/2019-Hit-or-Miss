@@ -21,7 +21,7 @@ public class CargoHigh extends CommandGroup {
     addSequential(new HatchFlip(false));
     addParallel(new setWrist(2781));
     addParallel(new DelayHatch());
-    addSequential(new ArmSetPositionMM(3812));
+    addSequential(new ArmSetPositionMM(4038));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

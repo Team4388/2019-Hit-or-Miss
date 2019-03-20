@@ -18,8 +18,8 @@ public class HatchMid extends CommandGroup {
    */
   public HatchMid() {
     
-    addParallel(new setWrist(750));
-    addSequential(new ArmSetPositionMM(2000));
+    addParallel(new setWrist(525));
+    addSequential(new ArmSetPositionMM(2050));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

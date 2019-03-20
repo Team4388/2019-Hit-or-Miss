@@ -18,7 +18,7 @@ public class HatchLow extends CommandGroup {
    */
   public HatchLow() {
     
-    addParallel(new setWrist(350));
+    addParallel(new setWrist(200));
     addSequential(new ArmSetPositionMM(550));
 
     // Add Commands here:

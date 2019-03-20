@@ -112,7 +112,7 @@ public class Robot extends TimedRobot
 		//drive.resetEncoders();
 		drive.endGyroCalibration();
 		arm.targetPositionInchesMM = arm.motor1.getPositionWorld();
-		wrist.targetPositionInchesPID = wrist.wristMotor1.getPositionWorld();
+		wrist.targetPositionInchesMM = wrist.wristMotor1.getPositionWorld();
         updateStatus();
     }
 

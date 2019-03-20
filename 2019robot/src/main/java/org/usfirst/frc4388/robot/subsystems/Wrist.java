@@ -46,7 +46,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	public static final double TEST_SPEED_DOWN = -0.3;
 	public static final double AUTO_ZERO_SPEED = -0.3;
 	public static final double JOYSTICK_INCHES_PER_MS_HI = 20;
-	public static final double JOYSTICK_INCHES_PER_MS_LO = 27;
+	public static final double JOYSTICK_INCHES_PER_MS_LO = 20;
 
 	// Defined positions
 	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
@@ -87,12 +87,12 @@ public class Wrist extends Subsystem implements ControlLoopable
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);
 	public static final double KF_UP = 0.01;
 	public static final double KF_DOWN = 0.0;
-	public static final double P_Value = 1;
-	public static final double I_Value = 0.0000;
-	public static final double D_Value = 000;
+	public static final double P_Value = 1.2;
+	public static final double I_Value = 0.002;
+	public static final double D_Value = 125;
 	public static final double F_Value = 1;
-	public static final int CV_value = 100;
-	public static final int A_value = 100;
+	public static final int CV_value = 200;
+	public static final int A_value = 350;
 	public static final double RampRate = 0.0;
 	public static final double maxGravityComp = 0;
 	private PIDParams wristPIDParams = new PIDParams(P_Value, I_Value, D_Value, KF_DOWN);	// KF gets updated later
@@ -104,7 +104,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
 	private boolean isFinished;
-	private WristControlMode wristControlMode = WristControlMode.JOYSTICK_PID;
+	private WristControlMode wristControlMode = WristControlMode.MOTION_MAGIC;
 	public double targetPositionInchesPID = 0;
 	public double targetPositionInchesMM = 0;
 	private boolean firstMpPoint;
@@ -122,12 +122,6 @@ public class Wrist extends Subsystem implements ControlLoopable
 //	            Driver.reportError("Could not detect elevator motor 1 encoder encoder!", false);
 //	        }
 
-			wristMotor1.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
-			wristMotor1.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
-			wristMotor1.setNeutralMode(NeutralMode.Brake);
-			wristMotor1.enableCurrentLimit(true);
-			//wristMotor1.setSensorPhase(true);
-			
 			wristMotor1.configNominalOutputForward(0, TalonSRXEncoder.TIMEOUT_MS);
 			wristMotor1.configNominalOutputReverse(0, TalonSRXEncoder.TIMEOUT_MS);
 			wristMotor1.configPeakOutputForward(1, TalonSRXEncoder.TIMEOUT_MS);
@@ -138,6 +132,12 @@ public class Wrist extends Subsystem implements ControlLoopable
 			wristMotor1.config_kP(MM_SLOT, P_Value, TalonSRXEncoder.TIMEOUT_MS);
 			wristMotor1.config_kI(MM_SLOT, I_Value, TalonSRXEncoder.TIMEOUT_MS);
 			wristMotor1.config_kD(MM_SLOT, D_Value, TalonSRXEncoder.TIMEOUT_MS);
+
+			wristMotor1.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+			wristMotor1.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
+			wristMotor1.setNeutralMode(NeutralMode.Brake);
+			wristMotor1.enableCurrentLimit(true);
+			//wristMotor1.setSensorPhase(true);
 			motorControllers.add(wristMotor1);
 		}
 		catch (Exception e) {
@@ -175,11 +175,11 @@ public class Wrist extends Subsystem implements ControlLoopable
 		wristMotor1.set(ControlMode.PercentOutput, speed);
 		setWristControlMode(WristControlMode.JOYSTICK_MANUAL);
 	}
-
 	public void setPositionMM(double targetPositionInches){
+		wristMotor1.selectProfileSlot(MM_SLOT, 0);
 		wristMotor1.set(ControlMode.MotionMagic, targetPositionInches);
 		//System.err.println(wristMotor1.getControlMode());
-		wristMotor1.selectProfileSlot(MM_SLOT, 0);
+		
 		setWristControlMode(WristControlMode.MOTION_MAGIC);
 		updatePositionMM(targetPositionInches);
 		setFinished(false);
@@ -219,7 +219,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 		double startPositionInches = wristMotor1.getPositionWorld();
 		//mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN);
 		wristMotor1.set(ControlMode.Position, targetPositionInches);
-		wristMotor1.configClosedloopRamp(.02);
+		wristMotor1.configClosedloopRamp(.02);	//TODO: Arm has this set to zero
 		//wristMotor1.configPeakCurrentLimit(5);
 		wristMotor1.configContinuousCurrentLimit(2);
 		wristMotor1.config_kP(0, P_Value, TalonSRXEncoder.TIMEOUT_MS);
@@ -318,22 +318,19 @@ public class Wrist extends Subsystem implements ControlLoopable
 		// Do the update
 		if (wristControlMode == WristControlMode.JOYSTICK_MANUAL) {
 			controlManualWithJoystick();
-
 		}
 		else if (!isFinished) {
 			if (wristControlMode == WristControlMode.MOTION_PROFILE) {
 				isFinished = mpController.controlLoopUpdate(getPositionInches());
 
 			}
+			if (wristControlMode == WristControlMode.JOYSTICK_PID){
+				controlPidWithJoystick();
+				//System.err.println(wristMotor1.getControlMode());
+			}
 			if (wristControlMode == WristControlMode.MOTION_MAGIC){
 				controlMMWithJoystick();
 				//System.err.println(wristMotor1.getControlMode());
-			}
-			if (wristControlMode == WristControlMode.JOYSTICK_PID){
-				//System.err.println(wristMotor1.getControlMode());
-				controlPidWithJoystick();
-
-
 			}
 
 			/*else if (wristControlMode == WristControlMode.MP_PATH_VELOCITY) {
@@ -347,25 +344,18 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}
 
 
-
+	private void controlPidWithJoystick() {
+		double joystickPosition = -Robot.oi.getOperatorController().getRightYAxis();
+		double deltaPosition = joystickPosition * joystickInchesPerMs;
+		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
+		updatePositionPID(targetPositionInchesPID);
+	}
 	private void controlMMWithJoystick() {
 		double joystickPosition = -Robot.oi.getOperatorController().getRightYAxis();
 		double deltaPosition = joystickPosition * joystickInchesPerMs;
 		targetPositionInchesMM = targetPositionInchesMM + deltaPosition;
 		updatePositionMM(targetPositionInchesMM);
 		//Robot.wrist.targetPositionInchesPID = targetPositionInchesPID - (deltaPosition/3);
-		
-	}
-
-
-
-	private void controlPidWithJoystick() {
-		double joystickPosition = -Robot.oi.getOperatorController().getRightYAxis();
-		double deltaPosition = joystickPosition * joystickInchesPerMs;
-		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
-		updatePositionPID(targetPositionInchesPID);
-
-
 	}
 
 	private void ControlWithJoystickhold(){
