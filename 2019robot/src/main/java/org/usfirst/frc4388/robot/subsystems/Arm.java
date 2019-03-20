@@ -109,6 +109,12 @@ public class Arm extends Subsystem implements ControlLoopable
 	// Pneumatics
 	private Solenoid speedShift;
 
+	//DPad Buttons
+	static final int DPAD_UP = 0;
+	static final int DPAD_RIGHT = 90;
+	static final int DPAD_DOWN = 180;
+	static final int DPAD_LEFT = 270;
+
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
 	private boolean isFinished;
@@ -279,29 +285,29 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void dPadButtons(){
 		int dPadAngle = Robot.oi.getOperatorController().getDpadAngle();
 		if (placeMode == PlaceMode.HATCH){
-			if (dPadAngle == 0 && lastDPadAngle == -1){
+			if (dPadAngle == DPAD_UP && lastDPadAngle == -1){
 				new HatchHigh().start();
 			}
-			if (dPadAngle == 90 && lastDPadAngle == -1){
+			if (dPadAngle == DPAD_RIGHT && lastDPadAngle == -1){
 				new HatchMid().start();
 			}
-			if (dPadAngle == 180 && lastDPadAngle == -1){
+			if (dPadAngle == DPAD_DOWN && lastDPadAngle == -1){
 				new HatchLow().start();
 			}
 		}
 		if (placeMode == PlaceMode.CARGO) {
-			if (dPadAngle == 0 && lastDPadAngle == -1){
+			if (dPadAngle == DPAD_UP && lastDPadAngle == -1){
 				new CargoHigh().start();
 			}
-			if (dPadAngle == 90 && lastDPadAngle == -1){
+			if (dPadAngle == DPAD_RIGHT && lastDPadAngle == -1){
 				new CargoMid().start();
 			}
-			if (dPadAngle == 180 && lastDPadAngle == -1){
+			if (dPadAngle == DPAD_DOWN && lastDPadAngle == -1){
 				new CargoLow().start();
 			}
 		}
 
-		if (dPadAngle == 270 && lastDPadAngle == -1){
+		if (dPadAngle == DPAD_LEFT && lastDPadAngle == -1){
 			new StowArm().start();
 		}
 		SmartDashboard.putNumber("DPad Angle", dPadAngle);
