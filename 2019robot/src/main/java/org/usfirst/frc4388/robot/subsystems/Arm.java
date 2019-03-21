@@ -146,10 +146,11 @@ public class Arm extends Subsystem implements ControlLoopable
 			motor1.configPeakOutputReverse(-1, TalonSRXEncoder.TIMEOUT_MS);
 
 			motor1.selectProfileSlot(MM_SLOT, 0);
-			//motor1.config_kF(MM_SLOT, F_Value, TalonSRXEncoder.TIMEOUT_MS);
+			motor1.config_kF(MM_SLOT, F_Value, TalonSRXEncoder.TIMEOUT_MS);
 			motor1.config_kP(MM_SLOT, P_Value, TalonSRXEncoder.TIMEOUT_MS);
 			motor1.config_kI(MM_SLOT, I_Value, TalonSRXEncoder.TIMEOUT_MS);
 			motor1.config_kD(MM_SLOT, D_Value, TalonSRXEncoder.TIMEOUT_MS);
+			motor1.setSensorPhase(true);
 
 			motor1.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			motor1.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
@@ -331,7 +332,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		// Do the update
 		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
 			controlManualWithJoystick();
-			//System.err.println(motor1.getControlMode());
+			System.err.println(motor1.getControlMode());
 		}
 		else if (!isFinished) {
 			if (armControlMode == ArmControlMode.MOTION_PROFILE) {
@@ -340,11 +341,11 @@ public class Arm extends Subsystem implements ControlLoopable
 			}
 			if (armControlMode == ArmControlMode.JOYSTICK_PID){
 					controlPidWithJoystick();
-					//System.err.println(motor1.getControlMode());
+					System.err.println(motor1.getControlMode());
 			}
 			if (armControlMode == ArmControlMode.MOTION_MAGIC){
 				controlMMWithJoystick();
-				//System.err.println(motor1.getControlMode());
+				System.err.println(motor1.getControlMode());
 			}
 
 			/*else if (armControlMode == ArmControlMode.MP_PATH_VELOCITY) {
