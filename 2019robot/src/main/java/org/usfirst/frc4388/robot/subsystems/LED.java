@@ -41,5 +41,5 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   @Override
 	public void initDefaultCommand() {
-	}
+  }
 }

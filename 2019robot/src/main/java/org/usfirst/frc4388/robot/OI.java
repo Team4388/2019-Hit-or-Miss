@@ -44,13 +44,8 @@ public class OI
 			m_driverXbox = new XboxController(RobotMap.DRIVER_JOYSTICK_1_USB_ID);
 			m_operatorXbox = new XboxController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID);
 
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//			operator controller
-
-
-
+			
+			/** operator controller */
 	        XBoxTriggerButton CarriageIntake = new XBoxTriggerButton(m_operatorXbox, XBoxTriggerButton.LEFT_TRIGGER);
 	        CarriageIntake.whenPressed(new SetIntakeSpeed(BallIntake.BALL_INTAKE_SPEED));
 	        CarriageIntake.whenReleased(new SetIntakeSpeed(0.0));
@@ -97,10 +92,7 @@ public class OI
 			//stow.whenPressed(new setLEDPattern(LEDPatterns.SOLID_GREEN));
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//			Driver Xbox Controler
-
-
+			/** Driver Xbox Controler */
 			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			
 			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
