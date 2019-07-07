@@ -12,10 +12,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
-
-
 /**
- *
+ * Configuires the commands for a wheel based ball intake.
  */
 public class BallIntake extends Subsystem {
 

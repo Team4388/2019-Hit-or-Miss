@@ -1,12 +1,10 @@
-
 package org.usfirst.frc4388.robot;
-
 
 /**
  * A list of constants used by the rest of the robot code. This include physics
- * constants as well as constants determined through calibrations.
+ * constants as well as constants determined through calibrations. Most late stage ajustments
+ * ideally should be made here.
  */
-
 public class Constants {
     public static double kLooperDt = 0.01;
     public static double kDriveWheelDiameterInches = 6.04; 

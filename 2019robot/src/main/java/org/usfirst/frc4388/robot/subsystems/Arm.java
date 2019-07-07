@@ -1,4 +1,5 @@
 package org.usfirst.frc4388.robot.subsystems;
+
 import java.util.ArrayList;
 
 import org.usfirst.frc4388.robot.Constants;
@@ -37,6 +38,10 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * Controls a single joint arm. Uses a joystick to change a MM or PID target position for the arm,
+ * and uses the d-pad on the opperator controller to move the arm and wrist to preset positions.
+ */
 public class Arm extends Subsystem implements ControlLoopable
 {
 	private static Arm instance;

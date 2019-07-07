@@ -1,7 +1,8 @@
-
 package org.usfirst.frc4388.robot;
 
-
+/**
+ * Defines each input/output id on the robot.
+ */
 public class RobotMap {
 	// USB Port IDs
 	public static final int DRIVER_JOYSTICK_1_USB_ID = 0;

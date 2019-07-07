@@ -1,4 +1,3 @@
-
 package org.usfirst.frc4388.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -24,6 +23,10 @@ import org.usfirst.frc4388.robot.subsystems.Drive;
 
 import org.usfirst.frc4388.robot.subsystems.Drive.DriveControlMode;;
 
+/**
+ * Initialises all the subsystems and directs which processes to 
+ * run during autonomous and periodic modes
+ */
 public class Robot extends TimedRobot
 {
 

@@ -1,6 +1,3 @@
-
-
-
 package org.usfirst.frc4388.robot;
 
 import buttons.XBoxTriggerButton;
@@ -28,7 +25,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 
 
-
+/**
+ * Maps controler buttons to specific commands. Any controller will work but we 
+ * use Xbox One controllers for our naming scheme.
+ */
 public class OI
 {
 		private static OI instance;

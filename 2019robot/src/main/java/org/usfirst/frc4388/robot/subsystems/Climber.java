@@ -32,9 +32,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-
 /**
- *
+ * Controls an extending leg based climber. Buttons control the flipping of the
+ * rachets and the safety switch that keeps the legs from moving unexpectedly.
+ * The right trigger controls the speed of the climb.
  */
 public class Climber extends Subsystem{
 	
