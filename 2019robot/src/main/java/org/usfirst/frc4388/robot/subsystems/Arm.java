@@ -38,6 +38,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 /**
  * Controls a single joint arm. Uses a joystick to change a MM or PID target position for the arm,
  * and uses the d-pad on the opperator controller to move the arm and wrist to preset positions.
@@ -81,8 +87,11 @@ public class Arm extends Subsystem implements ControlLoopable
 	// Motor controllers
 	private ArrayList<TalonSRXEncoder> motorControllers = new ArrayList<TalonSRXEncoder>();
 
-	public TalonSRXEncoder motor1;
-	private TalonSRX motor2;
+	public CANSparkMax motor1;
+	private CANSparkMax motor2;
+
+	private CANPIDController motor1_Controller;
+	
 
 	// PID controller and params
 	private MPTalonPIDController mpController;
@@ -103,6 +112,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double RampRate = 0;// 0.0;
 	public static final int A_value = 400;
 	public static final int CV_value = 500;
+	
 
 
 
@@ -134,9 +144,12 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	public Arm() {
 		try {
-			motor1 = TalonSRXFactory.createTalonEncoder(RobotMap.ARM_MOTOR1_ID, (ENCODER_TICKS_TO_INCHES), false, FeedbackDevice.QuadEncoder);
-			motor2 = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.ARM_MOTOR2_ID, RobotMap.ARM_MOTOR1_ID);
+			motor1 = new CANSparkMax(RobotMap.ARM_MOTOR1_ID, MotorType.kBrushless);
+			motor2 = new CANSparkMax(RobotMap.ARM_MOTOR2_ID, MotorType.kBrushless);
+			//motor1 = TalonSRXFactory.createTalonEncoder(RobotMap.ARM_MOTOR1_ID, (ENCODER_TICKS_TO_INCHES), false, FeedbackDevice.QuadEncoder);
+			//motor2 = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.ARM_MOTOR2_ID, RobotMap.ARM_MOTOR1_ID);
 
+			motor1_Controller = new CANPIDController(motor1);
 
 			motor1.setInverted(true);
 			motor2.setInverted(true);
