@@ -94,7 +94,7 @@ public class Robot extends TimedRobot
     	updateChoosers();
     	controlLoop.start();
 		drive.endGyroCalibration();
-		arm.targetPositionInchesMM = arm.motor1.getPositionWorld();
+		//TODO// arm.targetPositionInchesMM = arm.motor1.getPositionWorld();
 		wrist.targetPositionInchesMM = wrist.wristMotor1.getPositionWorld();
     	//drive.resetEncoders();
     	//drive.resetGyro();
@@ -114,7 +114,7 @@ public class Robot extends TimedRobot
 		controlLoop.start();
 		//drive.resetEncoders();
 		drive.endGyroCalibration();
-		arm.targetPositionInchesMM = arm.motor1.getPositionWorld();
+		//TODO// arm.targetPositionInchesMM = arm.motor1.getPositionWorld();
 		wrist.targetPositionInchesMM = wrist.wristMotor1.getPositionWorld();
         updateStatus();
     }
