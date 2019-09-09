@@ -116,9 +116,6 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static double kMinOutput = -1;
 	public static double kMaxOutput = 1;
 
-
-
-
 	private PIDParams armPIDParams = new PIDParams(kP, kI, kD, kFF_Down);	// KF gets updated later
 	public static final double PID_ERROR_INCHES = 50;
 	LimitSwitchSource limitSwitchSource;
@@ -226,7 +223,7 @@ public class Arm extends Subsystem implements ControlLoopable
 				// System.err.println(motor1.getControlMode());
 			}
 			else if (armControlMode == ArmControlMode.SMART_MOTION){
-
+				controlSMWithJoystick();
 			}
 			/* if (armControlMode == ArmControlMode.MOTION_PROFILE) {
 				//isFinished = mpController.controlLoopUpdate(getPositionInches());
@@ -340,6 +337,31 @@ public class Arm extends Subsystem implements ControlLoopable
 		// motor1.config_kF(0, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN, TalonSRXEncoder.TIMEOUT_MS);
 		// System.err.println(motor1.getControlMode());
 		// System.err.print(motor1.getClosedLoopError());
+	}
+
+	private void controlSMWithJoystick() {
+		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+		double deltaPosition = joystickPosition * joystickInchesPerMs;
+		targetPositionInchesSM = targetPositionInchesSM + deltaPosition;
+		updatePositionSM(targetPositionInchesSM);
+	}
+	
+	public void setPositionSM(double targetPositionInches) {
+		// motorController.setReference(targetPositionInches, ControlType.kSmartMotion);
+		updatePositionSM(targetPositionInches);
+		setArmControlMode(ArmControlMode.SMART_MOTION);
+		setFinished(false);
+	}
+
+	public void updatePositionSM(double targetPositionInches) {
+		targetPositionInchesSM = limitPosition(targetPositionInches);
+		if (limitPosition(motorEncoder.getPosition()) == MIN_POSITION_INCHES){
+			resetEncoder();
+		}
+
+		double startPositionInches = motorEncoder.getPosition();
+		motorController.setReference(targetPositionInches, ControlType.kSmartMotion);
+		motorController.setFF(targetPositionInchesPID > startPositionInches ? kFF_Up : kFF_Down);
 	}
 
 	private double limitPosition(double targetPosition) {
@@ -458,6 +480,7 @@ public class Arm extends Subsystem implements ControlLoopable
 				//SmartDashboard.putNumber("Arm Error", motor1.getClosedLoopError());
 				SmartDashboard.putNumber("Arm Amps", getAverageMotorCurrent());
 				SmartDashboard.putNumber("Arm Target SM", targetPositionInchesSM);
+				SmartDashboard.putString("Arm Control Mode", armControlMode.toString());
 				//SmartDashboard.putNumber("arm output", motor1.getMotorOutputPercent());
 				//SmartDashboard.putNumber("Elevator Motor 1 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID));
 				//SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
