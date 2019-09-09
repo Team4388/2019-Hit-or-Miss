@@ -111,8 +111,10 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static double kFF = 0.75;	// 1023 / 1360 max speed (ticks/100ms)
 	public static double maxGravityComp = 0.01;
 	public static double RampRate = 0;// 0.0;
-	public static int maxAcc = 400;
-	public static int maxVel = 500;
+	public static double maxAcc = 400;
+	public static double maxVel = 500;
+	public static double minVel = 0;
+	public static double allowedErr = 0;
 	public static double kMinOutput = -1;
 	public static double kMaxOutput = 1;
 
@@ -136,6 +138,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	public PlaceMode placeMode = PlaceMode.HATCH;
 	public double targetPositionInchesPID = 0;
 	public double targetPositionInchesSM = 0;
+	private double targetPositionInchesSmtDash = 0;
 	//public double targetPositionInchesMM = 0;
 	//private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
@@ -163,6 +166,12 @@ public class Arm extends Subsystem implements ControlLoopable
     		motorController.setIZone(kIz);
 			motorController.setFF(kFF);
 			motorController.setOutputRange(kMinOutput, kMaxOutput);
+
+			int smartMotionSlot = 0;
+			motorController.setSmartMotionMaxVelocity(maxVel, smartMotionSlot);
+    		motorController.setSmartMotionMinOutputVelocity(minVel, smartMotionSlot);
+    		motorController.setSmartMotionMaxAccel(maxAcc, smartMotionSlot);
+    		motorController.setSmartMotionAllowedClosedLoopError(allowedErr, smartMotionSlot);
 
 
 			// motor1.setInverted(true);
@@ -486,11 +495,74 @@ public class Arm extends Subsystem implements ControlLoopable
 				//SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
 				//SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
 				//SmartDashboard.putNumber("Arm Target PID Position", targetPositionInchesPID);
+
+				// display PID coefficients on SmartDashboard
+				SmartDashboard.putNumber("Arm P Gain", kP);
+				SmartDashboard.putNumber("Arm I Gain", kI);
+				SmartDashboard.putNumber("Arm D Gain", kD);
+				SmartDashboard.putNumber("Arm I Zone", kIz);
+				SmartDashboard.putNumber("Arm Feed Forward", kFF);
+				SmartDashboard.putNumber("Arm Max Output", kMaxOutput);
+				SmartDashboard.putNumber("Arm Min Output", kMinOutput);
+			
+				// display Smart Motion coefficients
+				SmartDashboard.putNumber("Arm Max Velocity", maxVel);
+				SmartDashboard.putNumber("Arm Min Velocity", minVel);
+				SmartDashboard.putNumber("Arm Max Acceleration", maxAcc);
+				SmartDashboard.putNumber("Arm Allowed Closed Loop Error", allowedErr);
+				SmartDashboard.putNumber("Arm Set Position", 0);
 			}
 			catch (Exception e) {
-				System.err.println("Arm update status error" +e.getMessage());
+				System.err.println("Arm update status error: " +e.getMessage());
 			}
 
+	}
+
+	public void ReadStatus(){
+		try {
+			// read PID coefficients from SmartDashboard
+			double p = SmartDashboard.getNumber("Arm P Gain", 0);
+			double i = SmartDashboard.getNumber("Arm I Gain", 0);
+			double d = SmartDashboard.getNumber("Arm D Gain", 0);
+			double iz = SmartDashboard.getNumber("Arm I Zone", 0);
+			double ff = SmartDashboard.getNumber("Arm Feed Forward", 0);
+			double max = SmartDashboard.getNumber("Arm Max Output", 0);
+			double min = SmartDashboard.getNumber("Arm Min Output", 0);
+			double maxV = SmartDashboard.getNumber("Arm Max Velocity", 0);
+			double minV = SmartDashboard.getNumber("Arm Min Velocity", 0);
+			double maxA = SmartDashboard.getNumber("Arm Max Acceleration", 0);
+			double allE = SmartDashboard.getNumber("Arm Allowed Closed Loop Error", 0);
+
+			// if PID coefficients on SmartDashboard have changed, write new values to controller
+			if((p != kP)) { motorController.setP(p); kP = p; }
+			if((i != kI)) { motorController.setI(i); kI = i; }
+			if((d != kD)) { motorController.setD(d); kD = d; }
+			if((iz != kIz)) { motorController.setIZone(iz); kIz = iz; }
+			if((ff != kFF)) { motorController.setFF(ff); kFF = ff; }
+			if((max != kMaxOutput) || (min != kMinOutput)) { 
+			  motorController.setOutputRange(min, max); 
+			  kMinOutput = min; kMaxOutput = max; 
+			}
+			if((maxV != maxVel)) { motorController.setSmartMotionMaxVelocity(maxV,0); maxVel = maxV; }
+			if((minV != minVel)) { motorController.setSmartMotionMinOutputVelocity(minV,0); minVel = minV; }
+			if((maxA != maxAcc)) { motorController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }
+			if((allE != allowedErr)) { motorController.setSmartMotionAllowedClosedLoopError(allE,0); allE = allowedErr; }
+
+			// if Set Position has changed, set as target for motorController
+			double setPos = SmartDashboard.getNumber("Arm Set Position", 0);
+			if (targetPositionInchesSmtDash != setPos){
+				if (armControlMode == ArmControlMode.JOYSTICK_PID) {
+					setPositionPID(setPos);
+				}
+				else if (armControlMode == ArmControlMode.SMART_MOTION){
+					setPositionSM(setPos);
+				}
+				targetPositionInchesSmtDash = setPos;
+			}
+
+		} catch (Exception e) {
+			System.err.println("Arm read status error: " +e.getMessage());
+		}
 	}
 
 	public static Arm getInstance() {
