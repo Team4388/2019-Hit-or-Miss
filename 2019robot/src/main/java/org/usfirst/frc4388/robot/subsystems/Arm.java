@@ -81,9 +81,9 @@ public class Arm extends Subsystem implements ControlLoopable
 
 
 	// Motion profile max velocities and accel times
-	public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60;
-	public static final double MP_T1 = 300;  // Fast = 300
-	public static final double MP_T2 = 150;  // Fast = 150
+	//public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60;
+	//public static final double MP_T1 = 300;  // Fast = 300
+	//public static final double MP_T2 = 150;  // Fast = 150
 
 	// Motor controllers
 	public CANSparkMax motor1;
@@ -94,11 +94,11 @@ public class Arm extends Subsystem implements ControlLoopable
 	private CANDigitalInput motorForwardLimitSwitch, motorReverseLimitSwitch;
 
 	// PID controller and params
-	private MPTalonPIDController mpController;
+	//private MPTalonPIDController mpController;
 
 	public static int PID_SLOT = 0;
-	public static int MM_SLOT = 1;
-	public static int MP_SLOT = 2;
+	//public static int MM_SLOT = 1;
+	//public static int MP_SLOT = 2;
 
 	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);
 	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);
@@ -135,11 +135,12 @@ public class Arm extends Subsystem implements ControlLoopable
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
 	private boolean isFinished;
-	private ArmControlMode armControlMode = ArmControlMode.MOTION_MAGIC;
+	private ArmControlMode armControlMode = ArmControlMode.SMART_MOTION;
 	public PlaceMode placeMode = PlaceMode.HATCH;
 	public double targetPositionInchesPID = 0;
 	public double targetPositionInchesSM = 0;
-	private boolean firstMpPoint;
+	//public double targetPositionInchesMM = 0;
+	//private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
 	private double p = 0;
 
@@ -169,23 +170,19 @@ public class Arm extends Subsystem implements ControlLoopable
 
 			// motor1.setInverted(true);
 			// motor2.setInverted(true);
-
-//	        if (motor1.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder) != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
-//	            Driver.reportError("Could not detect elevator motor 1 encoder encoder!", false);
-//	        }
-
+			// if (motor1.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder) != CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
+			//    Driver.reportError("Could not detect elevator motor 1 encoder encoder!", false);
+			// }
 			// motor1.configNominalOutputForward(0, TalonSRXEncoder.TIMEOUT_MS);
 			// motor1.configNominalOutputReverse(0, TalonSRXEncoder.TIMEOUT_MS);
 			// motor1.configPeakOutputForward(1, TalonSRXEncoder.TIMEOUT_MS);
 			// motor1.configPeakOutputReverse(-1, TalonSRXEncoder.TIMEOUT_MS);
-
 			// motor1.selectProfileSlot(MM_SLOT, 0);
 			// motor1.config_kF(MM_SLOT, F_Value, TalonSRXEncoder.TIMEOUT_MS);
 			// motor1.config_kP(MM_SLOT, P_Value, TalonSRXEncoder.TIMEOUT_MS);
 			// motor1.config_kI(MM_SLOT, I_Value, TalonSRXEncoder.TIMEOUT_MS);
 			// motor1.config_kD(MM_SLOT, D_Value, TalonSRXEncoder.TIMEOUT_MS);
 			// motor1.setSensorPhase(true);
-
 			// motor1.configForwardLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			// motor1.configReverseLimitSwitchSource(limitSwitchSource, LimitSwitchNormal.NormallyOpen, 0);
 			// motor1.setNeutralMode(NeutralMode.Brake);
@@ -193,7 +190,6 @@ public class Arm extends Subsystem implements ControlLoopable
 			// motor1.enableCurrentLimit(true);
 			// motorControllers.add(motor1);
 			//motor1.setSelectedSensorPosition(0, , );
-
 
 		}
 		catch (Exception e) {
@@ -205,9 +201,54 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void initDefaultCommand() {
 	}
 
-	public void resetZeroPosition(double position) {
-		mpController.resetZeroPosition(position);
+	public synchronized void controlLoopUpdate() {
+		// Measure *actual* update period
+		double currentTimestamp = Timer.getFPGATimestamp();
+		if (lastControlLoopUpdateTimestamp > 0.001)	{	// ie, if this is NOT the first time
+			lastControlLoopUpdatePeriod = currentTimestamp - lastControlLoopUpdateTimestamp;
+		}
+		lastControlLoopUpdateTimestamp = currentTimestamp;
+
+		dPadButtons();
+
+		if (motorReverseLimitSwitch.get()){
+			resetEncoder();
+		}
+
+		// Do the update
+		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
+			controlManualWithJoystick();
+			// System.err.println(motorController.getControlMode());
+		}
+		else if (!isFinished) {
+			if (armControlMode == ArmControlMode.JOYSTICK_PID){
+				controlPidWithJoystick();
+				// System.err.println(motor1.getControlMode());
+			}
+			else if (armControlMode == ArmControlMode.SMART_MOTION){
+
+			}
+			/* if (armControlMode == ArmControlMode.MOTION_PROFILE) {
+				//isFinished = mpController.controlLoopUpdate(getPositionInches());
+
+			}*/
+			/*if (armControlMode == ArmControlMode.MOTION_MAGIC){
+				controlMMWithJoystick();
+				// System.err.println(motor1.getControlMode());
+			}*/
+			/*else if (armControlMode == ArmControlMode.MP_PATH_VELOCITY) {
+				isFinished = mpPathVelocityController.controlLoopUpdate(getGyroAngleDeg());
+			}
+			else if (armControlMode == ArmControlMode.ADAPTIVE_PURSUIT) {
+				updatePose();
+				isFinished = adaptivePursuitController.controlLoopUpdate(currentPose);
+			}*/
+		}
 	}
+
+	/* public void resetZeroPosition(double position) {
+		mpController.resetZeroPosition(position);
+	} */
 
 	public void resetEncoder(){
 		motorEncoder.setPosition(0);
@@ -224,26 +265,52 @@ public class Arm extends Subsystem implements ControlLoopable
 		return this.armControlMode;
 	}
 
-	public void setSpeed(double speed) {
-		// motor1.set(ControlMode.PercentOutput, speed);
-		motorController.setReference(speed, ControlType.kVoltage);
-		setArmControlMode(ArmControlMode.MANUAL);
+	@Override
+	public void setPeriodMs(long periodMs) {
+		// mpController = new MPTalonPIDController(periodMs, motorControllers);
+		// mpController.setPID(mpPIDParams, MP_SLOT);
+		// mpController.setPID(armPIDParams, PID_SLOT);
+		// mpController.setPIDSlot(PID_SLOT);
+		this.periodMs = periodMs;
 	}
 
 	public void setSpeedJoystick(double speed) {
 		setSpeed(speed);
 		setArmControlMode(ArmControlMode.JOYSTICK_MANUAL);
 	}
+	
+	public void setSpeed(double speed) {
+		// motor1.set(ControlMode.PercentOutput, speed);
+		motorController.setReference(speed, ControlType.kVoltage);
+		setArmControlMode(ArmControlMode.MANUAL);
+	}
 
 	public double calcGravityCompensationAtCurrentPosition() {
 		double rot = motorEncoder.getPosition();
-		//double degreesFromDown = (rot+920)*(360.0/(4096*3));
+		// double degreesFromDown = (rot+920)*(360.0/(4096*3));
 		// double compensation = maxGravityComp * Math.sin(degreesFromDown*Math.PI/180);
-		//System.err.println("comp(" + degreesFromDown + "^) = " + compensation);
-		//TODO// return compensation;
+		// System.err.println("comp(" + degreesFromDown + "^) = " + compensation);
+		// return compensation;
 		return 0.0;
 	}
 
+	private void ControlWithJoystickhold(){
+		double holdPosition = motorEncoder.getPosition();
+		updatePositionPID(holdPosition);
+	}
+
+	private void controlManualWithJoystick() {
+		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
+		setSpeedJoystick(joyStickSpeed);
+	}
+	
+	private void controlPidWithJoystick() {
+		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+		double deltaPosition = joystickPosition * joystickInchesPerMs;
+		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
+		updatePositionPID(targetPositionInchesPID);
+	}
+	
 	public void setPositionPID(double targetPositionInches) {
 		// motorController.setReference(targetPositionInches, ControlType.kPosition);
 		// mpController.setPIDSlot(PID_SLOT);	//TODO: verify that motor's selectProfileSlot() should be called AFTER its control mode is set
@@ -271,8 +338,8 @@ public class Arm extends Subsystem implements ControlLoopable
 		// motor1.config_kI(0, I_Value, TalonSRXEncoder.TIMEOUT_MS);
 		// motor1.config_kD(0, D_Value, TalonSRXEncoder.TIMEOUT_MS);
 		// motor1.config_kF(0, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN, TalonSRXEncoder.TIMEOUT_MS);
-		//System.err.println(motor1.getControlMode());
-		//System.err.print(motor1.getClosedLoopError());
+		// System.err.println(motor1.getControlMode());
+		// System.err.print(motor1.getClosedLoopError());
 	}
 
 	private double limitPosition(double targetPosition) {
@@ -285,13 +352,25 @@ public class Arm extends Subsystem implements ControlLoopable
 
 		return targetPosition;
 	}
-	@Override
-	public void setPeriodMs(long periodMs) {
-		// mpController = new MPTalonPIDController(periodMs, motorControllers);
-		//mpController.setPID(mpPIDParams, MP_SLOT);
-		//mpController.setPID(armPIDParams, PID_SLOT);
-		//mpController.setPIDSlot(PID_SLOT);
-		this.periodMs = periodMs;
+
+	public double getPositionInches() {
+		return motorEncoder.getPosition();
+	}
+
+	public double getAverageMotorCurrent() {
+		return (motor1.getOutputCurrent() + motor2.getOutputCurrent()) / 2;
+	}
+
+	public synchronized boolean isFinished() {
+		return isFinished;
+	}
+
+	public synchronized void setFinished(boolean isFinished) {
+		this.isFinished = isFinished;
+	}
+
+	public double getPeriodMs() {
+		return periodMs;
 	}
 
 	private int lastDPadAngle = -1;
@@ -325,115 +404,6 @@ public class Arm extends Subsystem implements ControlLoopable
 		}
 		SmartDashboard.putNumber("DPad Angle", dPadAngle);
 		lastDPadAngle = dPadAngle;
-	}
-
-	public synchronized void controlLoopUpdate() {
-		// Measure *actual* update period
-		double currentTimestamp = Timer.getFPGATimestamp();
-		if (lastControlLoopUpdateTimestamp > 0.001)	{	// ie, if this is NOT the first time
-			lastControlLoopUpdatePeriod = currentTimestamp - lastControlLoopUpdateTimestamp;
-		}
-		lastControlLoopUpdateTimestamp = currentTimestamp;
-
-		dPadButtons();
-
-		if (motorReverseLimitSwitch.get()){
-			resetEncoder();
-		}
-
-		// Do the update
-		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
-			controlManualWithJoystick();
-			// System.err.println(motorController.getControlMode());
-		}
-		else if (!isFinished) {
-			if (armControlMode == ArmControlMode.MOTION_PROFILE) {
-				isFinished = mpController.controlLoopUpdate(getPositionInches());
-
-			}
-			if (armControlMode == ArmControlMode.JOYSTICK_PID){
-					controlPidWithJoystick();
-					// System.err.println(motor1.getControlMode());
-			}
-			if (armControlMode == ArmControlMode.SMART_MOTION){
-
-			}
-			/*if (armControlMode == ArmControlMode.MOTION_MAGIC){
-				controlMMWithJoystick();
-				// System.err.println(motor1.getControlMode());
-			}*/
-			/*else if (armControlMode == ArmControlMode.MP_PATH_VELOCITY) {
-				isFinished = mpPathVelocityController.controlLoopUpdate(getGyroAngleDeg());
-			}
-			else if (armControlMode == ArmControlMode.ADAPTIVE_PURSUIT) {
-				updatePose();
-				isFinished = adaptivePursuitController.controlLoopUpdate(currentPose);
-			}*/
-		}
-	}
-
-
-
-
-
-
-
-	private void controlPidWithJoystick() {
-		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-		double deltaPosition = joystickPosition * joystickInchesPerMs;
-		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
-		updatePositionPID(targetPositionInchesPID);
-	}
-
-	private void ControlWithJoystickhold(){
-		double holdPosition = motorEncoder.getPosition();
-		updatePositionPID(holdPosition);
-	}
-
-	private void controlManualWithJoystick() {
-		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
-		setSpeedJoystick(joyStickSpeed);
-	}
-	/*
-	public void setShiftState(ElevatorSpeedShiftState state) {
-
-			joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_HI;
-			speedShift.set(true);
-			mpController.setPID(pidPIDParamsHiGear, PID_SLOT);
-		}
-		else if(state == ElevatorSpeedShiftState.LO) {
-			joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
-			speedShift.set(false);
-			mpController.setPID(pidPIDParamsLoGear, PID_SLOT);
-		}
-	}
-
-	public ElevatorSpeedShiftState getShiftState() {
-		return shiftState;
-	}
-*/
-	public double getPositionInches() {
-		return motorEncoder.getPosition();
-	}
-
-//	public double getAverageMotorCurrent() {
-//		return (Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID) + Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID) + Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID)) / 3;
-//	}
-
-	public double getAverageMotorCurrent() {
-		return (motor1.getOutputCurrent() + motor2.getOutputCurrent()) / 2;
-	}
-
-	public synchronized boolean isFinished() {
-		return isFinished;
-	}
-
-	public synchronized void setFinished(boolean isFinished) {
-		this.isFinished = isFinished;
-	}
-
-	public double getPeriodMs() {
-		return periodMs;
 	}
 
 	/* public void setPositionMM(double targetPositionInches){
