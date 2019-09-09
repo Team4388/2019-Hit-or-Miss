@@ -260,8 +260,8 @@ public class Arm extends Subsystem implements ControlLoopable
 	public void resetEncoder(){
 		motorEncoder.setPosition(0);
 		//motor1.setEncPosition(0);
-		//targetPositionInchesMM = 0;
-		//targetPositionInchesPID = 0;
+		targetPositionInchesSM = 0;
+		targetPositionInchesPID = 0;
 	}
 
 	private synchronized void setArmControlMode(ArmControlMode controlMode) {
