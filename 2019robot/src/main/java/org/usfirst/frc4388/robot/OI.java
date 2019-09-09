@@ -105,7 +105,7 @@ public class OI
 			
 			JoystickButton help = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.X_BUTTON);
 			help.whenPressed(new ArmSetMode(ArmControlMode.JOYSTICK_MANUAL));
-			help.whenReleased(new ArmSetMode(ArmControlMode.MOTION_MAGIC));
+			help.whenReleased(new ArmSetMode(ArmControlMode.JOYSTICK_PID));
 			help.whenPressed(new WristSetMode(WristControlMode.JOYSTICK_MANUAL));
 			help.whenReleased(new WristSetMode(WristControlMode.JOYSTICK_PID));
 

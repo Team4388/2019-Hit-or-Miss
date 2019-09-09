@@ -134,7 +134,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
 	private boolean isFinished;
-	private ArmControlMode armControlMode = ArmControlMode.SMART_MOTION;
+	private ArmControlMode armControlMode = ArmControlMode.JOYSTICK_MANUAL;
 	public PlaceMode placeMode = PlaceMode.HATCH;
 	public double targetPositionInchesPID = 0;
 	public double targetPositionInchesSM = 0;
@@ -226,7 +226,8 @@ public class Arm extends Subsystem implements ControlLoopable
 			controlManualWithJoystick();
 			// System.err.println(motorController.getControlMode());
 		}
-		else if (!isFinished) {
+		//else if (!isFinished) {
+		else {
 			if (armControlMode == ArmControlMode.JOYSTICK_PID){
 				controlPidWithJoystick();
 				// System.err.println(motor1.getControlMode());
@@ -331,11 +332,9 @@ public class Arm extends Subsystem implements ControlLoopable
 			resetEncoder();
 		}
 		double startPositionInches = motorEncoder.getPosition();
-		// mpController.setTarget(targetPositionInchesPID, targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN);
+		motorController.setFF(targetPositionInchesPID > startPositionInches ? kFF_Up : kFF_Down);
 		motorController.setReference(targetPositionInches, ControlType.kPosition);
 		// motor1.setClosedLoopRampRate(RampRate);
-		motorController.setFF(targetPositionInchesPID > startPositionInches ? kFF_Up : kFF_Down);
-		
 
 		// motor1.configClosedloopRamp(0);
 		// motor1.configPeakCurrentLimit(5);
@@ -369,8 +368,8 @@ public class Arm extends Subsystem implements ControlLoopable
 		}
 
 		double startPositionInches = motorEncoder.getPosition();
-		motorController.setReference(targetPositionInches, ControlType.kSmartMotion);
 		motorController.setFF(targetPositionInchesPID > startPositionInches ? kFF_Up : kFF_Down);
+		motorController.setReference(targetPositionInches, ControlType.kSmartMotion);
 	}
 
 	private double limitPosition(double targetPosition) {
