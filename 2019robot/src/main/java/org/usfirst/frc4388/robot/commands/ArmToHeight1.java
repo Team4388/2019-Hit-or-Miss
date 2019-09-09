@@ -18,7 +18,7 @@ public class ArmToHeight1 extends CommandGroup {
   public ArmToHeight1() {
     addSequential(new HatchFlip(false));
     addParallel(new WristPlacement(true));
-    addParallel(new ArmSetPositionMM(1300), 4);
+    addParallel(new ArmSetPositionSM(1300), 4);
     addSequential(new WaitCommand(1));
     addSequential(new WristSetPositionPID(2300), 2);
     // Add Commands here:

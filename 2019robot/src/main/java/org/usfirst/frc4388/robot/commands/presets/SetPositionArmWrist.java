@@ -7,7 +7,7 @@
 
 package org.usfirst.frc4388.robot.commands.presets;
 
-import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
+import org.usfirst.frc4388.robot.commands.ArmSetPositionSM;
 import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -19,7 +19,7 @@ public class SetPositionArmWrist extends CommandGroup {
   public SetPositionArmWrist(double arm, double wrist) {
     
     addParallel(new WristSetPositionPID(wrist));
-    addSequential(new ArmSetPositionMM(arm));
+    addSequential(new ArmSetPositionSM(arm));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

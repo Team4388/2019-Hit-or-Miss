@@ -7,7 +7,7 @@
 
 package org.usfirst.frc4388.robot.commands.presets;
 
-import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
+import org.usfirst.frc4388.robot.commands.ArmSetPositionSM;
 import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -19,7 +19,7 @@ public class HatchLow extends CommandGroup {
   public HatchLow() {
     
     addParallel(new setWrist(200));
-    addSequential(new ArmSetPositionMM(550));
+    addSequential(new ArmSetPositionSM(550));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());

@@ -5,7 +5,7 @@ import org.usfirst.frc4388.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- *
+ * @deprecated
  */
 public class ArmSetPositionMM extends Command {
 	
@@ -26,7 +26,7 @@ public class ArmSetPositionMM extends Command {
     	}
     	else {
         	isAtTarget = false;
-        	Robot.arm.setPositionMM(targetPositionInches);
+        	//Robot.arm.setPositionMM(targetPositionInches);
     	}
 //    	System.out.println("Arm set MP initialized, target = " + targetPositionInches);
     }
@@ -42,7 +42,7 @@ public class ArmSetPositionMM extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-		Robot.arm.setPositionMM(Robot.arm.getPositionInches());
+		//Robot.arm.setPositionMM(Robot.arm.getPositionInches());
 //    	System.out.println("Arm set MP end");
     }
 
@@ -51,6 +51,6 @@ public class ArmSetPositionMM extends Command {
     protected void interrupted() {
 //    	System.out.println("ArmSetPositionMP interrupted");
     	Robot.arm.setFinished(true);
-		Robot.arm.setPositionMM(Robot.arm.getPositionInches());
+		//Robot.arm.setPositionMM(Robot.arm.getPositionInches());
     }
 }

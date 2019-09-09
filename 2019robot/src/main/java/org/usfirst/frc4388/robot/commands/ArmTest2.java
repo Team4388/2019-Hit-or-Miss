@@ -14,7 +14,7 @@ public class ArmTest2 extends CommandGroup {
    * Add your docs here.
    */
   public ArmTest2() {
-    addSequential(new ArmSetPositionMM(600));
+    addSequential(new ArmSetPositionSM(600));
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.

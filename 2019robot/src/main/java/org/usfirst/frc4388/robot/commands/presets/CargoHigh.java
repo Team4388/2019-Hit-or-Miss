@@ -7,7 +7,7 @@
 
 package org.usfirst.frc4388.robot.commands.presets;
 
-import org.usfirst.frc4388.robot.commands.ArmSetPositionMM;
+import org.usfirst.frc4388.robot.commands.ArmSetPositionSM;
 import org.usfirst.frc4388.robot.commands.HatchFlip;
 import org.usfirst.frc4388.robot.commands.WristSetPositionPID;
 
@@ -21,7 +21,7 @@ public class CargoHigh extends CommandGroup {
     addSequential(new HatchFlip(false));
     addParallel(new setWrist(2781));
     addParallel(new DelayHatch());
-    addSequential(new ArmSetPositionMM(4038));
+    addSequential(new ArmSetPositionSM(4038));
 
     // Add Commands here:
     // e.g. addSequential(new Command1());
