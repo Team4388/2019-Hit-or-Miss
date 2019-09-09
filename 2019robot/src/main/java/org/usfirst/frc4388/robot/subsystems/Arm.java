@@ -253,9 +253,9 @@ public class Arm extends Subsystem implements ControlLoopable
 		}
 	}
 
-	/* public void resetZeroPosition(double position) {
-		mpController.resetZeroPosition(position);
-	} */
+	public void resetZeroPosition(double position) {
+		motorEncoder.setPosition(position);
+	}
 
 	public void resetEncoder(){
 		motorEncoder.setPosition(0);
