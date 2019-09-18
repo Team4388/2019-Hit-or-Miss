@@ -140,6 +140,7 @@ public class Robot extends TimedRobot
 		arm.updateStatus(operationMode);
 		drive.updateStatus(operationMode);
 		wrist.updateStatus(operationMode);
+		pnumatics.updateStatus(operationMode);
 
    }
 

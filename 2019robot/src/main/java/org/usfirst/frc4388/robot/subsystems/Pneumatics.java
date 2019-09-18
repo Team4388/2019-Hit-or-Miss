@@ -5,6 +5,7 @@ import org.usfirst.frc4388.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Pneumatics extends Subsystem {
     
@@ -14,6 +15,7 @@ public class Pneumatics extends Subsystem {
 	private DoubleSolenoid ballIntake;
 	private DoubleSolenoid wrist;
 
+	public boolean wristState = false;
 	
 	public Pneumatics() {
 		try {
@@ -57,6 +59,15 @@ public class Pneumatics extends Subsystem {
 		}
 		if (state==false) {
 			wrist.set(DoubleSolenoid.Value.kReverse);
+		}
+		wristState = state;
+	}
+
+	public void updateStatus(Robot.OperationMode operationMode) {
+		try {
+			SmartDashboard.putBoolean("Wrist", wristState);
+		} catch(Exception e) {
+
 		}
 	}
 
