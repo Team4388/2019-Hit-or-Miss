@@ -18,7 +18,7 @@ public class ArmAutoZero extends Command
 
 	@Override
 	protected void initialize() {
-		lastArmPosition = Arm.MAX_POSITION_INCHES;
+		lastArmPosition = Arm.MAX_POSITION_ROT;
 		Robot.arm.setSpeed(Arm.AUTO_ZERO_SPEED);
 		encoderCount = 0;
 //		System.out.println("Auto zero initialize");
@@ -52,7 +52,7 @@ public class ArmAutoZero extends Command
 	protected void end() {
 		Robot.arm.setSpeed(0);
 		Robot.arm.resetZeroPosition(Arm.ZERO_POSITION_INCHES);
-		Robot.arm.setPositionPID(Arm.MIN_POSITION_INCHES);
+		Robot.arm.setPositionPID(Arm.MIN_POSITION_ROT);
 //		System.out.println("Arm Zeroed");
 	}
 

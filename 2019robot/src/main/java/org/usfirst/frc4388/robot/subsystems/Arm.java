@@ -58,11 +58,13 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	// One revolution of the 30T Drive 1.880" PD pulley = Pi * PD inches = 36/24 revs due to pulleys * 34/24 revs due to gears * 36/12 revs due mag encoder gear on ball shifter * 4096 ticks
 	public static final double ENCODER_TICKS_TO_INCHES = (1);
+	public static final double ROT_TO_RAD = 0;
 
 
 	private double periodMs;
 	private double lastControlLoopUpdatePeriod = 0.0;
 	private double lastControlLoopUpdateTimestamp = 0.0;
+
 	// Defined speeds
 	public static final double CLIMB_SPEED = -1.0;
 	public static final double TEST_SPEED_UP = 0.3;
@@ -70,15 +72,19 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double AUTO_ZERO_SPEED = -0.3;
 	public static final double JOYSTICK_INCHES_PER_MS_HI = 35;
 	public static final double JOYSTICK_INCHES_PER_MS_LO = 35;
+	public static final double HORIZONTAL_COMPENSATION = 0.0; ///TODO
 
-	// Defined positions
+	// Defined positions (from now on only use variables ending with _ROT)
 	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
 	public static final double ZERO_POSITION_INCHES = -0.25;
-	public static final double NEAR_ZERO_POSITION_INCHES = 0.0;
-	public static final double MIN_POSITION_INCHES = -25;
-	public static final double MAX_POSITION_INCHES = 4200;
+	public static final double NEAR_ZERO_POSITION_ROT = 0.0;
+	public static final double MIN_POSITION_ROT = -25; ///TODO
+	public static final double MAX_POSITION_ROT = 4200; ///TODO
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
+	public static final double HORIZONTAL_POSITION_ROT = 0; ///TODO
+	public static final double VERTICAL_POSITION_ROT = 0; ///TODO
 
+	public static final double SOFT_LIMIT_RANGE = 0; ///TODO
 
 	// Motion profile max velocities and accel times
 	//public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60;
@@ -221,10 +227,12 @@ public class Arm extends Subsystem implements ControlLoopable
 		dPadButtons();
 
 		if (armForwardLimit.get() && armControlMode == ArmControlMode.JOYSTICK_MANUAL){
-			setArmControlMode(ArmControlMode.F_SWITCH);
+			//setArmControlMode(ArmControlMode.F_SWITCH);
+			//motorEncoder.setPosition(MAX_POSITION_ROT); ///TODO: Enable when MIN/MAX found
 		}
 		else if (armReverseLimit.get() && armControlMode == ArmControlMode.JOYSTICK_MANUAL){
-			setArmControlMode(ArmControlMode.R_SWITCH);
+			//setArmControlMode(ArmControlMode.R_SWITCH);
+			//motorEncoder.setPosition(MIN_POSITION_ROT); ///TODO: Enable when MIN/MAX found
 		}
 		
 		/* if (motorReverseLimitSwitch.get()){
@@ -236,12 +244,12 @@ public class Arm extends Subsystem implements ControlLoopable
 			controlManualWithJoystick();
 			// System.err.println(motorController.getControlMode());
 		}
-		else if (armControlMode == ArmControlMode.F_SWITCH){
+		/* else if (armControlMode == ArmControlMode.F_SWITCH){
 			controlManualWithJoystickFSwitch();
 		}
 		else if (armControlMode == ArmControlMode.R_SWITCH){
 			controlManualWithJoystickRSwitch();
-		}
+		}*/
 		//else if (!isFinished) {
 		else {
 			if (armControlMode == ArmControlMode.JOYSTICK_PID){
@@ -304,17 +312,37 @@ public class Arm extends Subsystem implements ControlLoopable
 	
 	public void setSpeed(double speed) {
 		// motor1.set(ControlMode.PercentOutput, speed);
+		// speed = calcSoftLimits(speed); ///TODO: Enable for SoftLimits
+		// speed += calcGravityCompensationAtCurrentPosition(); ///TODO: Enable for Compensation
 		motor1.set(speed);
 		setArmControlMode(ArmControlMode.MANUAL);
 	}
 
+	public double calcSoftLimits(double speed){
+		double position = motorEncoder.getPosition();
+		if (speed > 0){
+			if (position <= (MAX_POSITION_ROT - SOFT_LIMIT_RANGE)) 									speed *= 1;
+			if ((MAX_POSITION_ROT - SOFT_LIMIT_RANGE) < position && position <= (MAX_POSITION_ROT)) speed *= ((Math.sqrt(-SOFT_LIMIT_RANGE * (position - MAX_POSITION_ROT)))/SOFT_LIMIT_RANGE);
+			if (MAX_POSITION_ROT < position) 														speed *= 0;
+		}
+		else if (speed < 0) {
+			if (position <= MIN_POSITION_ROT) 														speed *= 0;
+			if (MIN_POSITION_ROT < position && position <= (MIN_POSITION_ROT + SOFT_LIMIT_RANGE)) 	speed *= ((Math.sqrt(SOFT_LIMIT_RANGE * (position - MIN_POSITION_ROT)))/SOFT_LIMIT_RANGE);
+			if ((MIN_POSITION_ROT + SOFT_LIMIT_RANGE) < position) 									speed *= 1;
+		}
+		return speed;
+	}
+
 	public double calcGravityCompensationAtCurrentPosition() {
 		double rot = motorEncoder.getPosition();
-		// double degreesFromDown = (rot+920)*(360.0/(4096*3));
-		// double compensation = maxGravityComp * Math.sin(degreesFromDown*Math.PI/180);
-		// System.err.println("comp(" + degreesFromDown + "^) = " + compensation);
-		// return compensation;
-		return 0.0;
+		double rad = armRotToRadians(rot);
+		double compensation = HORIZONTAL_COMPENSATION * Math.sin(rad);
+		return compensation;
+	}
+
+	public double armRotToRadians(double rot){
+		double rad = (VERTICAL_POSITION_ROT - rot) * ROT_TO_RAD;
+		return rad;
 	}
 
 	private void ControlWithJoystickhold(){
@@ -358,7 +386,7 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	public void updatePositionPID(double targetPositionInches) {
 		targetPositionInchesPID = limitPosition(targetPositionInches);
-		if (limitPosition(motorEncoder.getPosition()) == MIN_POSITION_INCHES){
+		if (limitPosition(motorEncoder.getPosition()) == MIN_POSITION_ROT){
 			resetEncoder();
 		}
 		double startPositionInches = motorEncoder.getPosition();
@@ -393,7 +421,7 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	public void updatePositionSM(double targetPositionInches) {
 		targetPositionInchesSM = limitPosition(targetPositionInches);
-		if (limitPosition(motorEncoder.getPosition()) == MIN_POSITION_INCHES){
+		if (limitPosition(motorEncoder.getPosition()) == MIN_POSITION_ROT){
 			resetEncoder();
 		}
 
@@ -403,11 +431,11 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 
 	private double limitPosition(double targetPosition) {
-		if (targetPosition < MIN_POSITION_INCHES) {
-			return MIN_POSITION_INCHES;
+		if (targetPosition < MIN_POSITION_ROT) {
+			return MIN_POSITION_ROT;
 		}
-		if (targetPosition > MAX_POSITION_INCHES) {
-			return MAX_POSITION_INCHES;
+		if (targetPosition > MAX_POSITION_ROT) {
+			return MAX_POSITION_ROT;
 		}
 
 		return targetPosition;
@@ -438,29 +466,29 @@ public class Arm extends Subsystem implements ControlLoopable
 		int dPadAngle = Robot.oi.getOperatorController().getDpadAngle();
 		if (placeMode == PlaceMode.HATCH){
 			if (dPadAngle == DPAD_UP && lastDPadAngle == -1){
-				new HatchHigh().start();
+				//new HatchHigh().start();
 			}
 			if (dPadAngle == DPAD_RIGHT && lastDPadAngle == -1){
-				new HatchMid().start();
+				//new HatchMid().start();
 			}
 			if (dPadAngle == DPAD_DOWN && lastDPadAngle == -1){
-				new HatchLow().start();
+				//new HatchLow().start();
 			}
 		}
 		if (placeMode == PlaceMode.CARGO) {
 			if (dPadAngle == DPAD_UP && lastDPadAngle == -1){
-				new CargoHigh().start();
+				//new CargoHigh().start();
 			}
 			if (dPadAngle == DPAD_RIGHT && lastDPadAngle == -1){
-				new CargoMid().start();
+				//new CargoMid().start();
 			}
 			if (dPadAngle == DPAD_DOWN && lastDPadAngle == -1){
-				new CargoLow().start();
+				//new CargoLow().start();
 			}
 		}
 
 		if (dPadAngle == DPAD_LEFT && lastDPadAngle == -1){
-			new StowArm().start();
+			//new StowArm().start();
 		}
 		SmartDashboard.putNumber("DPad Angle", dPadAngle);
 		lastDPadAngle = dPadAngle;

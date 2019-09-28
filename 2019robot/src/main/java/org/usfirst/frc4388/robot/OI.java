@@ -82,10 +82,10 @@ public class OI
 			safteySwitch.whenReleased(new setLEDPattern(LEDPatterns.FOREST_WAVES));
 
 			JoystickButton Height1 = new JoystickButton(m_operatorXbox.getJoyStick(),XboxController.RIGHT_JOYSTICK_BUTTON);
-			Height1.whenPressed(new ArmToHeight1());
+			//Height1.whenPressed(new ArmToHeight1());
 
 			JoystickButton lowHeight = new JoystickButton(m_operatorXbox.getJoyStick(),XboxController.LEFT_JOYSTICK_BUTTON);
-			lowHeight.whenPressed(new GrabFromLoadingSatation());
+			//lowHeight.whenPressed(new GrabFromLoadingSatation());
 
 			//JoystickButton stow = new JoystickButton(m_operatorXbox.getJoyStick(), XboxController.B_BUTTON);
 			//stow.whenPressed(new StowArm());
@@ -93,9 +93,9 @@ public class OI
 
 
 			/** Driver Xbox Controler */
-			JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
+			//JoystickButton climbUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_TRIGGER_AXIS);
 			
-			JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
+			//JoystickButton climbDown = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.LEFT_TRIGGER_AXIS);
 
 	        JoystickButton shiftUp = new JoystickButton(m_driverXbox.getJoyStick(), XboxController.RIGHT_BUMPER_BUTTON);
 	        shiftUp.whenPressed(new DriveSpeedShift(true));
