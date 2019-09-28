@@ -53,7 +53,9 @@ public class Arm extends Subsystem implements ControlLoopable
 {
 	private static Arm instance;
 
-	public static enum ArmControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL, MOTION_MAGIC, SMART_MOTION, F_SWITCH, R_SWITCH};
+	public static enum ArmControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL, MOTION_MAGIC, SMART_MOTION, F_SWITCH, R_SWITCH,
+		JOYSTICK_MANUAL_TEST
+	};
 	public static enum PlaceMode { HATCH, CARGO };
 
 	// One revolution of the 30T Drive 1.880" PD pulley = Pi * PD inches = 36/24 revs due to pulleys * 34/24 revs due to gears * 36/12 revs due mag encoder gear on ball shifter * 4096 ticks
@@ -73,6 +75,8 @@ public class Arm extends Subsystem implements ControlLoopable
 	public static final double JOYSTICK_INCHES_PER_MS_HI = 35;
 	public static final double JOYSTICK_INCHES_PER_MS_LO = 35;
 	public static final double HORIZONTAL_COMPENSATION = 0.0; ///TODO
+
+	public static double testOutput = 0;
 
 	// Defined positions (from now on only use variables ending with _ROT)
 	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
@@ -244,6 +248,10 @@ public class Arm extends Subsystem implements ControlLoopable
 			controlManualWithJoystick();
 			// System.err.println(motorController.getControlMode());
 		}
+		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL_TEST) {
+			controlManualWithJoystickTest();
+			// System.err.println(motorController.getControlMode());
+		}
 		/* else if (armControlMode == ArmControlMode.F_SWITCH){
 			controlManualWithJoystickFSwitch();
 		}
@@ -306,14 +314,15 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 
 	public void setSpeedJoystick(double speed) {
+		double comp = calcGravityCompensationAtCurrentPosition();
+		speed = (1 - comp) * calcSoftLimits(speed); ///TODO: Enable for SoftLimits
+		speed += comp; ///TODO: Enable for Compensation
 		setSpeed(speed);
 		setArmControlMode(ArmControlMode.JOYSTICK_MANUAL);
 	}
 	
 	public void setSpeed(double speed) {
 		// motor1.set(ControlMode.PercentOutput, speed);
-		// speed = calcSoftLimits(speed); ///TODO: Enable for SoftLimits
-		// speed += calcGravityCompensationAtCurrentPosition(); ///TODO: Enable for Compensation
 		motor1.set(speed);
 		setArmControlMode(ArmControlMode.MANUAL);
 	}
@@ -337,7 +346,8 @@ public class Arm extends Subsystem implements ControlLoopable
 		double rot = motorEncoder.getPosition();
 		double rad = armRotToRadians(rot);
 		double compensation = HORIZONTAL_COMPENSATION * Math.sin(rad);
-		return compensation;
+		if (MIN_POSITION_ROT < rot && rot < MAX_POSITION_ROT) return compensation;
+		else 												  return 0;
 	}
 
 	public double armRotToRadians(double rot){
@@ -353,6 +363,13 @@ public class Arm extends Subsystem implements ControlLoopable
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
 		setSpeedJoystick(joyStickSpeed);
+	}
+
+	private void controlManualWithJoystickTest() {
+		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
+		joyStickSpeed *= testOutput * 0.3;
+		joyStickSpeed += testOutput;
+		setSpeed(joyStickSpeed);
 	}
 
 	private void controlManualWithJoystickFSwitch(){
@@ -553,6 +570,8 @@ public class Arm extends Subsystem implements ControlLoopable
 				//SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
 				//SmartDashboard.putNumber("Arm Target PID Position", targetPositionInchesPID);
 
+				SmartDashboard.putNumber("Arm Test Output", testOutput);
+
 				// display PID coefficients on SmartDashboard
 				SmartDashboard.putNumber("Arm P Gain", kP);
 				SmartDashboard.putNumber("Arm I Gain", kI);
@@ -575,7 +594,7 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	}
 
-	public void ReadStatus(){
+	public void readStatus(){
 		try {
 			// read PID coefficients from SmartDashboard
 			double p = SmartDashboard.getNumber("Arm P Gain", 0);
@@ -589,6 +608,7 @@ public class Arm extends Subsystem implements ControlLoopable
 			double minV = SmartDashboard.getNumber("Arm Min Velocity", 0);
 			double maxA = SmartDashboard.getNumber("Arm Max Acceleration", 0);
 			double allE = SmartDashboard.getNumber("Arm Allowed Closed Loop Error", 0);
+			double testOut = SmartDashboard.getNumber("Arm Test Output", 0);
 
 			// if PID coefficients on SmartDashboard have changed, write new values to controller
 			if((p != kP)) { motorController.setP(p); kP = p; }
@@ -604,6 +624,7 @@ public class Arm extends Subsystem implements ControlLoopable
 			if((minV != minVel)) { motorController.setSmartMotionMinOutputVelocity(minV,0); minVel = minV; }
 			if((maxA != maxAcc)) { motorController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }
 			if((allE != allowedErr)) { motorController.setSmartMotionAllowedClosedLoopError(allE,0); allE = allowedErr; }
+			if((testOut != testOutput)) { testOutput = testOut; }
 
 			// if Set Position has changed, set as target for motorController
 			double setPos = SmartDashboard.getNumber("Arm Set Position", 0);

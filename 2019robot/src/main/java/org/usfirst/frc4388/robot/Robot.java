@@ -141,6 +141,7 @@ public class Robot extends TimedRobot
     
     public void updateStatus() {
 		arm.updateStatus(operationMode);
+		arm.readStatus();
 		drive.updateStatus(operationMode);
 		wrist.updateStatus(operationMode);
 
