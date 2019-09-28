@@ -47,6 +47,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	public static final double AUTO_ZERO_SPEED = -0.3;
 	public static final double JOYSTICK_INCHES_PER_MS_HI = 20;
 	public static final double JOYSTICK_INCHES_PER_MS_LO = 20;
+	public static final double SPEED_VOLTAGE_RATIO = 0.25;
 
 	// Defined positions
 	public static final double ZERO_POSITION_AUTON_FORWARD_INCHES = 8.0;
