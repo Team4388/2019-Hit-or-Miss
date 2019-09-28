@@ -53,7 +53,7 @@ public class Arm extends Subsystem implements ControlLoopable
 {
 	private static Arm instance;
 
-	public static enum ArmControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL, MOTION_MAGIC, SMART_MOTION};
+	public static enum ArmControlMode { MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL, MOTION_MAGIC, SMART_MOTION, F_SWITCH, R_SWITCH};
 	public static enum PlaceMode { HATCH, CARGO };
 
 	// One revolution of the 30T Drive 1.880" PD pulley = Pi * PD inches = 36/24 revs due to pulleys * 34/24 revs due to gears * 36/12 revs due mag encoder gear on ball shifter * 4096 ticks
@@ -87,11 +87,12 @@ public class Arm extends Subsystem implements ControlLoopable
 
 	// Motor controllers
 	public CANSparkMax motor1;
-	private CANSparkMax motor2;
+	//private CANSparkMax motor2;
 
 	private CANPIDController motorController;
 	private CANEncoder motorEncoder;
 	private CANDigitalInput motorForwardLimitSwitch, motorReverseLimitSwitch;
+	private DigitalInput armForwardLimit, armReverseLimit;
 
 	// PID controller and params
 	//private MPTalonPIDController mpController;
@@ -151,14 +152,14 @@ public class Arm extends Subsystem implements ControlLoopable
 			// motor2 = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.ARM_MOTOR2_ID, RobotMap.ARM_MOTOR1_ID);
 
 			motor1 = new CANSparkMax(RobotMap.ARM_MOTOR1_ID, MotorType.kBrushless);
-			motor2 = new CANSparkMax(RobotMap.ARM_MOTOR2_ID, MotorType.kBrushless);
+			//motor2 = new CANSparkMax(RobotMap.ARM_MOTOR2_ID, MotorType.kBrushless);
 			motor1.restoreFactoryDefaults();
-			motor2.restoreFactoryDefaults();
-			motor2.follow(motor1);
+			//motor2.restoreFactoryDefaults();
+			//motor2.follow(motor1);
 			motorController = motor1.getPIDController();
-			motorEncoder = motor1.getEncoder();
-			motorForwardLimitSwitch = motor1.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyOpen);
-			motorReverseLimitSwitch = motor1.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyOpen);
+			//motorEncoder = motor1.getEncoder();
+			//motorForwardLimitSwitch = motor1.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyOpen);
+			//motorReverseLimitSwitch = motor1.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyOpen);
 
 			motorController.setP(kP);
 			motorController.setI(kI);
@@ -173,6 +174,8 @@ public class Arm extends Subsystem implements ControlLoopable
     		motorController.setSmartMotionMaxAccel(maxAcc, smartMotionSlot);
     		motorController.setSmartMotionAllowedClosedLoopError(allowedErr, smartMotionSlot);
 
+			armForwardLimit = new DigitalInput(RobotMap.ARM_LIMIT_FORWARD_ID);
+			armReverseLimit = new DigitalInput(RobotMap.ARM_LIMIT_REVERSE_ID);
 
 			// motor1.setInverted(true);
 			// motor2.setInverted(true);
@@ -217,14 +220,27 @@ public class Arm extends Subsystem implements ControlLoopable
 
 		dPadButtons();
 
-		if (motorReverseLimitSwitch.get()){
-			resetEncoder();
+		if (armForwardLimit.get() && armControlMode == ArmControlMode.JOYSTICK_MANUAL){
+			setArmControlMode(ArmControlMode.F_SWITCH);
 		}
+		else if (armReverseLimit.get() && armControlMode == ArmControlMode.JOYSTICK_MANUAL){
+			setArmControlMode(ArmControlMode.R_SWITCH);
+		}
+		
+		/* if (motorReverseLimitSwitch.get()){
+			resetEncoder();
+		} */
 
 		// Do the update
 		if (armControlMode == ArmControlMode.JOYSTICK_MANUAL) {
 			controlManualWithJoystick();
 			// System.err.println(motorController.getControlMode());
+		}
+		else if (armControlMode == ArmControlMode.F_SWITCH){
+			controlManualWithJoystickFSwitch();
+		}
+		else if (armControlMode == ArmControlMode.R_SWITCH){
+			controlManualWithJoystickRSwitch();
 		}
 		//else if (!isFinished) {
 		else {
@@ -288,7 +304,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	
 	public void setSpeed(double speed) {
 		// motor1.set(ControlMode.PercentOutput, speed);
-		motorController.setReference(speed, ControlType.kVoltage);
+		motor1.set(speed);
 		setArmControlMode(ArmControlMode.MANUAL);
 	}
 
@@ -309,6 +325,20 @@ public class Arm extends Subsystem implements ControlLoopable
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
 		setSpeedJoystick(joyStickSpeed);
+	}
+
+	private void controlManualWithJoystickFSwitch(){
+		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
+		if (joyStickSpeed > 0) joyStickSpeed = 0;
+		setSpeedJoystick(joyStickSpeed);
+		if (!armForwardLimit.get()) setArmControlMode(ArmControlMode.JOYSTICK_MANUAL);
+	}
+
+	private void controlManualWithJoystickRSwitch(){
+		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
+		if (joyStickSpeed < 0) joyStickSpeed = 0;
+		setSpeedJoystick(joyStickSpeed);
+		if (!armReverseLimit.get()) setArmControlMode(ArmControlMode.JOYSTICK_MANUAL);
 	}
 	
 	private void controlPidWithJoystick() {
@@ -388,7 +418,7 @@ public class Arm extends Subsystem implements ControlLoopable
 	}
 
 	public double getAverageMotorCurrent() {
-		return (motor1.getOutputCurrent() + motor2.getOutputCurrent()) / 2;
+		return (motor1.getOutputCurrent() /*+ motor2.getOutputCurrent()*/) / 2;
 	}
 
 	public synchronized boolean isFinished() {
@@ -480,7 +510,7 @@ public class Arm extends Subsystem implements ControlLoopable
 		//System.err.println("the encoder is right after this");
 			try {
 
-				SmartDashboard.putNumber("Arm Ticks", motorEncoder.getPosition());
+				///SmartDashboard.putNumber("Arm Ticks", motorEncoder.getPosition());
 				//SmartDashboard.putNumber("Arm Motor 1 Amps", motor1.getOutputCurrent());
 				//SmartDashboard.putNumber("Arm Motor 2 Amps", motor2.getOutputCurrent());
 				//SmartDashboard.putNumber("sensor vel", motor1.getSelectedSensorVelocity());
@@ -489,7 +519,7 @@ public class Arm extends Subsystem implements ControlLoopable
 				SmartDashboard.putNumber("Arm Amps", getAverageMotorCurrent());
 				SmartDashboard.putNumber("Arm Target SM", targetPositionInchesSM);
 				SmartDashboard.putString("Arm Control Mode", armControlMode.toString());
-				//SmartDashboard.putNumber("arm output", motor1.getMotorOutputPercent());
+				SmartDashboard.putNumber("arm output", motor1.getOutputCurrent());
 				//SmartDashboard.putNumber("Elevator Motor 1 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID));
 				//SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
 				//SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));

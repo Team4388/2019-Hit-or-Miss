@@ -104,7 +104,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
 	private boolean isFinished;
-	private WristControlMode wristControlMode = WristControlMode.MOTION_MAGIC;
+	private WristControlMode wristControlMode = WristControlMode.JOYSTICK_MANUAL;
 	public double targetPositionInchesPID = 0;
 	public double targetPositionInchesMM = 0;
 	private boolean firstMpPoint;
@@ -172,7 +172,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 	}
 
 	public void setSpeedJoystick(double speed) {
-		wristMotor1.set(ControlMode.PercentOutput, speed);
+		wristMotor1.set(ControlMode.PercentOutput, speed * SPEED_VOLTAGE_RATIO);
 		setWristControlMode(WristControlMode.JOYSTICK_MANUAL);
 	}
 	public void setPositionMM(double targetPositionInches){
@@ -422,6 +422,7 @@ public class Wrist extends Subsystem implements ControlLoopable
 //				SmartDashboard.putNumber("Elevator Motor 2 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
 //				SmartDashboard.putNumber("Elevator Motor 3 Amps PDP", Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
 				SmartDashboard.putNumber("Wrist Target PID", targetPositionInchesPID);
+				SmartDashboard.putString("Wrist Mode", wristControlMode.toString());
 			}
 			catch (Exception e) {
 				System.err.println("Drivetrain update status error" +e.getMessage());

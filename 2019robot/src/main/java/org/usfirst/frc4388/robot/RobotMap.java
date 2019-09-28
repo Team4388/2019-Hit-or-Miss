@@ -39,4 +39,8 @@ public class RobotMap {
 	public static final int OPEN_INTAKE_PCM_ID = 4;
 	public static final int CLOSE_INTAKE_PCM_ID = 5;
 
+	//DIO
+	public static final int ARM_LIMIT_FORWARD_ID = 0;
+	public static final int ARM_LIMIT_REVERSE_ID = 1;
+
 }

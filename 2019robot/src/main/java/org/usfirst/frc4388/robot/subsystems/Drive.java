@@ -266,7 +266,7 @@ public class Drive extends Subsystem implements ControlLoopable
 			//rightDrive1.setVoltageRampRate(VOLTAGE_RAMP_RATE);
 			//rightDrive1.setNominalClosedLoopVoltage(12.0);
 			rightDrive1.clearFaults();
-			rightDrive1.setInverted(true);//false on comp, false on practice
+			rightDrive1.setInverted(false);//false on comp, false on practice
 			//rightDrive1.setSensorPhase(true);//true on comp 2108, true on microbot
 			//rightDrive1.setSafetyEnabled(false);
 			rightDrive1.setIdleMode(IdleMode.kBrake);
@@ -279,7 +279,7 @@ public class Drive extends Subsystem implements ControlLoopable
 //	        }
 			
 
-			rightDrive2.setInverted(false);//True on comp 2019, false on practice
+			rightDrive2.setInverted(true);//True on comp 2019, false on practice
 			//rightDrive2.setSafetyEnabled(false);
 			rightDrive2.setIdleMode(IdleMode.kBrake);
 			//rightDrive2.set(ControlMode.Follower, rightDrive1.getDeviceID());
